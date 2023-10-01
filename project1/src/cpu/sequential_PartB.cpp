@@ -9,15 +9,12 @@
 #include <cmath>
 #include <chrono>
 #include <memory>
+#include <vector>
 
 #include "utils.hpp"
 
 const int FILTER_SIZE = 3;
-const double filter[FILTER_SIZE][FILTER_SIZE] = {
-    {1.0 / 9, 1.0 / 9, 1.0 / 9},
-    {1.0 / 9, 1.0 / 9, 1.0 / 9},
-    {1.0 / 9, 1.0 / 9, 1.0 / 9}
-};
+std::vector<float> filter(9, 1.0/9);
 
 int main(int argc, char** argv) {
     
@@ -42,24 +39,63 @@ int main(int argc, char** argv) {
         for (int width = 1; width < input_jpeg.width - 1; width++) {
 
             int sum_r = 0, sum_g = 0, sum_b = 0;
+            int inner_height = height - 1, inner_width = width - 1;
+            // row 0
+            int rloc = ((inner_height) * input_jpeg.width + (inner_width)) * input_jpeg.num_channels;
+            auto cur_filter = filter.begin();
+            sum_r += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_g += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_b += input_jpeg.buffer[rloc++] * (*cur_filter);
+            cur_filter++;
+            sum_r += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_g += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_b += input_jpeg.buffer[rloc++] * (*cur_filter);
+            cur_filter++;
+            sum_r += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_g += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_b += input_jpeg.buffer[rloc++] * (*cur_filter);
+            cur_filter++;
+            // row 1
+            rloc += (input_jpeg.width - FILTER_SIZE) * input_jpeg.num_channels;
+            sum_r += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_g += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_b += input_jpeg.buffer[rloc++] * (*cur_filter);
+            cur_filter++;
+            sum_r += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_g += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_b += input_jpeg.buffer[rloc++] * (*cur_filter);
+            cur_filter++;
+            sum_r += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_g += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_b += input_jpeg.buffer[rloc++] * (*cur_filter);
+            cur_filter++;
+            // row 2
+            rloc += (input_jpeg.width - FILTER_SIZE) * input_jpeg.num_channels;
+            sum_r += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_g += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_b += input_jpeg.buffer[rloc++] * (*cur_filter);
+            cur_filter++;
+            sum_r += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_g += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_b += input_jpeg.buffer[rloc++] * (*cur_filter);
+            cur_filter++;
+            sum_r += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_g += input_jpeg.buffer[rloc++] * (*cur_filter);
+            sum_b += input_jpeg.buffer[rloc] * (*cur_filter);
             
-            for (int i = -1; i <= 1; i++) {
-                for (int j = -1; j <= 1; j++) {
-                    int channel_value_r = input_jpeg.buffer[((height + i) * input_jpeg.width + (width + j)) * input_jpeg.num_channels];
-                    int channel_value_g = input_jpeg.buffer[((height + i) * input_jpeg.width + (width + j)) * input_jpeg.num_channels + 1];
-                    int channel_value_b = input_jpeg.buffer[((height + i) * input_jpeg.width + (width + j)) * input_jpeg.num_channels + 2];
-                    sum_r += channel_value_r * filter[i + 1][j + 1];
-                    sum_g += channel_value_g * filter[i + 1][j + 1];
-                    sum_b += channel_value_b * filter[i + 1][j + 1];
-                }
-            }
+            // for (int i = -1; i <= 1; i++) {
+            //     for (int j = -1; j <= 1; j++) {
+            //         int rloc = ((height + i) * input_jpeg.width + (width + j)) * input_jpeg.num_channels;
+            //         sum_r += input_jpeg.buffer[rloc++] * filter[0];
+            //         sum_g += input_jpeg.buffer[rloc++] * filter[0];
+            //         sum_b += input_jpeg.buffer[rloc] * filter[0];
+            //     }
+            // }
 
-            filteredImage[(height * input_jpeg.width + width) * input_jpeg.num_channels]
-                = static_cast<unsigned char>(std::round(sum_r));
-            filteredImage[(height * input_jpeg.width + width) * input_jpeg.num_channels + 1]
-                = static_cast<unsigned char>(std::round(sum_g));
-            filteredImage[(height * input_jpeg.width + width) * input_jpeg.num_channels + 2]
-                = static_cast<unsigned char>(std::round(sum_b));
+            int insert_loc = (height * input_jpeg.width + width) * input_jpeg.num_channels;
+            filteredImage[insert_loc++] = static_cast<unsigned char>(sum_r);
+            filteredImage[insert_loc++] = static_cast<unsigned char>(sum_g);
+            filteredImage[insert_loc] = static_cast<unsigned char>(sum_b);
 
         }
     }
