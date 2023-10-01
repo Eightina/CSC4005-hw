@@ -1,0 +1,151 @@
+Current directory: /nfsmnt/223040076/coursecode/project1/src/scripts
+Sequential PartB (Optimized with -O2)
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
+Transformation Complete!
+Execution Time: 11165 milliseconds
+
+SIMD(AVX2) PartB (Optimized with -O2)
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/simd_PartB: No such file or directory
+
+MPI PartB (Optimized with -O2)
+Number of processes: 1
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+
+Number of processes: 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+srun: error: node23: tasks 0-1: Exited with exit code 2
+
+Number of processes: 4
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+srun: error: node23: tasks 0-3: Exited with exit code 2
+
+Number of processes: 8
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+srun: error: node23: tasks 0-7: Exited with exit code 2
+
+Number of processes: 16
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+srun: error: node23: tasks 0-15: Exited with exit code 2
+
+Number of processes: 32
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/mpi_PartB: No such file or directory
+srun: error: node23: tasks 0-31: Exited with exit code 2
+
+Pthread PartB (Optimized with -O2)
+Number of cores: 1
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/pthread_PartB: No such file or directory
+
+Number of cores: 2
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/pthread_PartB: No such file or directory
+
+Number of cores: 4
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/pthread_PartB: No such file or directory
+
+Number of cores: 8
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/pthread_PartB: No such file or directory
+
+Number of cores: 16
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/pthread_PartB: No such file or directory
+
+Number of cores: 32
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/pthread_PartB: No such file or directory
+
+OpenMP PartB (Optimized with -O2)
+Number of cores: 1
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/openmp_PartB: No such file or directory
+
+Number of cores: 2
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/openmp_PartB: No such file or directory
+
+Number of cores: 4
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/openmp_PartB: No such file or directory
+
+Number of cores: 8
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/openmp_PartB: No such file or directory
+
+Number of cores: 16
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/openmp_PartB: No such file or directory
+
+Number of cores: 32
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/cpu/openmp_PartB: No such file or directory
+
+CUDA PartB
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/gpu/cuda_PartB: No such file or directory
+
+OpenACC PartB
+srun: error: node23: task 0: Exited with exit code 2
+slurmstepd: error: execve(): /nfsmnt/223040076/coursecode/project1/src/scripts/../../build/src/gpu/openacc_PartB: No such file or directory
+
