@@ -1,0 +1,2 @@
+salloc -N1 -n8 -t5 -p Debug
+srun hostname
