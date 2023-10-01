@@ -1,0 +1,193 @@
+Current directory: /nfsmnt/223040076/coursecode/project1/src/scripts
+Sequential PartA (Optimized with -O2)
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 635 milliseconds
+
+SIMD(AVX2) PartA (Optimized with -O2)
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 422 milliseconds
+
+MPI PartA (Optimized with -O2)
+Number of processes: 1
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 634 milliseconds
+
+Number of processes: 2
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 784 milliseconds
+
+Number of processes: 4
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 498 milliseconds
+
+Number of processes: 8
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 336 milliseconds
+
+Number of processes: 16
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 270 milliseconds
+
+Number of processes: 32
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 229 milliseconds
+
+Pthread PartA (Optimized with -O2)
+Number of cores: 1
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 712 milliseconds
+
+Number of cores: 2
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 641 milliseconds
+
+Number of cores: 4
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 345 milliseconds
+
+Number of cores: 8
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 181 milliseconds
+
+Number of cores: 16
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 101 milliseconds
+
+Number of cores: 32
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 79 milliseconds
+
+OpenMP PartA (Optimized with -O2)
+Number of cores: 1
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 590 milliseconds
+
+Number of cores: 2
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 591 milliseconds
+
+Number of cores: 4
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 457 milliseconds
+
+Number of cores: 8
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 287 milliseconds
+
+Number of cores: 16
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 184 milliseconds
+
+Number of cores: 32
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 125 milliseconds
+
+CUDA PartA
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+GPU Execution Time: 27.1155 milliseconds
+
+OpenACC PartA
+Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Gray.jpg
+Transformation Complete!
+Execution Time: 28 milliseconds
+
