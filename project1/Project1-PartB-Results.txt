@@ -3,5 +3,5 @@ Sequential PartB (Optimized with -O2)
 Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
 Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
 Transformation Complete!
-Execution Time: 10964 milliseconds
+Execution Time: 6500 milliseconds
 
