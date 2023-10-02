@@ -11,14 +11,14 @@ CURRENT_DIR=$(pwd)/src/scripts
 echo "Current directory: ${CURRENT_DIR}"
 
 # Sequential PartB
-echo "Sequential PartB (Optimized with -O2)"
-srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../../build/src/cpu/sequential_PartB ${CURRENT_DIR}/../../images/20K-RGB.jpg ${CURRENT_DIR}/../../images/20K-Smooth.jpg
-echo ""
-
-# # SIMD PartB
-# echo "SIMD(AVX2) PartB (Optimized with -O2)"
-# srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../../build/src/cpu/simd_PartB ${CURRENT_DIR}/../../images/20K-RGB.jpg ${CURRENT_DIR}/../../images/20K-Smooth.jpg
+# echo "Sequential PartB (Optimized with -O2)"
+# srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../../build/src/cpu/sequential_PartB ${CURRENT_DIR}/../../images/20K-RGB.jpg ${CURRENT_DIR}/../../images/20K-Smooth.jpg
 # echo ""
+
+# SIMD PartB
+echo "SIMD(AVX2) PartB (Optimized with -O2)"
+srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../../build/src/cpu/simd_PartB ${CURRENT_DIR}/../../images/20K-RGB.jpg ${CURRENT_DIR}/../../images/20K-Smooth.jpg
+echo ""
 
 # # MPI PartB
 # echo "MPI PartB (Optimized with -O2)"

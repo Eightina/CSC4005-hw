@@ -17,18 +17,15 @@ const int FILTER_SIZE = 3;
 //     {1.0 / 9, 1.0 / 9, 1.0 / 9},
 //     {1.0 / 9, 1.0 / 9, 1.0 / 9}
 // };
-__m256 filter0 = _mm256_set1_ps(1.0 / 9);
-__m256 filter1 = _mm256_set1_ps(1.0 / 9);
-__m256 filter2 = _mm256_set1_ps(1.0 / 9);
+const __m128 filter0 = _mm_set1_ps(1.0 / 9);
+const __m128 filter1 = _mm_set1_ps(1.0 / 9);
+const __m128 filter2 = _mm_set1_ps(1.0 / 9);
 
-__m256i shuffle = _mm256_setr_epi8(0, 4, 8, -1, 
+const __m128i shuffle = _mm_setr_epi8(0, 4, 8, -1, 
                                 -1, -1, -1, -1, 
                                 -1, -1, -1, -1, 
-                                -1, -1, -1, -1,
-                                -1, -1, -1, -1,
-                                -1, -1, -1, -1,
-                                -1, -1, -1, -1,
-                                -1, -1, -1, -1);
+                                -1, -1, -1, -1); 
+// using -1 can mask elements not needed
 
 int main(int argc, char** argv) {
     if (argc != 3) {
@@ -65,64 +62,83 @@ int main(int argc, char** argv) {
             int start2 = start1 + input_jpeg.width;
             
             // solve red
+            auto temp_reds = new unsigned char[16];
             __m128i row0 = _mm_loadu_si128((__m128i*) (reds+start0));
-            __m256i row0_ints = _mm256_cvtepu8_epi32(row0);
-            __m256 row0_floats = _mm256_cvtepi32_ps(row0_ints);
-            __m256 row0_filtered = _mm256_mul_ps(row0_floats, filter0);
+            __m128i row0_ints = _mm_cvtepu8_epi32(row0);
+            __m128 row0_floats = _mm_cvtepi32_ps(row0_ints);
+            __m128 row0_filtered = _mm_mul_ps(row0_floats, filter0);
 
             __m128i row1 = _mm_loadu_si128((__m128i*) (reds+start1));
-            __m256i row1_ints = _mm256_cvtepu8_epi32(row1);
-            __m256 row1_floats = _mm256_cvtepi32_ps(row1_ints);
-            __m256 row1_filtered = _mm256_mul_ps(row1_floats, filter1);
+            __m128i row1_ints = _mm_cvtepu8_epi32(row1);
+            __m128 row1_floats = _mm_cvtepi32_ps(row1_ints);
+            __m128 row1_filtered = _mm_mul_ps(row1_floats, filter1);
 
             __m128i row2 = _mm_loadu_si128((__m128i*) (reds+start2));
-            __m256i row2_ints = _mm256_cvtepu8_epi32(row2);
-            __m256 row2_floats = _mm256_cvtepi32_ps(row2_ints);
-            __m256 row2_filtered = _mm256_mul_ps(row0_floats, filter2);
+            __m128i row2_ints = _mm_cvtepu8_epi32(row2);
+            __m128 row2_floats = _mm_cvtepi32_ps(row2_ints);
+            __m128 row2_filtered = _mm_mul_ps(row2_floats, filter2);
 
-            __m256 add_results_red = _mm256_add_ps(row0_filtered, row1_filtered);
-            add_results_red = _mm256_add_ps(add_results_red, row2_filtered);
-            __m256i add_results_red_32 =  _mm256_cvtps_epi32(add_results_red);
-            __m128i add_results_red_8 = _mm256_shuffle_epi8(add_results_red_32, shuffle);
-    // https://www.jianshu.com/p/523f262c77b3
+            __m128 add_results_red = _mm_add_ps(row0_filtered, row1_filtered);
+            add_results_red = _mm_add_ps(add_results_red, row2_filtered);
+            __m128i add_results_red_32 =  _mm_cvtps_epi32(add_results_red);
+            __m128i add_results_red_8 = _mm_shuffle_epi8(add_results_red_32, shuffle);
+            _mm_storeu_si128((__m128i*)(temp_reds), add_results_red_8);
+            unsigned char the_red = temp_reds[0] + temp_reds[1] + temp_reds[2];
+
+
+            // https://www.jianshu.com/p/523f262c77b3
             // solve green
-            __m128i row0 = _mm_loadu_si128((__m128i*) (greens+start0));
-            __m256i row0_ints = _mm256_cvtepu8_epi32(row0);
-            __m256 row0_floats = _mm256_cvtepi32_ps(row0_ints);
-            __m256 row0_filtered = _mm256_mul_ps(row0_floats, filter0);
+            auto temp_greens = new unsigned char[16];
+            row0 = _mm_loadu_si128((__m128i*) (greens+start0));
+            row0_ints = _mm_cvtepu8_epi32(row0);
+            row0_floats = _mm_cvtepi32_ps(row0_ints);
+            row0_filtered = _mm_mul_ps(row0_floats, filter0);
 
-            __m128i row1 = _mm_loadu_si128((__m128i*) (greens+start1));
-            __m256i row1_ints = _mm256_cvtepu8_epi32(row1);
-            __m256 row1_floats = _mm256_cvtepi32_ps(row1_ints);
-            __m256 row1_filtered = _mm256_mul_ps(row1_floats, filter1);
+            row1 = _mm_loadu_si128((__m128i*) (greens+start1));
+            row1_ints = _mm_cvtepu8_epi32(row1);
+            row1_floats = _mm_cvtepi32_ps(row1_ints);
+            row1_filtered = _mm_mul_ps(row1_floats, filter1);
 
-            __m128i row2 = _mm_loadu_si128((__m128i*) (greens+start2));
-            __m256i row2_ints = _mm256_cvtepu8_epi32(row2);
-            __m256 row2_floats = _mm256_cvtepi32_ps(row2_ints);
-            __m256 row2_filtered = _mm256_mul_ps(row0_floats, filter2);
+            row2 = _mm_loadu_si128((__m128i*) (greens+start2));
+            row2_ints = _mm_cvtepu8_epi32(row2);
+            row2_floats = _mm_cvtepi32_ps(row2_ints);
+            row2_filtered = _mm_mul_ps(row2_floats, filter2);
 
-            __m256 add_results_green = _mm256_add_ps(row0_filtered, row1_filtered);
-            add_results_green = _mm256_add_ps(add_results_green, row2_filtered);
+            __m128 add_results_green = _mm_add_ps(row0_filtered, row1_filtered);
+            add_results_green = _mm_add_ps(add_results_green, row2_filtered);
+            __m128i add_results_green_32 =  _mm_cvtps_epi32(add_results_green);
+            __m128i add_results_green_8 = _mm_shuffle_epi8(add_results_green_32, shuffle);
+            _mm_storeu_si128((__m128i*)(temp_greens), add_results_green_8);
+            unsigned char the_green = temp_greens[0] + temp_greens[1] + temp_greens[2];
 
-            // solve blue
-            __m128i row0 = _mm_loadu_si128((__m128i*) (blues+start0));
-            __m256i row0_ints = _mm256_cvtepu8_epi32(row0);
-            __m256 row0_floats = _mm256_cvtepi32_ps(row0_ints);
-            __m256 row0_filtered = _mm256_mul_ps(row0_floats, filter0);
+            // //solve blue
+            auto temp_blues = new unsigned char[16];
+            row0 = _mm_loadu_si128((__m128i*) (blues+start0));
+            row0_ints = _mm_cvtepu8_epi32(row0);
+            row0_floats = _mm_cvtepi32_ps(row0_ints);
+            row0_filtered = _mm_mul_ps(row0_floats, filter0);
 
-            __m128i row1 = _mm_loadu_si128((__m128i*) (blues+start1));
-            __m256i row1_ints = _mm256_cvtepu8_epi32(row1);
-            __m256 row1_floats = _mm256_cvtepi32_ps(row1_ints);
-            __m256 row1_filtered = _mm256_mul_ps(row1_floats, filter1);
+            row1 = _mm_loadu_si128((__m128i*) (blues+start1));
+            row1_ints = _mm_cvtepu8_epi32(row1);
+            row1_floats = _mm_cvtepi32_ps(row1_ints);
+            row1_filtered = _mm_mul_ps(row1_floats, filter1);
 
-            __m128i row2 = _mm_loadu_si128((__m128i*) (blues+start2));
-            __m256i row2_ints = _mm256_cvtepu8_epi32(row2);
-            __m256 row2_floats = _mm256_cvtepi32_ps(row2_ints);
-            __m256 row2_filtered = _mm256_mul_ps(row0_floats, filter2);
+            row2 = _mm_loadu_si128((__m128i*) (blues+start2));
+            row2_ints = _mm_cvtepu8_epi32(row2);
+            row2_floats = _mm_cvtepi32_ps(row2_ints);
+            row2_filtered = _mm_mul_ps(row2_floats, filter2);
 
-            __m256 add_results_blue = _mm256_add_ps(row0_filtered, row1_filtered);
-            add_results_blue = _mm256_add_ps(add_results_blue, row2_filtered);
+            __m128 add_results_blue = _mm_add_ps(row0_filtered, row1_filtered);
+            add_results_blue = _mm_add_ps(add_results_blue, row2_filtered);
+            __m128i add_results_blue_32 =  _mm_cvtps_epi32(add_results_blue);
+            __m128i add_results_blue_8 = _mm_shuffle_epi8(add_results_blue_32, shuffle);
+            _mm_storeu_si128((__m128i*)(temp_blues), add_results_blue_8);
+            unsigned char the_blue = temp_blues[0] + temp_blues[1] + temp_blues[2];
 
+            int insert_loc = (height * input_jpeg.width + width) * input_jpeg.num_channels;
+            filteredImage[insert_loc] = the_red;
+            filteredImage[insert_loc + 1] = the_green;
+            filteredImage[insert_loc + 2] = the_blue;
         }
     }
     auto end_time = std::chrono::high_resolution_clock::now();
