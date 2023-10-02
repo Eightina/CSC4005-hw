@@ -11,21 +11,50 @@
 #include <immintrin.h>
 #include "utils.hpp"
 
-const int FILTER_SIZE = 3;
-// const double filter[FILTER_SIZE][FILTER_SIZE] = {
-//     {1.0 / 9, 1.0 / 9, 1.0 / 9},
-//     {1.0 / 9, 1.0 / 9, 1.0 / 9},
-//     {1.0 / 9, 1.0 / 9, 1.0 / 9}
-// };
-const __m128 filter0 = _mm_set1_ps(1.0 / 9);
-const __m128 filter1 = _mm_set1_ps(1.0 / 9);
-const __m128 filter2 = _mm_set1_ps(1.0 / 9);
+#ifdef _MSC_VER_ // for MSVC
+#define forceinline __forceinline
+#elif defined __GNUC__ // for gcc on Linux/Apple OS X
+#define forceinline __inline__ __attribute__((always_inline))
+#else
+#define forceinline
+#endif
 
-const __m128i shuffle = _mm_setr_epi8(0, 4, 8, -1, 
+const int FILTER_SIZE = 3;
+
+const __m256 filter0 = _mm256_set1_ps(1.0 / 9);
+const __m256 filter1 = _mm256_set1_ps(1.0 / 9);
+const __m256 filter2 = _mm256_set1_ps(1.0 / 9);
+
+const __m128i shuffle = _mm_setr_epi8(0, 4, 8, 12, 
                                 -1, -1, -1, -1, 
                                 -1, -1, -1, -1, 
                                 -1, -1, -1, -1); 
 // using -1 can mask elements not needed
+
+forceinline __m256 line_filtering(const unsigned char* start, const __m256& filter, unsigned char* single) {
+    __m128i row0 = _mm_loadu_si128((__m128i*)start);
+    __m256i row0_ints = _mm256_cvtepu8_epi32(row0);
+    __m256 row0_floats = _mm256_cvtepi32_ps(row0_ints);
+    __m256 row0_filtered = _mm256_mul_ps(row0_floats, filter);
+    (*single) += static_cast<unsigned char>(*(start + 8) * filter[0]);
+    return row0_filtered;
+}
+
+forceinline void store_res(__m256 row0_filtered, __m256 row1_filtered, __m256 row2_filtered, unsigned char* temp_reds, int store_offset) {
+    __m256 add_results_red = _mm256_add_ps(row0_filtered, row1_filtered);
+    add_results_red = _mm256_add_ps(add_results_red, row2_filtered);
+    __m256i add_results_red_32 =  _mm256_cvtps_epi32(add_results_red);
+    // remind that shuffle instruction works on two splitted sections, must split 256 into 128 * 2
+    __m128i low = _mm256_castsi256_si128(add_results_red_32);
+    __m128i high = _mm256_extracti128_si256(add_results_red_32, 1);
+
+    __m128i add_results_red_4low = _mm_shuffle_epi8(low, shuffle);
+    __m128i add_results_red_4high = _mm_shuffle_epi8(high, shuffle);
+
+    _mm_storeu_si128((__m128i*)(&temp_reds[store_offset]), add_results_red_4low);
+    _mm_storeu_si128((__m128i*)(&temp_reds[store_offset + 4]), add_results_red_4high);
+}
+
 
 int main(int argc, char** argv) {
     if (argc != 3) {
@@ -42,8 +71,7 @@ int main(int argc, char** argv) {
     auto filteredImage = new unsigned char[input_jpeg.width * input_jpeg.height * input_jpeg.num_channels];
     for (int i = 0; i < input_jpeg.width * input_jpeg.height * input_jpeg.num_channels; ++i)
         filteredImage[i] = 0;
-    
-    // Preprocessing: store reds, greens and blues separately
+
     auto reds = new unsigned char[input_jpeg.width * input_jpeg.height];
     auto greens = new unsigned char[input_jpeg.width * input_jpeg.height];
     auto blues = new unsigned char[input_jpeg.width * input_jpeg.height];
@@ -56,89 +84,60 @@ int main(int argc, char** argv) {
     auto start_time = std::chrono::high_resolution_clock::now();
     // Nested for loop, please optimize it
     for (int height = 1; height < input_jpeg.height - 1; height++) {
-        for (int width = 1; width < input_jpeg.width - 1; width++) {
-            int start0 = ((height - 1) * input_jpeg.width + (width - 1));
-            int start1 = start0 + input_jpeg.width;
-            int start2 = start1 + input_jpeg.width;
+        for (int width = 1; width < input_jpeg.width - 4; width+=3) {
+            const int distance = FILTER_SIZE * input_jpeg.num_channels;
+
+            const int start0 = ((height - 1) * input_jpeg.width + (width - 1)) * input_jpeg.num_channels;
+            const int start1 = start0 + input_jpeg.width * input_jpeg.num_channels;
+            const int start2 = start1 + input_jpeg.width * input_jpeg.num_channels;
+
+            const int start0a = start0 + distance;
+            const int start1a = start1 + distance;
+            const int start2a = start2 + distance;
+
+            const int start0b = start0a + distance;
+            const int start1b = start1a + distance;
+            const int start2b = start2a + distance;
+
+            auto temp_reds = new unsigned char[8];
+            auto temp_redsa = new unsigned char[8];
+            auto temp_redsb = new unsigned char[8];
+
+            unsigned char single = 0, singlea = 0, singleb = 0;
+
+            __m256 row0_filtered = line_filtering((input_jpeg.buffer + start0), filter0, &single);
+            __m256 row0a_filtered = line_filtering((input_jpeg.buffer + start0a), filter0, &singlea);
+            __m256 row0b_filtered = line_filtering((input_jpeg.buffer + start0b), filter0, &singleb);
+
+            __m256 row1_filtered = line_filtering((input_jpeg.buffer + start1), filter1, &single);
+            __m256 row1a_filtered = line_filtering((input_jpeg.buffer + start1a), filter1, &singlea);
+            __m256 row1b_filtered = line_filtering((input_jpeg.buffer + start1b), filter1, &singleb);
             
-            // solve red
-            auto temp_reds = new unsigned char[16];
-            __m128i row0 = _mm_loadu_si128((__m128i*) (reds+start0));
-            __m128i row0_ints = _mm_cvtepu8_epi32(row0);
-            __m128 row0_floats = _mm_cvtepi32_ps(row0_ints);
-            __m128 row0_filtered = _mm_mul_ps(row0_floats, filter0);
+            __m256 row2_filtered = line_filtering((input_jpeg.buffer + start2), filter2, &single);
+            __m256 row2a_filtered = line_filtering((input_jpeg.buffer + start2a), filter2, &singlea);
+            __m256 row2b_filtered = line_filtering((input_jpeg.buffer + start2b), filter2, &singleb);
+        
+            // process result
+            store_res(row0_filtered, row1_filtered, row2_filtered, temp_reds, 0);
+            store_res(row0a_filtered, row1a_filtered, row2a_filtered, temp_redsa, 0);
+            store_res(row0b_filtered, row1b_filtered, row2b_filtered, temp_redsb, 0);
 
-            __m128i row1 = _mm_loadu_si128((__m128i*) (reds+start1));
-            __m128i row1_ints = _mm_cvtepu8_epi32(row1);
-            __m128 row1_floats = _mm_cvtepi32_ps(row1_ints);
-            __m128 row1_filtered = _mm_mul_ps(row1_floats, filter1);
+            const int insert_loc = (height * input_jpeg.width + width) * input_jpeg.num_channels;
+            filteredImage[insert_loc]       = temp_reds[0] + temp_reds[3] + temp_reds[6];
+            filteredImage[insert_loc + 1]   = temp_reds[1] + temp_reds[4] + temp_reds[7];
+            filteredImage[insert_loc + 2]   = temp_reds[2] + temp_reds[5] + single;
 
-            __m128i row2 = _mm_loadu_si128((__m128i*) (reds+start2));
-            __m128i row2_ints = _mm_cvtepu8_epi32(row2);
-            __m128 row2_floats = _mm_cvtepi32_ps(row2_ints);
-            __m128 row2_filtered = _mm_mul_ps(row2_floats, filter2);
+            filteredImage[insert_loc + 3]   = temp_redsa[0] + temp_redsa[3] + temp_redsa[6];
+            filteredImage[insert_loc + 4]   = temp_redsa[1] + temp_redsa[4] + temp_redsa[7];
+            filteredImage[insert_loc + 5]   = temp_redsa[2] + temp_redsa[5] + singlea;
 
-            __m128 add_results_red = _mm_add_ps(row0_filtered, row1_filtered);
-            add_results_red = _mm_add_ps(add_results_red, row2_filtered);
-            __m128i add_results_red_32 =  _mm_cvtps_epi32(add_results_red);
-            __m128i add_results_red_8 = _mm_shuffle_epi8(add_results_red_32, shuffle);
-            _mm_storeu_si128((__m128i*)(temp_reds), add_results_red_8);
-            unsigned char the_red = temp_reds[0] + temp_reds[1] + temp_reds[2];
+            filteredImage[insert_loc + 6]   = temp_redsb[0] + temp_redsb[3] + temp_redsb[6];
+            filteredImage[insert_loc + 7]   = temp_redsb[1] + temp_redsb[4] + temp_redsb[7];
+            filteredImage[insert_loc + 8]   = temp_redsb[2] + temp_redsb[5] + singleb;
 
-
-            // https://www.jianshu.com/p/523f262c77b3
-            // solve green
-            auto temp_greens = new unsigned char[16];
-            row0 = _mm_loadu_si128((__m128i*) (greens+start0));
-            row0_ints = _mm_cvtepu8_epi32(row0);
-            row0_floats = _mm_cvtepi32_ps(row0_ints);
-            row0_filtered = _mm_mul_ps(row0_floats, filter0);
-
-            row1 = _mm_loadu_si128((__m128i*) (greens+start1));
-            row1_ints = _mm_cvtepu8_epi32(row1);
-            row1_floats = _mm_cvtepi32_ps(row1_ints);
-            row1_filtered = _mm_mul_ps(row1_floats, filter1);
-
-            row2 = _mm_loadu_si128((__m128i*) (greens+start2));
-            row2_ints = _mm_cvtepu8_epi32(row2);
-            row2_floats = _mm_cvtepi32_ps(row2_ints);
-            row2_filtered = _mm_mul_ps(row2_floats, filter2);
-
-            __m128 add_results_green = _mm_add_ps(row0_filtered, row1_filtered);
-            add_results_green = _mm_add_ps(add_results_green, row2_filtered);
-            __m128i add_results_green_32 =  _mm_cvtps_epi32(add_results_green);
-            __m128i add_results_green_8 = _mm_shuffle_epi8(add_results_green_32, shuffle);
-            _mm_storeu_si128((__m128i*)(temp_greens), add_results_green_8);
-            unsigned char the_green = temp_greens[0] + temp_greens[1] + temp_greens[2];
-
-            // //solve blue
-            auto temp_blues = new unsigned char[16];
-            row0 = _mm_loadu_si128((__m128i*) (blues+start0));
-            row0_ints = _mm_cvtepu8_epi32(row0);
-            row0_floats = _mm_cvtepi32_ps(row0_ints);
-            row0_filtered = _mm_mul_ps(row0_floats, filter0);
-
-            row1 = _mm_loadu_si128((__m128i*) (blues+start1));
-            row1_ints = _mm_cvtepu8_epi32(row1);
-            row1_floats = _mm_cvtepi32_ps(row1_ints);
-            row1_filtered = _mm_mul_ps(row1_floats, filter1);
-
-            row2 = _mm_loadu_si128((__m128i*) (blues+start2));
-            row2_ints = _mm_cvtepu8_epi32(row2);
-            row2_floats = _mm_cvtepi32_ps(row2_ints);
-            row2_filtered = _mm_mul_ps(row2_floats, filter2);
-
-            __m128 add_results_blue = _mm_add_ps(row0_filtered, row1_filtered);
-            add_results_blue = _mm_add_ps(add_results_blue, row2_filtered);
-            __m128i add_results_blue_32 =  _mm_cvtps_epi32(add_results_blue);
-            __m128i add_results_blue_8 = _mm_shuffle_epi8(add_results_blue_32, shuffle);
-            _mm_storeu_si128((__m128i*)(temp_blues), add_results_blue_8);
-            unsigned char the_blue = temp_blues[0] + temp_blues[1] + temp_blues[2];
-
-            int insert_loc = (height * input_jpeg.width + width) * input_jpeg.num_channels;
-            filteredImage[insert_loc] = the_red;
-            filteredImage[insert_loc + 1] = the_green;
-            filteredImage[insert_loc + 2] = the_blue;
+            delete[] temp_reds;
+            delete[] temp_redsa;
+            delete[] temp_redsb;
         }
     }
     auto end_time = std::chrono::high_resolution_clock::now();
