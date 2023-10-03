@@ -1,10 +1,3 @@
-//
-// Created by Liu Yuxuan on 2023/9/15.
-// Email: yuxuanliu1@link.cuhk.edu.cm
-//
-// A naive sequential implementation of image filtering
-//
-
 #include <iostream>
 #include <cmath>
 #include <chrono>
@@ -49,7 +42,7 @@ forceinline void line_filtering_genline(
 
     __m128i pixel_a_u8 = _mm_shuffle_epi8(row_filtered_32int, shuffle);
     _mm_storeu_si128((__m128i*)(tar), pixel_a_u8);
-    // tar[3] = 0;
+    // tar[3] = 0; //padding here is not essential
 }
 
 forceinline void line_filtering_addin(
@@ -69,13 +62,18 @@ forceinline void line_filtering_addin(
     row_filtered_32int = _mm_add_epi32(row_filtered_32int, pre_row_32int);
 
     __m128i pixel_a_u8 = _mm_shuffle_epi8(row_filtered_32int, shuffle);
-    // _mm_storeu_si128((__m128i*)(tar), pixel_a_u8);
-    // _mm_storeu_si64((__m128i*)(tar), pixel_a_u8);
+
+    // _mm_storeu_si128((__m128i*)(tar), pixel_a_u8);  !!!wrong!!! overwriting following data in *tar
+    // _mm_storeu_si64((__m128i*)(tar), pixel_a_u8);    no supported sse intrinsic
+    // for efficient storing back, meanwhile not overweriting following data
+    // _mm_storeu_si64() is not supported, somehow, so some pointer trick is appllied here
+    // which achieves similar performance to sse instruction _mm_storeu_si64(),
+    // guess that complier does similar jobs for both
     u_int32_t* temp_p = reinterpret_cast<u_int32_t*>(&pixel_a_u8);
     u_int32_t* temp_tar = reinterpret_cast<u_int32_t*>(tar);
     // unsigned char* temp_p = (u_int32_t*)&pixel_a_u8;
     *temp_tar = *temp_p;
-    // tar[3] = 0;
+    // tar[3] = 0; //padding here is not essential
 }
 
 int main(int argc, char** argv) {
@@ -106,7 +104,7 @@ int main(int argc, char** argv) {
 
     auto start_time = std::chrono::high_resolution_clock::now();
     for (int height = 1; height < input_jpeg.height - 1; height++) {
-        const int array_len = input_jpeg.width * 4 + 16; // each pixel needs 3
+        const int array_len = input_jpeg.width * 4 + 16;  // each pixel needs 4, padding, plus 16 in case of overflow
         unsigned char r_array[array_len] = {};
         unsigned char g_array[array_len] = {};
         unsigned char b_array[array_len] = {};
@@ -114,7 +112,7 @@ int main(int argc, char** argv) {
         const int start0 = ((height) * input_jpeg.width);
         const int start1 = ((height + 1) * input_jpeg.width);
 
-        // row 0 三行合在一个循化里比拆开来快多了，为什么？
+        // row 0 init filtering 三行合在一个循化里比拆开来快多了(当然，比九行合在一起也要快多了，顺序访问的重要性)
         int cbuffer_loc = start;
         for (int width = 1; width < input_jpeg.width - 1; width++) {
             line_filtering_genline(&(reds[cbuffer_loc]), filter0, &(r_array[width * 4]));    
@@ -122,7 +120,7 @@ int main(int argc, char** argv) {
             line_filtering_genline(&(blues[cbuffer_loc++]), filter0, &(b_array[width * 4]));    
         }
 
-        // row 1
+        // row 1 add up to previous result
         cbuffer_loc = start0;
         for (int width = 1; width < input_jpeg.width - 1; width++) {
             line_filtering_addin(&(reds[cbuffer_loc]), filter1, &(r_array[width * 4]));    
@@ -130,7 +128,7 @@ int main(int argc, char** argv) {
             line_filtering_addin(&(blues[cbuffer_loc++]), filter1, &(b_array[width * 4]));    
         }
 
-        // row 2
+        // row 2 add up to previous result
         cbuffer_loc = start1;
         for (int width = 1; width < input_jpeg.width - 1; width++) {
             line_filtering_addin(&(reds[cbuffer_loc]), filter2, &(r_array[width * 4]));    
@@ -138,23 +136,13 @@ int main(int argc, char** argv) {
             line_filtering_addin(&(blues[cbuffer_loc++]), filter2, &(b_array[width * 4]));    
         }
 
-        // const int insert_loc = (height * input_jpeg.width) * input_jpeg.num_channels;
-        // for (int width = 1; width < input_jpeg.width - 1; ++width) {
-        //     const int array_loc = width * input_jpeg.num_channels;
-        //     const int cur_insert_loc = insert_loc + width * input_jpeg.num_channels;
-        //     filteredImage[cur_insert_loc] = r_array[array_loc] + r_array[array_loc + 1] + r_array[array_loc + 2];
-        //     filteredImage[cur_insert_loc + 1] = g_array[array_loc] + g_array[array_loc + 1] + g_array[array_loc + 2];
-        //     filteredImage[cur_insert_loc + 2] = b_array[array_loc] + b_array[array_loc + 1] + b_array[array_loc + 2];
-        // }    
         for (int width = 1; width < input_jpeg.width - 1; ++width) {
-            int insert_loc = (height * input_jpeg.width + width) * input_jpeg.num_channels;
+            const int insert_loc = (height * input_jpeg.width + width) * input_jpeg.num_channels;
             const int array_loc = width * 4;
             filteredImage[insert_loc] = r_array[array_loc] + r_array[array_loc + 1] + r_array[array_loc + 2];
             filteredImage[insert_loc + 1] = g_array[array_loc] + g_array[array_loc + 1] + g_array[array_loc + 2];
             filteredImage[insert_loc + 2] = b_array[array_loc] + b_array[array_loc + 1] + b_array[array_loc + 2];
         } 
-
-
     }
     auto end_time = std::chrono::high_resolution_clock::now();
     auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
