@@ -1,6 +1,6 @@
 # Minimum CMake version
 cmake_minimum_required(VERSION 3.10)
-
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
 # Project Name
 project(
         CSC4005/MDS6108-Project-1
@@ -22,3 +22,4 @@ if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 7.3.1)
 endif ()
 
 add_subdirectory(src)
+

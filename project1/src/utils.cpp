@@ -73,4 +73,25 @@ int write_to_jpeg(const JPEGMeta &data, const char* filepath) {
     fclose(outputFile); // Close jpeg file
     return 0;
 }
+    // padding 
+    // const int padding_len = input_jpeg.width / input_jpeg.num_channels / input_jpeg.num_channels * 4;
+    // const int padding_size = input_jpeg.height * padding_len;
+    // auto reds   = new unsigned char[padding_size];
+    // auto greens = new unsigned char[padding_size];
+    // auto blues  = new unsigned char[padding_size];                                                                                                                                                                                                                                            
+    // int skip = 0;
+    // int skippt = 3;
+    // for (int i = 0; i < padding_size; i++) {
+    //     if (i > 0 && i == skippt) {
+    //         reds[i] = 0;
+    //         greens[i] = 0;
+    //         blues[i] = 0;
+    //         ++skip;
+    //         skippt += 4;
+    //         continue;
+    //     }
+    //     reds[i] = input_jpeg.buffer[(i - skip) * input_jpeg.num_channels];
+    //     greens[i] = input_jpeg.buffer[(i - skip) * input_jpeg.num_channels + 1];
+    //     blues[i] = input_jpeg.buffer[(i - skip) * input_jpeg.num_channels + 2];
+    // }
 

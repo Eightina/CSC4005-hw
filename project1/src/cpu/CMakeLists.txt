@@ -21,33 +21,33 @@ endif ()
 add_executable(sequential_PartA
         sequential_PartA.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(sequential_PartA PRIVATE -O2)
+target_compile_options(sequential_PartA PRIVATE )
 
 add_executable(sequential_PartB
         sequential_PartB.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(sequential_PartB PRIVATE -O2)
+target_compile_options(sequential_PartB PRIVATE )
 
 ## SIMD Vectorization (AVX2)
 add_executable(simd_PartA
         simd_PartA.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(simd_PartA PRIVATE -O2 -mavx2)
+target_compile_options(simd_PartA PRIVATE  -mavx2)
 
-add_executable(simd_PartB_proto
-        simd_PartB_proto.cpp
+add_executable(simd_PartB_old
+        simd_PartB_old.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(simd_PartB_proto PRIVATE -O2 -mavx2)
+target_compile_options(simd_PartB_old PRIVATE  -mavx2)
 
 add_executable(simd_PartB
         simd_PartB.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(simd_PartB PRIVATE -O2 -mavx2)
+target_compile_options(simd_PartB PRIVATE  -mavx2)
 ## MPI
 add_executable(mpi_PartA
         mpi_PartA.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(mpi_PartA PRIVATE -O2)
+target_compile_options(mpi_PartA PRIVATE )
 target_include_directories(mpi_PartA PRIVATE ${MPI_CXX_INCLUDE_DIRS})
 target_link_libraries(mpi_PartA ${MPI_LIBRARIES})
 
@@ -55,13 +55,13 @@ target_link_libraries(mpi_PartA ${MPI_LIBRARIES})
 add_executable(pthread_PartA
         pthread_PartA.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(pthread_PartA PRIVATE -O2)
+target_compile_options(pthread_PartA PRIVATE )
 target_link_libraries(pthread_PartA PRIVATE pthread)
 
 ## OpenMP
 add_executable(openmp_PartA
         openmp_PartA.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(openmp_PartA PRIVATE -O2 -fopenmp)
+target_compile_options(openmp_PartA PRIVATE  -fopenmp)
 target_include_directories(openmp_PartA PRIVATE ${OpenMP_CXX_INCLUDE_DIRS})
 target_link_libraries(openmp_PartA PRIVATE ${OpenMP_CXX_LIBRARIES})
