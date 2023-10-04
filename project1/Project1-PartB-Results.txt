@@ -1,8 +1,7 @@
 Current directory: /nfsmnt/223040076/coursecode/project1/src/scripts
-/var/spool/slurmd/job95313/slurm_script: line 13: Sequential: command not found
 Sequential PartB (Optimized with -O2)
 Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
 Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
 Transformation Complete!
-Execution Time: 6499 milliseconds
+Execution Time: 6503 milliseconds
 
