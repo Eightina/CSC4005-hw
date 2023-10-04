@@ -72,3 +72,10 @@ add_executable(openmp_PartA
 target_compile_options(openmp_PartA PRIVATE  -fopenmp)
 target_include_directories(openmp_PartA PRIVATE ${OpenMP_CXX_INCLUDE_DIRS})
 target_link_libraries(openmp_PartA PRIVATE ${OpenMP_CXX_LIBRARIES})
+
+add_executable(openmp_PartB
+        openmp_PartB.cpp
+        ../utils.cpp ../utils.hpp)
+target_compile_options(openmp_PartB PRIVATE  -fopenmp)
+target_include_directories(openmp_PartB PRIVATE ${OpenMP_CXX_INCLUDE_DIRS})
+target_link_libraries(openmp_PartB PRIVATE ${OpenMP_CXX_LIBRARIES})
