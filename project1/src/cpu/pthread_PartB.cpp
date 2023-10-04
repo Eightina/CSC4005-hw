@@ -4,19 +4,55 @@
 #include "utils.hpp"
 #include <vector>
 
+#ifdef _MSC_VER_ // for MSVC
+#define forceinline __forceinline
+#elif defined __GNUC__ // for gcc on Linux/Apple OS X
+#define forceinline __inline__ __attribute__((always_inline))
+#else
+#define forceinline
+#endif
 
 // Structure to pass data to each thread
 struct ThreadData {
     unsigned char* input_buffer;
+    int input_jpeg_width;
+    int input_jpeg_num_channels;
+
     unsigned char* output_buffer;
     int start_row;
     int end_row;
 
-    int input_jpeg_width;
-
+    std::vector<float>& filter;
 };
 
-// Function to convert RGB to Grayscale for a portion of the image
+// filter func
+forceinline void rbgarray_filtering (
+    unsigned char r_array[],
+    unsigned char g_array[],
+    unsigned char b_array[],
+    // JPEGMeta& input_jpeg,
+    int input_jpeg_width,
+    int input_jpeg_num_channels,
+    unsigned char* input_buffer,
+    int loc,
+    std::vector<float>& filter,
+    int filter_offset
+) {
+    for (int width = 1; width < input_jpeg_width - 1; ++width) {
+        r_array[width] += (unsigned char)(input_buffer[loc++] * filter[filter_offset]);
+        g_array[width] += (unsigned char)(input_buffer[loc++] * filter[filter_offset]);
+        b_array[width] += (unsigned char)(input_buffer[loc++] * filter[filter_offset]);
+        r_array[width] += (unsigned char)(input_buffer[loc++] * filter[filter_offset + 1]);
+        g_array[width] += (unsigned char)(input_buffer[loc++] * filter[filter_offset + 1]);
+        b_array[width] += (unsigned char)(input_buffer[loc++] * filter[filter_offset + 1]);          
+        r_array[width] += (unsigned char)(input_buffer[loc++] * filter[filter_offset + 2]);
+        g_array[width] += (unsigned char)(input_buffer[loc++] * filter[filter_offset + 2]);
+        b_array[width] += (unsigned char)(input_buffer[loc++] * filter[filter_offset + 2]);
+        loc -= 2 * input_jpeg_num_channels;            
+    }
+}
+
+// routine function to convert RGB to Grayscale for a portion of the image
 void* rgbToGray(void* arg) {
     ThreadData* data = reinterpret_cast<ThreadData*>(arg);
     
@@ -25,7 +61,20 @@ void* rgbToGray(void* arg) {
         unsigned char g_array[data->input_jpeg_width] = {};
         unsigned char b_array[data->input_jpeg_width] = {};
 
+        int rloc = ((height - 1) * data->input_jpeg_width) * data->input_jpeg_num_channels;
+        rbgarray_filtering(r_array, g_array, b_array,
+                            data->input_jpeg_width, data->input_jpeg_num_channels, data->input_buffer,
+                            rloc, data->filter, 0);
 
+        rloc = ((height) * data->input_jpeg_width) * data->input_jpeg_num_channels;
+        rbgarray_filtering(r_array, g_array, b_array,
+                            data->input_jpeg_width, data->input_jpeg_num_channels, data->input_buffer,
+                            rloc, data->filter, 3);
+
+        rloc = ((height + 1) * data->input_jpeg_width) * data->input_jpeg_num_channels;
+        rbgarray_filtering(r_array, g_array, b_array,
+                            data->input_jpeg_width, data->input_jpeg_num_channels, data->input_buffer,
+                            rloc, data->filter, 6);
     }
 
     return nullptr;
@@ -45,8 +94,10 @@ int main(int argc, char** argv) {
     std::cout << "Input file from: " << input_filepath << "\n";
     auto input_jpeg = read_from_jpeg(input_filepath);
 
-    // Computation: RGB to Gray
-    auto grayImage = new unsigned char[input_jpeg.width * input_jpeg.height];
+    // Apply the filter to the image
+    auto filteredImage = new unsigned char[input_jpeg.width * input_jpeg.height * input_jpeg.num_channels];
+    for (int i = 0; i < input_jpeg.width * input_jpeg.height * input_jpeg.num_channels; ++i)
+        filteredImage[i] = 0;
     
     pthread_t threads[num_threads];
     ThreadData thread_data[num_threads];

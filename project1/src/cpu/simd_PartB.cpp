@@ -92,7 +92,7 @@ int main(int argc, char** argv) {
     for (int i = 0; i < input_jpeg.width * input_jpeg.height * input_jpeg.num_channels; ++i)
         filteredImage[i] = 0;
     
-    // Prepross, store reds, greens and blues separately
+    // Preprocess, store reds, greens and blues separately
     auto reds = new unsigned char[input_jpeg.width * input_jpeg.height + 16];
     auto greens = new unsigned char[input_jpeg.width * input_jpeg.height + 16];
     auto blues = new unsigned char[input_jpeg.width * input_jpeg.height + 16];
