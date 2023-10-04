@@ -35,8 +35,7 @@ echo "Current directory: ${CURRENT_DIR}"
 
 # Pthread PartB
 echo "Pthread PartB (Optimized with -O2)"
-for num_cores in 1 2 4 
-# 8 16 32
+for num_cores in 1 2 4 8 16 32
 do
   echo "Number of cores: $num_cores"
   srun -n 1 --cpus-per-task $num_cores ${CURRENT_DIR}/../../build/src/cpu/pthread_PartB ${CURRENT_DIR}/../../images/20K-RGB.jpg ${CURRENT_DIR}/../../images/20K-Smooth.jpg ${num_cores}

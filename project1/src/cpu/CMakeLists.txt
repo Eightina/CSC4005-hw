@@ -64,7 +64,7 @@ target_link_libraries(pthread_PartA PRIVATE pthread)
 add_executable(pthread_PartB
         pthread_PartB.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(pthread_PartB PRIVATE )
+target_compile_options(pthread_PartB PRIVATE -O3)
 target_link_libraries(pthread_PartB PRIVATE pthread)
 
 ## OpenMP
