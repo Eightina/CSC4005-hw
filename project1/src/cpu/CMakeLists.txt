@@ -43,14 +43,14 @@ target_compile_options(simd_PartB PRIVATE  -mavx2 -O3)
 add_executable(mpi_PartA
         mpi_PartA.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(mpi_PartA PRIVATE -O2)
+target_compile_options(mpi_PartA PRIVATE -O3)
 target_include_directories(mpi_PartA PRIVATE ${MPI_CXX_INCLUDE_DIRS})
 target_link_libraries(mpi_PartA ${MPI_LIBRARIES})
 
 add_executable(mpi_PartB
         mpi_PartB.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(mpi_PartB PRIVATE -O2)
+target_compile_options(mpi_PartB PRIVATE -O3)
 target_include_directories(mpi_PartB PRIVATE ${MPI_CXX_INCLUDE_DIRS})
 target_link_libraries(mpi_PartB ${MPI_LIBRARIES})
 
@@ -58,26 +58,26 @@ target_link_libraries(mpi_PartB ${MPI_LIBRARIES})
 add_executable(pthread_PartA
         pthread_PartA.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(pthread_PartA PRIVATE -O2)
+target_compile_options(pthread_PartA PRIVATE -O3)
 target_link_libraries(pthread_PartA PRIVATE pthread)
 
 add_executable(pthread_PartB
         pthread_PartB.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(pthread_PartB PRIVATE -O2)
+target_compile_options(pthread_PartB PRIVATE )
 target_link_libraries(pthread_PartB PRIVATE pthread)
 
 ## OpenMP
 add_executable(openmp_PartA
         openmp_PartA.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(openmp_PartA PRIVATE  -fopenmp -O2)
+target_compile_options(openmp_PartA PRIVATE  -fopenmp -O3)
 target_include_directories(openmp_PartA PRIVATE ${OpenMP_CXX_INCLUDE_DIRS})
 target_link_libraries(openmp_PartA PRIVATE ${OpenMP_CXX_LIBRARIES})
 
 add_executable(openmp_PartB
         openmp_PartB.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(openmp_PartB PRIVATE  -fopenmp -O2)
+target_compile_options(openmp_PartB PRIVATE  -fopenmp -O3)
 target_include_directories(openmp_PartB PRIVATE ${OpenMP_CXX_INCLUDE_DIRS})
 target_link_libraries(openmp_PartB PRIVATE ${OpenMP_CXX_LIBRARIES})

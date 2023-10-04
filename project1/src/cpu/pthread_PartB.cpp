@@ -23,7 +23,7 @@ struct ThreadData {
     int end_row;
 
     // std::vector<float>& filter;
-    float filter[];
+    float* filter;
 };
 
 // filter func
@@ -36,7 +36,7 @@ forceinline void rbgarray_filtering (
     int input_jpeg_num_channels,
     unsigned char* input_buffer,
     int loc,
-    float filter[],
+    float* filter,
     int filter_offset
 ) {
     for (int width = 1; width < input_jpeg_width - 1; ++width) {
@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
     float filter[9] = {1.0/9, 1.0/9, 1.0/9, 
                         1.0/9, 1.0/9, 1.0/9, 
                         1.0/9, 1.0/9, 1.0/9};
-
+    float* filter_t = &(filter[0]);
     // Verify input argument format
     if (argc != 4) {
         std::cerr << "Invalid argument, should be: ./executable /path/to/input/jpeg /path/to/output/jpeg num_threads\n";
@@ -134,7 +134,6 @@ int main(int argc, char** argv) {
     // working part
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    int chunk_size = input_jpeg.height / num_threads;
     for (int i = 0; i < num_threads; i++) {
         thread_data[i].input_buffer = input_jpeg.buffer;
         thread_data[i].input_jpeg_width = input_jpeg.width;
@@ -143,6 +142,8 @@ int main(int argc, char** argv) {
         thread_data[i].output_buffer = filteredImage;
         thread_data[i].start_row = cuts[i];
         thread_data[i].end_row = cuts[i + 1];
+
+        thread_data[i].filter = filter_t;
         
         pthread_create(&threads[i], nullptr, rgbRoutine, &thread_data[i]);
     }
