@@ -132,9 +132,9 @@ int main(int argc, char** argv) {
 
         // Receive the transformed Gray contents from each slave executors
         for (int i = MASTER + 1; i < numtasks; i++) {
-            unsigned char* start_pos = filteredImage + cuts[i] * input_jpeg.width * input_jpeg.num_channels;
+            unsigned char* start_pos = filteredImage + (cuts[i] - 2 * i) * input_jpeg.width * input_jpeg.num_channels;
             int length = (cuts[i+1] - cuts[i]) * input_jpeg.width * input_jpeg.num_channels;
-            MPI_Recv(start_pos, length, MPI_CHAR, i, TAG_GATHER, MPI_COMM_WORLD, &status);
+            MPI_Recv(start_pos, length - 2 * input_jpeg.width * input_jpeg.num_channels, MPI_CHAR, i, TAG_GATHER, MPI_COMM_WORLD, &status);
         }
 
         auto end_time = std::chrono::high_resolution_clock::now();
@@ -200,11 +200,11 @@ int main(int argc, char** argv) {
         }
 
         // Send the gray image back to the master
-        MPI_Send(filteredImage, length, MPI_CHAR, MASTER, TAG_GATHER, MPI_COMM_WORLD);
+        MPI_Send(filteredImage + input_jpeg.width * input_jpeg.num_channels, length - 2 * input_jpeg.width * input_jpeg.num_channels, MPI_CHAR, MASTER, TAG_GATHER, MPI_COMM_WORLD);
         
         // Release the memory
         delete[] filteredImage;
-        delete[] input_jpeg.buffer;
+        // delete[] input_jpeg.buffer;
     }
 
     MPI_Finalize();
