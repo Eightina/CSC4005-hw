@@ -1,38 +1,8 @@
 Current directory: /nfsmnt/223040076/coursecode/project1/src/scripts
-OpenMP PartB (Optimized with -O2)
-Number of cores: 1
+/var/spool/slurmd/job95313/slurm_script: line 13: Sequential: command not found
+Sequential PartB (Optimized with -O2)
 Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
 Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
 Transformation Complete!
-Execution Time: 8055 milliseconds
-
-Number of cores: 2
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
-Transformation Complete!
-Execution Time: 4884 milliseconds
-
-Number of cores: 4
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
-Transformation Complete!
-Execution Time: 2736 milliseconds
-
-Number of cores: 8
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
-Transformation Complete!
-Execution Time: 1240 milliseconds
-
-Number of cores: 16
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
-Transformation Complete!
-Execution Time: 861 milliseconds
-
-Number of cores: 32
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
-Transformation Complete!
-Execution Time: 332 milliseconds
+Execution Time: 6499 milliseconds
 

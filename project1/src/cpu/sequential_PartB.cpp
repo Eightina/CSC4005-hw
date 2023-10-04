@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
         }
 
         for (int width = 1; width < input_jpeg.width - 1; ++width) {
-            int insert_loc = (height * input_jpeg.width + width) * input_jpeg.num_channels;
+            const int insert_loc = (height * input_jpeg.width + width) * input_jpeg.num_channels;
             filteredImage[insert_loc] = r_array[width];
             filteredImage[insert_loc + 1] = g_array[width];
             filteredImage[insert_loc + 2] = b_array[width];

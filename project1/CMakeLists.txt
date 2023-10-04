@@ -1,7 +1,7 @@
 # Minimum CMake version
 cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE " -DNDEBUG")
 # Project Name
 project(
         CSC4005/MDS6108-Project-1
