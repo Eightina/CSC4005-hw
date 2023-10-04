@@ -23,20 +23,21 @@ forceinline void rbgarray_filtering (
     unsigned char b_array[],
     JPEGMeta& input_jpeg,
     int loc,
-    std::vector<float>& filter
+    std::vector<float>& filter,
+    int filter_offset
 ) {
     for (int width = 1; width < input_jpeg.width - 1; ++width) {
-        r_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[0]);
-        g_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[0]);
-        b_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[0]);
+        r_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset]);
+        g_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset]);
+        b_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset]);
         // ++filter_iter;
-        r_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[0]);
-        g_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[0]);
-        b_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[0]);
+        r_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 1]);
+        g_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 1]);
+        b_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 1]);
         // ++filter_iter;            
-        r_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[0]);
-        g_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[0]);
-        b_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[0]);
+        r_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 2]);
+        g_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 2]);
+        b_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 2]);
         loc -= 2 * input_jpeg.num_channels;            
     }
 }
@@ -114,13 +115,13 @@ int main(int argc, char** argv) {
 
             // auto filter_iter = filter.begin();
             const int rloc0 = ((row - 1) * input_jpeg.width) * input_jpeg.num_channels;
-            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc0, filter);
+            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc0, filter, 0);
             // filter_iter = filter.begin();
             const int rloc1 = ((row) * input_jpeg.width) * input_jpeg.num_channels;
-            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter);
+            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter, 1);
             // filter_iter = filter.begin();
             const int rloc2 = ((row + 1) * input_jpeg.width) * input_jpeg.num_channels;
-            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter);
+            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter, 2);
 
             for (int width = 1; width < input_jpeg.width - 1; ++width) {
                 const int insert_loc = (row * input_jpeg.width + width) * input_jpeg.num_channels;
@@ -182,13 +183,13 @@ int main(int argc, char** argv) {
 
             // auto filter_iter = filter.begin();
             const int rloc0 = ((row - 1) * input_jpeg.width) * input_jpeg.num_channels;
-            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc0, filter);
+            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc0, filter, 0);
             // filter_iter = filter.begin();
             const int rloc1 = ((row) * input_jpeg.width) * input_jpeg.num_channels;
-            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter);
+            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter, 1);
             // filter_iter = filter.begin();
             const int rloc2 = ((row + 1) * input_jpeg.width) * input_jpeg.num_channels;
-            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter);
+            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter, 2);
 
             for (int width = 1; width < input_jpeg.width - 1; ++width) {
                 const int insert_loc = ((temp_row) * input_jpeg.width + width) * input_jpeg.num_channels;
