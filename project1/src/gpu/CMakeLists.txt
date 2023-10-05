@@ -15,15 +15,18 @@ endif ()
 SET(CMAKE_CXX_COMPILER pgc++)
 
 ## CUDA
+set (CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} -rdc=true) 
 cuda_add_executable(cuda_PartA
         cuda_PartA.cu
         ../utils.cpp ../utils.hpp)
 target_link_libraries(cuda_PartA cudart)
 
+set (CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} -rdc=true -O3) 
 cuda_add_executable(cuda_PartB
         cuda_PartB.cu
         ../utils.cpp ../utils.hpp)
 target_link_libraries(cuda_PartB cudart)
+
 
 ## OpenACC
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc")

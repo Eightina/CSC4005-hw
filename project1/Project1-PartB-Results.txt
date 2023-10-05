@@ -1,7 +1,12 @@
 Current directory: /nfsmnt/223040076/coursecode/project1/src/scripts
 CUDA PartB
 Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+before: heap size is 8 MB
+after: heap size is 1614 MB
+CUDA error: no error
+CUDA error: no error
+CUDA error: no error
 Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
 Transformation Complete!
-GPU Execution Time: 4.59163e-41 milliseconds
+GPU Execution Time: 6847.6 milliseconds
 
