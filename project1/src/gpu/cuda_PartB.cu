@@ -58,16 +58,6 @@ __global__ void rgbRoutine(
     cudaMalloc((void**)&r_array, input_jpeg_width * sizeof(unsigned char));
     cudaMalloc((void**)&g_array, input_jpeg_width * sizeof(unsigned char));
     cudaMalloc((void**)&b_array, input_jpeg_width * sizeof(unsigned char));
-    
-    // size_t gpu_total_size;
-    // size_t gpu_free_size;
-    // cudaError_t cuda_status = cudaMemGetInfo(&gpu_free_size, &gpu_total_size);
-    // int total_memory = (int)((gpu_total_size) / (1024.0 * 1024.0));
-    // int free_memory = (int)((gpu_free_size) / (1024.0 * 1024.0));
-    // int used_memory = total_memory - free_memory;
-    // printf("total:%d free:%d used:%d\n", total_memory, free_memory, used_memory);
-    // cudaError_t error_2 = cudaGetLastError();
-    // printf("CUDA kernel error: %s\n", cudaGetErrorString(error_2));
 
     int rloc = ((height - 1) * input_jpeg_width) * input_jpeg_num_channels;
     rbgarray_filtering(r_array, g_array, b_array,
@@ -118,11 +108,18 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    // Read from input JPEG
+    // Read and preprocess input JPEG
     const char* input_filepath = argv[1];
     std::cout << "Input file from: " << input_filepath << "\n";
     auto input_jpeg = read_from_jpeg(input_filepath);
-    // input_jpeg.height /= 5;
+    auto reds = new unsigned char[input_jpeg.width * input_jpeg.height];
+    auto greens = new unsigned char[input_jpeg.width * input_jpeg.height];
+    auto blues = new unsigned char[input_jpeg.width * input_jpeg.height];
+    for (int i = 0; i < input_jpeg.width * input_jpeg.height; i++) {
+        reds[i] = input_jpeg.buffer[i * input_jpeg.num_channels];
+        greens[i] = input_jpeg.buffer[i * input_jpeg.num_channels + 1];
+        blues[i] = input_jpeg.buffer[i * input_jpeg.num_channels + 2];
+    }
 
     // Allocate memory on host (CPU)
     auto filteredImage = new unsigned char[input_jpeg.width * input_jpeg.height * input_jpeg.num_channels];
@@ -134,13 +131,13 @@ int main(int argc, char** argv) {
     float* filter_t = &(filter[0]);
     
     // Allocate memory on device (GPU)
-    unsigned char* d_input;
+    unsigned char *d_reds, *d_greens, *d_blues;
     unsigned char* d_output;
     float* d_filter;
-    cudaMalloc((void**)&d_input, input_jpeg.width * input_jpeg.height *
-                                     input_jpeg.num_channels * sizeof(unsigned char));
-    cudaMalloc((void**)&d_output, input_jpeg.width * input_jpeg.height *
-                                     input_jpeg.num_channels * sizeof(unsigned char));
+    cudaMalloc((void**)&d_reds, input_jpeg.width * input_jpeg.height);
+    cudaMalloc((void**)&d_greens, input_jpeg.width * input_jpeg.height);
+    cudaMalloc((void**)&d_blues, input_jpeg.width * input_jpeg.height);
+    cudaMalloc((void**)&d_output, input_jpeg.width * input_jpeg.height * input_jpeg.num_channels);
     cudaMalloc((void**)&d_filter, 9 * sizeof(float));
 
     // check and assign heap memory
@@ -151,38 +148,43 @@ int main(int argc, char** argv) {
                                      input_jpeg.num_channels * sizeof(unsigned char));
     cudaDeviceGetLimit(&cuda_heap_size, cudaLimitMallocHeapSize);
     printf("after: heap size is %d MB\n", cuda_heap_size / 1024 / 1024);
-
-
     cudaError_t error_0 = cudaGetLastError();
     printf("CUDA error: %s\n", cudaGetErrorString(error_0));
 
 
     // Copy input data from host to device
-    cudaMemcpy(d_input,
-               input_jpeg.buffer,
-               input_jpeg.width * input_jpeg.height *
-                input_jpeg.num_channels * sizeof(unsigned char),
+    cudaMemcpy(d_reds, reds,
+               input_jpeg.width * input_jpeg.height,
                cudaMemcpyHostToDevice);
-    cudaMemcpy(d_filter, 
-               filter_t, 
+    cudaMemcpy(d_greens, greens,
+               input_jpeg.width * input_jpeg.height,
+               cudaMemcpyHostToDevice);
+    cudaMemcpy(d_blues, blues,
+               input_jpeg.width * input_jpeg.height,
+               cudaMemcpyHostToDevice);
+    cudaMemcpy(d_filter, filter_t, 
                9 * sizeof(float), 
                cudaMemcpyHostToDevice);
     cudaError_t error_1 = cudaGetLastError();
     printf("CUDA error: %s\n", cudaGetErrorString(error_1));
 
-    // Computation: RGB to Gray
+    // Computation: RGB smoothing
     cudaEvent_t start, stop;
     float gpuDuration;
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
     // int blockSize = 512; 
     // int blockSize = 256; 
-    int blockSize = 128; 
-    int numBlocks = input_jpeg.height / blockSize + 1; // each thread a line
+    int blockSize = input_jpeg.width / 100; // 192
+    // dim3 gridSize(ceil(N/256.0), 1, 1);
+    // dim3 blockSize(input_jpeg.width / 100, 1, 1);
+    dim3 gridSize(input_jpeg.height - 2, 10, 3); //(12993, 10, 3)
+    // int blockSize = 128; 
+    // int numBlocks = input_jpeg.height / blockSize.x + 1; // each thread a line
     // int rowsPerThread = input_jpeg.height / numBlocks / blockSize;
 
     cudaEventRecord(start, 0); // GPU start time
-    rgbRoutine<<<numBlocks, blockSize>>>(
+    rgbRoutine<<<gridSize, blockSize>>>(
         d_input,
         d_output,
         input_jpeg.width,
