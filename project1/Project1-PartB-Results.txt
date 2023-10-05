@@ -1,38 +1,7 @@
 Current directory: /nfsmnt/223040076/coursecode/project1/src/scripts
-Pthread PartB (Optimized with -O2)
-Number of cores: 1
+CUDA PartB
 Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
 Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
 Transformation Complete!
-Execution Time: 6208 milliseconds
-
-Number of cores: 2
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
-Transformation Complete!
-Execution Time: 5983 milliseconds
-
-Number of cores: 4
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
-Transformation Complete!
-Execution Time: 3047 milliseconds
-
-Number of cores: 8
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
-Transformation Complete!
-Execution Time: 1835 milliseconds
-
-Number of cores: 16
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
-Transformation Complete!
-Execution Time: 768 milliseconds
-
-Number of cores: 32
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
-Transformation Complete!
-Execution Time: 511 milliseconds
+GPU Execution Time: 4.59163e-41 milliseconds
 

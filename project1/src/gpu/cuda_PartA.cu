@@ -13,7 +13,8 @@
 
 // CUDA kernel functon：RGB to Gray
 __global__ void rgbToGray(const unsigned char* input, unsigned char* output,
-                          int width, int height, int num_channels) {
+                          int width, int height, int num_channels)
+{
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx < width * height)
     {
@@ -25,7 +26,8 @@ __global__ void rgbToGray(const unsigned char* input, unsigned char* output,
     }
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
     // Verify input argument format
     if (argc != 3)
     {
@@ -33,15 +35,12 @@ int main(int argc, char** argv) {
                      "/path/to/input/jpeg /path/to/output/jpeg\n";
         return -1;
     }
-
     // Read from input JPEG
     const char* input_filepath = argv[1];
     std::cout << "Input file from: " << input_filepath << "\n";
     auto input_jpeg = read_from_jpeg(input_filepath);
-
     // Allocate memory on host (CPU)
     auto grayImage = new unsigned char[input_jpeg.width * input_jpeg.height];   // num_channels = 1
-    
     // Allocate memory on device (GPU)
     unsigned char* d_input;
     unsigned char* d_output;
@@ -50,20 +49,17 @@ int main(int argc, char** argv) {
                                      sizeof(unsigned char));
     cudaMalloc((void**)&d_output,
                input_jpeg.width * input_jpeg.height * sizeof(unsigned char));
-
     // Copy input data from host to device
     cudaMemcpy(d_input, input_jpeg.buffer,
                input_jpeg.width * input_jpeg.height * input_jpeg.num_channels *
                    sizeof(unsigned char),
                cudaMemcpyHostToDevice);
-
     // Computation: RGB to Gray
     cudaEvent_t start, stop;
     float gpuDuration;
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
     int blockSize = 512; // 256
-
     // int numBlocks =
     //     (input_jpeg.width * input_jpeg.height + blockSize - 1) / blockSize;
     int numBlocks = (input_jpeg.width * input_jpeg.height) / blockSize + 1;
