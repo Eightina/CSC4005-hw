@@ -157,7 +157,7 @@ int main(int argc, char** argv) {
     cudaEventCreate(&stop);
     // int blockSize = 512; 
     // int blockSize = 256;
-    int blockdimx = 64; 
+    int blockdimx = 32; 
     int blockdimy = 4; 
     const dim3 blockShape(blockdimx, blockdimy);  
     const dim3 gridShape((input_jpeg.width + blockdimx - 1) / blockdimx, (input_jpeg.height + blockdimy - 1) / blockdimy);
