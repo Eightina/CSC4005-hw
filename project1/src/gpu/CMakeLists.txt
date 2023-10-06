@@ -21,7 +21,6 @@ cuda_add_executable(cuda_PartA
         ../utils.cpp ../utils.hpp)
 target_link_libraries(cuda_PartA cudart)
 
-set (CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} -rdc=true -O3) 
 cuda_add_executable(cuda_PartB
         cuda_PartB.cu
         ../utils.cpp ../utils.hpp)

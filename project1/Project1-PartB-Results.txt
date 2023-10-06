@@ -8,5 +8,5 @@ CUDA error: no error
 CUDA error: no error
 Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
 Transformation Complete!
-GPU Execution Time: 6847.6 milliseconds
+GPU Execution Time: 19.9397 milliseconds
 
