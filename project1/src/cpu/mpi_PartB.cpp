@@ -18,26 +18,26 @@
 
 
 forceinline void rbgarray_filtering (
-    unsigned char r_array[],
-    unsigned char g_array[],
-    unsigned char b_array[],
+    float g_array[],
+    float b_array[],
+    float r_array[],
     JPEGMeta& input_jpeg,
     int loc,
     std::vector<float>& filter,
     int filter_offset
 ) {
     for (int width = 1; width < input_jpeg.width - 1; ++width) {
-        r_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset]);
-        g_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset]);
-        b_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset]);
+        r_array[width] += (input_jpeg.buffer[loc++] * filter[filter_offset]);
+        g_array[width] += (input_jpeg.buffer[loc++] * filter[filter_offset]);
+        b_array[width] += (input_jpeg.buffer[loc++] * filter[filter_offset]);
         // ++filter_iter;
-        r_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 1]);
-        g_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 1]);
-        b_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 1]);
+        r_array[width] += (input_jpeg.buffer[loc++] * filter[filter_offset + 1]);
+        g_array[width] += (input_jpeg.buffer[loc++] * filter[filter_offset + 1]);
+        b_array[width] += (input_jpeg.buffer[loc++] * filter[filter_offset + 1]);
         // ++filter_iter;            
-        r_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 2]);
-        g_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 2]);
-        b_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 2]);
+        r_array[width] += (input_jpeg.buffer[loc++] * filter[filter_offset + 2]);
+        g_array[width] += (input_jpeg.buffer[loc++] * filter[filter_offset + 2]);
+        b_array[width] += (input_jpeg.buffer[loc++] * filter[filter_offset + 2]);
         loc -= 2 * input_jpeg.num_channels;            
     }
 }
@@ -77,8 +77,6 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    auto start_time = std::chrono::high_resolution_clock::now();
-
     // Divide the task
     // For example, there are 11 pixels and 3 tasks, 
     // we try to divide to 4 4 3 instead of 3 3 5
@@ -98,6 +96,8 @@ int main(int argc, char** argv) {
     cuts[0] += 1; // edge of image
     cuts.back() -= 1;
 
+    auto start_time = std::chrono::high_resolution_clock::now();
+
     // The tasks for the master executor
     // 1. Transform the first division of the RGB contents to the Gray contents
     // 2. Receive the transformed Gray contents from slave executors
@@ -108,26 +108,26 @@ int main(int argc, char** argv) {
         for (int i = 0; i < input_jpeg.width * input_jpeg.height * input_jpeg.num_channels; ++i)
         filteredImage[i] = 0;
 
+        float r_array[input_jpeg.width] = {};
+        float g_array[input_jpeg.width] = {};
+        float b_array[input_jpeg.width] = {};
+
         for (int row = cuts[MASTER]; row < cuts[MASTER + 1]; ++row) {
-            unsigned char r_array[input_jpeg.width] = {};
-            unsigned char g_array[input_jpeg.width] = {};
-            unsigned char b_array[input_jpeg.width] = {};
 
             // auto filter_iter = filter.begin();
             const int rloc0 = ((row - 1) * input_jpeg.width) * input_jpeg.num_channels;
-            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc0, filter, 0);
-            // filter_iter = filter.begin();
-            const int rloc1 = ((row) * input_jpeg.width) * input_jpeg.num_channels;
-            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter, 3);
-            // filter_iter = filter.begin();
-            const int rloc2 = ((row + 1) * input_jpeg.width) * input_jpeg.num_channels;
-            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter, 6);
+            const int rloc1 = rloc0 + input_jpeg.width * input_jpeg.num_channels;
+            const int rloc2 = rloc1 + input_jpeg.width * input_jpeg.num_channels;
 
+            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc0, filter, 0);
+            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter, 3);
+            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter, 6);
+            
             for (int width = 1; width < input_jpeg.width - 1; ++width) {
                 const int insert_loc = (row * input_jpeg.width + width) * input_jpeg.num_channels;
-                filteredImage[insert_loc] = r_array[width];
-                filteredImage[insert_loc + 1] = g_array[width];
-                filteredImage[insert_loc + 2] = b_array[width];
+                filteredImage[insert_loc] = (unsigned char)r_array[width];
+                filteredImage[insert_loc + 1] = (unsigned char)g_array[width];
+                filteredImage[insert_loc + 2] = (unsigned char)b_array[width];
             }            
         }
 
@@ -176,10 +176,12 @@ int main(int argc, char** argv) {
             filteredImage[i] = 0;
         
         int temp_row = 1;
+
+        float r_array[input_jpeg.width] = {};
+        float g_array[input_jpeg.width] = {};
+        float b_array[input_jpeg.width] = {};
+
         for (int row = cuts[taskid]; row < cuts[taskid + 1]; ++row) {
-            unsigned char r_array[input_jpeg.width] = {};
-            unsigned char g_array[input_jpeg.width] = {};
-            unsigned char b_array[input_jpeg.width] = {};
 
             // auto filter_iter = filter.begin();
             const int rloc0 = ((row - 1) * input_jpeg.width) * input_jpeg.num_channels;
@@ -193,9 +195,9 @@ int main(int argc, char** argv) {
 
             for (int width = 1; width < input_jpeg.width - 1; ++width) {
                 const int insert_loc = ((temp_row) * input_jpeg.width + width) * input_jpeg.num_channels;
-                filteredImage[insert_loc] = r_array[width];
-                filteredImage[insert_loc + 1] = g_array[width];
-                filteredImage[insert_loc + 2] = b_array[width];
+                filteredImage[insert_loc] = (unsigned char)r_array[width];
+                filteredImage[insert_loc + 1] = (unsigned char)g_array[width];
+                filteredImage[insert_loc + 2] = (unsigned char)b_array[width];
             }
             ++temp_row;     
         }

@@ -11,9 +11,9 @@ CURRENT_DIR=$(pwd)/src/scripts
 echo "Current directory: ${CURRENT_DIR}"
 
 # Sequential PartB
-# echo "Sequential PartB (Optimized with -O2)"
-# srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../../build/src/cpu/sequential_PartB ${CURRENT_DIR}/../../images/20K-RGB.jpg ${CURRENT_DIR}/../../images/20K-Smooth.jpg
-# echo ""
+echo "Sequential PartB (Optimized with -O2)"
+srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../../build/src/cpu/sequential_PartB ${CURRENT_DIR}/../../images/20K-RGB.jpg ${CURRENT_DIR}/../../images/20K-Smooth.jpg
+echo ""
 
 # SIMD PartB
 # echo "SIMD(AVX2) PartB (Optimized with -O3)"
@@ -57,6 +57,6 @@ echo "Current directory: ${CURRENT_DIR}"
 # echo ""
 
 # OpenACC PartB
-echo "OpenACC PartB"
-srun -n 1 --gpus 1 ${CURRENT_DIR}/../../build/src/gpu/openacc_PartB ${CURRENT_DIR}/../../images/20K-RGB.jpg ${CURRENT_DIR}/../../images/20K-Smooth.jpg
-echo ""
+# echo "OpenACC PartB"
+# srun -n 1 --gpus 1 ${CURRENT_DIR}/../../build/src/gpu/openacc_PartB ${CURRENT_DIR}/../../images/20K-RGB.jpg ${CURRENT_DIR}/../../images/20K-Smooth.jpg
+# echo ""

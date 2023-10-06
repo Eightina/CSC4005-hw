@@ -15,9 +15,9 @@
 #endif
 
 forceinline void rbgarray_filtering (
-    unsigned char r_array[],
-    unsigned char g_array[],
-    unsigned char b_array[],
+    __restrict_arr unsigned char r_array[],
+    __restrict_arr unsigned char g_array[],
+    __restrict_arr unsigned char b_array[],
     JPEGMeta& input_jpeg,
     int loc,
     std::vector<float>& filter,
@@ -59,19 +59,18 @@ int main(int argc, char** argv) {
     
     auto start_time = std::chrono::high_resolution_clock::now();
     // Nested for loop, please optimize it
+    unsigned char r_array[input_jpeg.width] = {};
+    unsigned char g_array[input_jpeg.width] = {};
+    unsigned char b_array[input_jpeg.width] = {};
     for (int height = 1; height < input_jpeg.height - 1; height++) {
-        unsigned char r_array[input_jpeg.width] = {};
-        unsigned char g_array[input_jpeg.width] = {};
-        unsigned char b_array[input_jpeg.width] = {};
 
-        int rloc = ((height - 1) * input_jpeg.width) * input_jpeg.num_channels;
-        rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc, filter, 0);
+        const int rloc0 = ((height - 1) * input_jpeg.width) * input_jpeg.num_channels;
+        const int rloc1 = rloc0 + input_jpeg.width * input_jpeg.num_channels;
+        const int rloc2 = rloc1 + input_jpeg.width * input_jpeg.num_channels;
 
-        rloc = ((height) * input_jpeg.width) * input_jpeg.num_channels;
-        rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc, filter, 3);
-
-        rloc = ((height + 1) * input_jpeg.width) * input_jpeg.num_channels;
-        rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc, filter, 6);
+        rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc0, filter, 0);
+        rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter, 3);
+        rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter, 6);
  
 
         for (int width = 1; width < input_jpeg.width - 1; ++width) {
