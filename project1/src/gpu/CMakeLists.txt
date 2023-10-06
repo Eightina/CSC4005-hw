@@ -28,7 +28,11 @@ target_link_libraries(cuda_PartB cudart)
 
 
 ## OpenACC
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc -Minfo=accel")
 add_executable(openacc_PartA
         openacc_PartA.cpp
+        ../utils.cpp ../utils.hpp)
+
+add_executable(openacc_PartB
+        openacc_PartB.cpp
         ../utils.cpp ../utils.hpp)

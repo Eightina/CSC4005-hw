@@ -1,10 +1,3 @@
-//
-// Created by Zhong Yebin on 2023/9/16.
-// Email: yebinzhong@link.cuhk.edu.cn
-//
-// CUDA implementation of transforming a JPEG image from RGB to gray
-//
-
 #include <iostream>
 #include <vector>
 #include <cuda_runtime.h> // CUDA Header
@@ -53,21 +46,22 @@ __global__ void rgbRoutine(
     if ((row >= input_jpeg_height) || (row == 0) || (col == 0) || (col >= input_jpeg_width)) {
         return;
     }
-    for (int input_row = row - 1; input_row < row + 2; ++input_row) {
+    float* row_filter = filter;
+    for (int input_row = row - 1; input_row < row + 2; ++input_row, row_filter+=2) {
         // for (int input_col = col - 1; input_col < col + 2; ++input_col) {
         int input_col = col - 1;
         const int rloc = (input_row * input_jpeg_width + input_col) * input_jpeg_num_channels;
         const int rloc1 = rloc + input_jpeg_num_channels;
         const int rloc2 = rloc1 + input_jpeg_num_channels;
-        temp_sum[0] +=   input_buffer[rloc] * filter[0];
-        temp_sum[1] +=   input_buffer[rloc + 1] * filter[0];
-        temp_sum[2] +=   input_buffer[rloc + 2] * filter[0];
-        temp_sum[0] +=  input_buffer[rloc1] * filter[1];
-        temp_sum[1] +=  input_buffer[rloc1 + 1] * filter[1];
-        temp_sum[2] +=  input_buffer[rloc1 + 2] * filter[1];
-        temp_sum[0] +=  input_buffer[rloc2] * filter[2];
-        temp_sum[1] +=  input_buffer[rloc2 + 1] * filter[2];
-        temp_sum[2] +=  input_buffer[rloc2 + 2] * filter[2];
+        temp_sum[0] +=   input_buffer[rloc] * row_filter[0];
+        temp_sum[1] +=   input_buffer[rloc + 1] * row_filter[0];
+        temp_sum[2] +=   input_buffer[rloc + 2] * row_filter[0];
+        temp_sum[0] +=  input_buffer[rloc1] * row_filter[1];
+        temp_sum[1] +=  input_buffer[rloc1 + 1] * row_filter[1];
+        temp_sum[2] +=  input_buffer[rloc1 + 2] * row_filter[1];
+        temp_sum[0] +=  input_buffer[rloc2] * row_filter[2];
+        temp_sum[1] +=  input_buffer[rloc2 + 1] * row_filter[2];
+        temp_sum[2] +=  input_buffer[rloc2 + 2] * row_filter[2];
         // } 
     }
     const int output_loc = (row * input_jpeg_width + col) * input_jpeg_num_channels;
