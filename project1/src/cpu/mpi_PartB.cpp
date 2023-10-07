@@ -82,7 +82,12 @@ int main(int argc, char** argv) {
     MPI_Init(&argc, &argv);
     // How many processes are running
     int numtasks;
+    bool specialized_master = false;
     MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
+    if (numtasks > 24) {
+        specialized_master = true;
+        numtasks -= 1;
+    }
     // What's my rank?
     int taskid;
     MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
@@ -126,32 +131,37 @@ int main(int argc, char** argv) {
     // 2. Receive the transformed Gray contents from slave executors
     // 3. Write the Gray contents to the JPEG File
     if (taskid == MASTER) {
+        
         int finished_num = 0;
-        // Transform the first division of RGB Contents to the gray contents
         auto filteredImage = new unsigned char[input_jpeg.width * input_jpeg.height * input_jpeg.num_channels];
         for (int i = 0; i < input_jpeg.width * input_jpeg.height * input_jpeg.num_channels; ++i)
         filteredImage[i] = 0;
-        unsigned char r_array[input_jpeg.width] = {};
-        unsigned char g_array[input_jpeg.width] = {};
-        unsigned char b_array[input_jpeg.width] = {};
-        for (int row = cuts[MASTER]; row < cuts[MASTER + 1]; ++row) {
 
-            const int rloc0 = ((row - 1) * input_jpeg.width) * input_jpeg.num_channels;
-            const int rloc1 = ((row) * input_jpeg.width) * input_jpeg.num_channels;
-            const int rloc2 = ((row + 1) * input_jpeg.width) * input_jpeg.num_channels;
+        if (specialized_master) {
+            // Transform the first division of RGB Contents to the gray contents
 
-            rbgarray_filtering_genline(r_array, g_array, b_array, input_jpeg, rloc0, filter, 0);
-            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter, 3);
-            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter, 6);
+            unsigned char r_array[input_jpeg.width] = {};
+            unsigned char g_array[input_jpeg.width] = {};
+            unsigned char b_array[input_jpeg.width] = {};
+            for (int row = cuts[MASTER]; row < cuts[MASTER + 1]; ++row) {
 
-            for (int width = 1; width < input_jpeg.width - 1; ++width) {
-                const int insert_loc = (row * input_jpeg.width + width) * input_jpeg.num_channels;
-                filteredImage[insert_loc] = r_array[width];
-                filteredImage[insert_loc + 1] = g_array[width];
-                filteredImage[insert_loc + 2] = b_array[width];
-            }            
+                const int rloc0 = ((row - 1) * input_jpeg.width) * input_jpeg.num_channels;
+                const int rloc1 = ((row) * input_jpeg.width) * input_jpeg.num_channels;
+                const int rloc2 = ((row + 1) * input_jpeg.width) * input_jpeg.num_channels;
+
+                rbgarray_filtering_genline(r_array, g_array, b_array, input_jpeg, rloc0, filter, 0);
+                rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter, 3);
+                rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter, 6);
+
+                for (int width = 1; width < input_jpeg.width - 1; ++width) {
+                    const int insert_loc = (row * input_jpeg.width + width) * input_jpeg.num_channels;
+                    filteredImage[insert_loc] = r_array[width];
+                    filteredImage[insert_loc + 1] = g_array[width];
+                    filteredImage[insert_loc + 2] = b_array[width];
+                }            
+            }
+            ++finished_num;
         }
-        ++finished_num;
 
         // Receive the transformed Gray contents from each slave executors
         MPI_Status receive_status;
@@ -164,7 +174,7 @@ int main(int argc, char** argv) {
                 continue;
             }
             unsigned char* start_pos = filteredImage + cuts[receive_status.MPI_SOURCE] * row_width;
-            int length = (cuts[receive_status.MPI_SOURCE + 1] -cuts[receive_status.MPI_SOURCE]) * row_width;
+            int length = (cuts[receive_status.MPI_SOURCE + 1] - cuts[receive_status.MPI_SOURCE]) * row_width;
             MPI_Recv(start_pos, length, MPI_CHAR, receive_status.MPI_SOURCE, TAG_GATHER, MPI_COMM_WORLD, &status);
             ++finished_num;
         }
