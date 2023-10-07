@@ -101,8 +101,6 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    auto start_time = std::chrono::high_resolution_clock::now();
-
     // Divide the task
     // For example, there are 11 pixels and 3 tasks, 
     // we try to divide to 4 4 3 instead of 3 3 5
@@ -121,11 +119,14 @@ int main(int argc, char** argv) {
     }
     cuts[0] += 1; // edge of image
 
+    auto start_time = std::chrono::high_resolution_clock::now();
+
     // The tasks for the master executor
     // 1. Transform the first division of the RGB contents to the Gray contents
     // 2. Receive the transformed Gray contents from slave executors
     // 3. Write the Gray contents to the JPEG File
     if (taskid == MASTER) {
+        int finished_num = 0;
         // Transform the first division of RGB Contents to the gray contents
         auto filteredImage = new unsigned char[input_jpeg.width * input_jpeg.height * input_jpeg.num_channels];
         for (int i = 0; i < input_jpeg.width * input_jpeg.height * input_jpeg.num_channels; ++i)
@@ -150,13 +151,29 @@ int main(int argc, char** argv) {
                 filteredImage[insert_loc + 2] = b_array[width];
             }            
         }
+        ++finished_num;
 
         // Receive the transformed Gray contents from each slave executors
-        for (int i = MASTER + 1; i < numtasks; i++) {
-            unsigned char* start_pos = filteredImage + (cuts[i]) * input_jpeg.width * input_jpeg.num_channels;
-            int length = (cuts[i+1] - cuts[i]) * input_jpeg.width * input_jpeg.num_channels;
-            MPI_Recv(start_pos, length, MPI_CHAR, i, TAG_GATHER, MPI_COMM_WORLD, &status);
+        MPI_Status receive_status;
+        int is_sent;
+        const int row_width = input_jpeg.width * input_jpeg.num_channels;
+        while (finished_num != numtasks) {
+            // MPI_Probe(MPI_ANY_SOURCE, MPI_ANY_TAG);
+            MPI_Iprobe(MPI_ANY_SOURCE, TAG_GATHER, MPI_COMM_WORLD, &is_sent, &receive_status);
+            if (!is_sent) {
+                continue;
+            }
+            unsigned char* start_pos = filteredImage + cuts[receive_status.MPI_SOURCE] * row_width;
+            int length = (cuts[receive_status.MPI_SOURCE + 1] -cuts[receive_status.MPI_SOURCE]) * row_width;
+            MPI_Recv(start_pos, length, MPI_CHAR, receive_status.MPI_SOURCE, TAG_GATHER, MPI_COMM_WORLD, &status);
+            ++finished_num;
         }
+
+        // for (int i = MASTER + 1; i < numtasks; i++) {
+        //     unsigned char* start_pos = filteredImage + (cuts[i]) * input_jpeg.width * input_jpeg.num_channels;
+        //     int length = (cuts[i+1] - cuts[i]) * input_jpeg.width * input_jpeg.num_channels;
+        //     MPI_Recv(start_pos, length, MPI_CHAR, i, TAG_GATHER, MPI_COMM_WORLD, &status);
+        // }
 
         auto end_time = std::chrono::high_resolution_clock::now();
         auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
