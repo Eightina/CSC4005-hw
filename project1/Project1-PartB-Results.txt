@@ -1,62 +1,6 @@
 Current directory: /nfsmnt/223040076/coursecode/project1/src/scripts
-/var/spool/slurmd/job100707/slurm_script: line 27: MPI: command not found
+/var/spool/slurmd/job101688/slurm_script: line 27: MPI: command not found
 MPI PartB (Optimized with -O2)
-Number of processes: 1
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
-Transformation Complete!
-Execution Time: 7518 milliseconds
-
-Number of processes: 2
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
-Transformation Complete!
-Execution Time: 4959 milliseconds
-
-Number of processes: 4
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
-Transformation Complete!
-Execution Time: 2735 milliseconds
-
-Number of processes: 8
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
-Transformation Complete!
-Execution Time: 1587 milliseconds
-
-Number of processes: 16
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
-Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
-Transformation Complete!
-Execution Time: 1015 milliseconds
-
 Number of processes: 32
 Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
 Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
@@ -90,7 +34,68 @@ Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/
 Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
 Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
 Input file from: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-RGB.jpg
+1 0
+2 0
+3 0
+4 0
+5 0
+6 0
+7 0
+8 0
+9 0
+10 0
+11 0
+12 0
+13 0
+14 0
+15 0
+16 0
+17 0
+18 0
+19 0
+20 0
+21 0
+22 0
+23 0
+24 0
+25 0
+26 0
+27 0
+28 0
+29 0
+30 0
+31 0
+32 1
+33 1
+34 1
+35 1
+36 1
+37 1
+38 1
+39 1
+40 1
+41 1
+42 1
+43 1
+44 1
+45 1
+46 1
+47 1
+48 1
+49 1
+50 1
+51 1
+52 1
+53 1
+54 1
+55 1
+56 1
+57 1
+58 1
+59 1
+60 1
+61 1
+62 1
 Output file to: /nfsmnt/223040076/coursecode/project1/src/scripts/../../images/20K-Smooth.jpg
 Transformation Complete!
-Execution Time: 1042 milliseconds
-
+Execution Time: 1051 milliseconds
