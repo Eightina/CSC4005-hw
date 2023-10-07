@@ -14,10 +14,33 @@
 #define forceinline
 #endif
 
+forceinline void rbgarray_filtering_genline (
+    unsigned char r_array[],
+    unsigned char g_array[],
+    unsigned char b_array[],
+    JPEGMeta& input_jpeg,
+    int loc,
+    std::vector<float>& filter,
+    int filter_offset
+) {
+    for (int width = 1; width < input_jpeg.width - 1; ++width) {
+        r_array[width] =  (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset]);
+        g_array[width] =  (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset]);
+        b_array[width] =  (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset]);
+        r_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 1]);
+        g_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 1]);
+        b_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 1]);          
+        r_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 2]);
+        g_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 2]);
+        b_array[width] += (unsigned char)(input_jpeg.buffer[loc++] * filter[filter_offset + 2]);
+        loc -= 2 * input_jpeg.num_channels;            
+    }
+}
+
 forceinline void rbgarray_filtering (
-    __restrict_arr unsigned char r_array[],
-    __restrict_arr unsigned char g_array[],
-    __restrict_arr unsigned char b_array[],
+    unsigned char r_array[],
+    unsigned char g_array[],
+    unsigned char b_array[],
     JPEGMeta& input_jpeg,
     int loc,
     std::vector<float>& filter,
@@ -68,7 +91,7 @@ int main(int argc, char** argv) {
         const int rloc1 = rloc0 + input_jpeg.width * input_jpeg.num_channels;
         const int rloc2 = rloc1 + input_jpeg.width * input_jpeg.num_channels;
 
-        rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc0, filter, 0);
+        rbgarray_filtering_genline(r_array, g_array, b_array, input_jpeg, rloc0, filter, 0);
         rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter, 3);
         rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter, 6);
  
