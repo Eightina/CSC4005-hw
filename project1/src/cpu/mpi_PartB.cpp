@@ -81,21 +81,8 @@ int main(int argc, char** argv) {
     // Start the MPI
     MPI_Init(&argc, &argv);
     // How many processes are running
-    int numtasks = 0;
-    bool specialized_master = false;
+    int numtasks;
     MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
-    int tar_count_tasks = numtasks;
-    if (numtasks > 24) {
-        specialized_master = true;
-        numtasks -= 1;
-        tar_count_tasks = numtasks * 2;
-    }
-
-    // int giventasks;
-    // MPI_Comm_size(MPI_COMM_WORLD, &giventasks);
-    // int numtasks = (giventasks > 24) ? (numtasks - 1) : (numtasks); 
-    // bool specialized_master = (giventasks > 24);
-
     // What's my rank?
     int taskid;
     MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
@@ -139,63 +126,46 @@ int main(int argc, char** argv) {
     // 2. Receive the transformed Gray contents from slave executors
     // 3. Write the Gray contents to the JPEG File
     if (taskid == MASTER) {
-        
         int finished_num = 0;
+        // Transform the first division of RGB Contents to the gray contents
         auto filteredImage = new unsigned char[input_jpeg.width * input_jpeg.height * input_jpeg.num_channels];
         for (int i = 0; i < input_jpeg.width * input_jpeg.height * input_jpeg.num_channels; ++i)
         filteredImage[i] = 0;
+        unsigned char r_array[input_jpeg.width] = {};
+        unsigned char g_array[input_jpeg.width] = {};
+        unsigned char b_array[input_jpeg.width] = {};
+        for (int row = cuts[MASTER]; row < cuts[MASTER + 1]; ++row) {
 
-        if (!specialized_master) {
-            // Transform the first division of RGB Contents to the gray contents
+            const int rloc0 = ((row - 1) * input_jpeg.width) * input_jpeg.num_channels;
+            const int rloc1 = ((row) * input_jpeg.width) * input_jpeg.num_channels;
+            const int rloc2 = ((row + 1) * input_jpeg.width) * input_jpeg.num_channels;
 
-            unsigned char r_array[input_jpeg.width] = {};
-            unsigned char g_array[input_jpeg.width] = {};
-            unsigned char b_array[input_jpeg.width] = {};
-            for (int row = cuts[MASTER]; row < cuts[MASTER + 1]; ++row) {
+            rbgarray_filtering_genline(r_array, g_array, b_array, input_jpeg, rloc0, filter, 0);
+            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter, 3);
+            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter, 6);
 
-                const int rloc0 = ((row - 1) * input_jpeg.width) * input_jpeg.num_channels;
-                const int rloc1 = ((row) * input_jpeg.width) * input_jpeg.num_channels;
-                const int rloc2 = ((row + 1) * input_jpeg.width) * input_jpeg.num_channels;
-
-                rbgarray_filtering_genline(r_array, g_array, b_array, input_jpeg, rloc0, filter, 0);
-                rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter, 3);
-                rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter, 6);
-
-                for (int width = 1; width < input_jpeg.width - 1; ++width) {
-                    const int insert_loc = (row * input_jpeg.width + width) * input_jpeg.num_channels;
-                    filteredImage[insert_loc] = r_array[width];
-                    filteredImage[insert_loc + 1] = g_array[width];
-                    filteredImage[insert_loc + 2] = b_array[width];
-                }            
-            }
-            ++finished_num;
+            for (int width = 1; width < input_jpeg.width - 1; ++width) {
+                const int insert_loc = (row * input_jpeg.width + width) * input_jpeg.num_channels;
+                filteredImage[insert_loc] = r_array[width];
+                filteredImage[insert_loc + 1] = g_array[width];
+                filteredImage[insert_loc + 2] = b_array[width];
+            }            
         }
+        ++finished_num;
 
         // Receive the transformed Gray contents from each slave executors
         MPI_Status receive_status;
         int is_sent;
         const int row_width = input_jpeg.width * input_jpeg.num_channels;
-        while (finished_num != tar_count_tasks) {
+        while (finished_num != numtasks) {
             // MPI_Probe(MPI_ANY_SOURCE, MPI_ANY_TAG);
-            MPI_Iprobe(MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &is_sent, &receive_status);
+            MPI_Iprobe(MPI_ANY_SOURCE, TAG_GATHER, MPI_COMM_WORLD, &is_sent, &receive_status);
             if (!is_sent) {
                 continue;
             }
-            unsigned char* start_pos;
-            int length = 0;
-            if (specialized_master) {
-                int all_rows = cuts[receive_status.MPI_SOURCE] - cuts[receive_status.MPI_SOURCE - 1];
-                length = ((receive_status.MPI_TAG) ? (all_rows - (all_rows / 2)) :(all_rows / 2)) * row_width;
-                start_pos = filteredImage + cuts[receive_status.MPI_SOURCE - 1] * row_width
-                            + ((receive_status.MPI_TAG) ? (all_rows / 2) : 0) * row_width;
-                MPI_Recv(start_pos, length, MPI_CHAR, receive_status.MPI_SOURCE, receive_status.MPI_TAG, MPI_COMM_WORLD, &status);
-                // printf("%d %d\n", finished_num+1 , receive_status.MPI_TAG);
-            } else {
-                int all_rows = cuts[receive_status.MPI_SOURCE + 1] - cuts[receive_status.MPI_SOURCE];
-                length = all_rows * row_width;
-                start_pos = filteredImage + cuts[receive_status.MPI_SOURCE] * row_width;
-                MPI_Recv(start_pos, length, MPI_CHAR, receive_status.MPI_SOURCE, receive_status.MPI_TAG, MPI_COMM_WORLD, &status);
-            }
+            unsigned char* start_pos = filteredImage + cuts[receive_status.MPI_SOURCE] * row_width;
+            int length = (cuts[receive_status.MPI_SOURCE + 1] -cuts[receive_status.MPI_SOURCE]) * row_width;
+            MPI_Recv(start_pos, length, MPI_CHAR, receive_status.MPI_SOURCE, TAG_GATHER, MPI_COMM_WORLD, &status);
             ++finished_num;
         }
 
@@ -226,107 +196,45 @@ int main(int argc, char** argv) {
     // 1. Transform the RGB contents to the Gray contents
     // 2. Send the transformed Gray contents back to the master executor
     else {
-        if (!specialized_master) {
-            const int rows = cuts[taskid + 1] - cuts[taskid];
-            const int length = rows * input_jpeg.width * input_jpeg.num_channels; 
-            auto filteredImage = new unsigned char[length];
-            for (int i = 0; i < length; ++i)
-                filteredImage[i] = 0;
-            int temp_row = 0;
-            unsigned char r_array[input_jpeg.width] = {};
-            unsigned char g_array[input_jpeg.width] = {};
-            unsigned char b_array[input_jpeg.width] = {};
-            for (int row = cuts[taskid]; row < cuts[taskid + 1]; ++row) {
-                // auto filter_iter = filter.begin();
-                const int rloc0 = ((row - 1) * input_jpeg.width) * input_jpeg.num_channels;
-                const int rloc1 = ((row) * input_jpeg.width) * input_jpeg.num_channels;
-                const int rloc2 = ((row + 1) * input_jpeg.width) * input_jpeg.num_channels;
+        // Transform the RGB Contents to the gray contents
+        const int rows = cuts[taskid + 1] - cuts[taskid];
+        const int length = rows * input_jpeg.width * input_jpeg.num_channels; 
+        auto filteredImage = new unsigned char[length];
+        for (int i = 0; i < length; ++i)
+            filteredImage[i] = 0;
+        
+        int temp_row = 0;
+        unsigned char r_array[input_jpeg.width] = {};
+        unsigned char g_array[input_jpeg.width] = {};
+        unsigned char b_array[input_jpeg.width] = {};
+        for (int row = cuts[taskid]; row < cuts[taskid + 1]; ++row) {
 
-                rbgarray_filtering_genline(r_array, g_array, b_array, input_jpeg, rloc0, filter, 0);
-                rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter, 3);
-                rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter, 6);
+            // auto filter_iter = filter.begin();
+            const int rloc0 = ((row - 1) * input_jpeg.width) * input_jpeg.num_channels;
+            const int rloc1 = ((row) * input_jpeg.width) * input_jpeg.num_channels;
+            const int rloc2 = ((row + 1) * input_jpeg.width) * input_jpeg.num_channels;
 
-                for (int width = 1; width < input_jpeg.width - 1; ++width) {
-                    const int insert_loc = ((temp_row) * input_jpeg.width + width) * input_jpeg.num_channels;
-                    filteredImage[insert_loc] = r_array[width];
-                    filteredImage[insert_loc + 1] = g_array[width];
-                    filteredImage[insert_loc + 2] = b_array[width];
-                }
-                ++temp_row;     
+            rbgarray_filtering_genline(r_array, g_array, b_array, input_jpeg, rloc0, filter, 0);
+            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter, 3);
+            rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter, 6);
+
+            for (int width = 1; width < input_jpeg.width - 1; ++width) {
+                const int insert_loc = ((temp_row) * input_jpeg.width + width) * input_jpeg.num_channels;
+                filteredImage[insert_loc] = r_array[width];
+                filteredImage[insert_loc + 1] = g_array[width];
+                filteredImage[insert_loc + 2] = b_array[width];
             }
-            // Send the gray image back to the master
-            MPI_Send(filteredImage, length, MPI_CHAR, MASTER, TAG_GATHER, MPI_COMM_WORLD);
-            // Release the memory
-            delete[] filteredImage;
-
-        } else {
-
-            // Transform the RGB Contents to the gray contents
-            const int rows = (specialized_master) ? (cuts[taskid] - cuts[taskid - 1]) : (cuts[taskid + 1] - cuts[taskid]);
-            const int length = rows * input_jpeg.width * input_jpeg.num_channels; 
-            const int length0 = rows / 2 * input_jpeg.width * input_jpeg.num_channels; 
-            const int length1 = length - length0; 
-            auto filteredImage = new unsigned char[length];
-            // for (int i = 0; i < length; ++i)
-            //     filteredImage[i] = 0;
-            
-            unsigned char r_array[input_jpeg.width] = {};
-            unsigned char g_array[input_jpeg.width] = {};
-            unsigned char b_array[input_jpeg.width] = {};
-            const int iter_start0 = (specialized_master) ? (cuts[taskid - 1]) : (cuts[taskid]);
-            const int iter_end0 = (specialized_master) ? (cuts[taskid - 1] + rows / 2) : (cuts[taskid] + rows / 2);
-            const int iter_start1 = iter_end0;
-            const int iter_end1 = (specialized_master) ? (cuts[taskid]) : (cuts[taskid + 1]);
-
-            int temp_row = 0;
-            for (int row = iter_start0; row < iter_end0; ++row) {
-
-                // auto filter_iter = filter.begin();
-                const int rloc0 = ((row - 1) * input_jpeg.width) * input_jpeg.num_channels;
-                const int rloc1 = ((row) * input_jpeg.width) * input_jpeg.num_channels;
-                const int rloc2 = ((row + 1) * input_jpeg.width) * input_jpeg.num_channels;
-
-                rbgarray_filtering_genline(r_array, g_array, b_array, input_jpeg, rloc0, filter, 0);
-                rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter, 3);
-                rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter, 6);
-
-                for (int width = 1; width < input_jpeg.width - 1; ++width) {
-                    const int insert_loc = ((temp_row) * input_jpeg.width + width) * input_jpeg.num_channels;
-                    filteredImage[insert_loc] = r_array[width];
-                    filteredImage[insert_loc + 1] = g_array[width];
-                    filteredImage[insert_loc + 2] = b_array[width];
-                }
-                ++temp_row;     
-            }
-            // Send the gray image back to the master
-            MPI_Send(filteredImage, length0, MPI_CHAR, MASTER, 0, MPI_COMM_WORLD);
-
-            // temp_row = 0;
-            for (int row = iter_start1; row < iter_end1; ++row) {
-
-                // auto filter_iter = filter.begin();
-                const int rloc0 = ((row - 1) * input_jpeg.width) * input_jpeg.num_channels;
-                const int rloc1 = ((row) * input_jpeg.width) * input_jpeg.num_channels;
-                const int rloc2 = ((row + 1) * input_jpeg.width) * input_jpeg.num_channels;
-
-                rbgarray_filtering_genline(r_array, g_array, b_array, input_jpeg, rloc0, filter, 0);
-                rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc1, filter, 3);
-                rbgarray_filtering(r_array, g_array, b_array, input_jpeg, rloc2, filter, 6);
-
-                for (int width = 1; width < input_jpeg.width - 1; ++width) {
-                    const int insert_loc = ((temp_row) * input_jpeg.width + width) * input_jpeg.num_channels;
-                    filteredImage[insert_loc] = r_array[width];
-                    filteredImage[insert_loc + 1] = g_array[width];
-                    filteredImage[insert_loc + 2] = b_array[width];
-                }
-                ++temp_row;     
-            }
-            // Send the gray image back to the master
-            MPI_Send(filteredImage + length0, length1, MPI_CHAR, MASTER, 1, MPI_COMM_WORLD);
-            // Release the memory
-            delete[] filteredImage;
+            ++temp_row;     
         }
-        MPI_Finalize();
-        return 0;
+
+        // Send the gray image back to the master
+        MPI_Send(filteredImage, length, MPI_CHAR, MASTER, TAG_GATHER, MPI_COMM_WORLD);
+        
+        // Release the memory
+        delete[] filteredImage;
+        // delete[] input_jpeg.buffer;
     }
+
+    MPI_Finalize();
+    return 0;
 }

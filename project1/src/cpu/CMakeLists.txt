@@ -28,6 +28,26 @@ add_executable(sequential_PartB
         ../utils.cpp ../utils.hpp)
 target_compile_options(sequential_PartB PRIVATE -O2)
 
+add_executable(sequential_PartB_O3
+        sequential_PartB.cpp
+        ../utils.cpp ../utils.hpp)
+target_compile_options(sequential_PartB_O3 PRIVATE -O3)
+
+add_executable(sequential_PartB_O2plus0
+        sequential_PartB.cpp
+        ../utils.cpp ../utils.hpp)
+target_compile_options(sequential_PartB_O2plus0 PRIVATE 
+                        -O2 -finline-functions -funswitch-loops 
+                        -fpredictive-commoning -fgcse-after-reload -fsplit-paths 
+                        -ftree-loop-distribute-patterns -fvect-cost-model
+                        -ftree-partial-pre -fpeel-loops -fipa-cp-clone)
+
+add_executable(sequential_PartB_O2plus1
+                sequential_PartB.cpp
+                ../utils.cpp ../utils.hpp)
+target_compile_options(sequential_PartB_O2plus1 PRIVATE 
+                        -O2 -ftree-loop-vectorize -ftree-slp-vectorize)           
+
 ## SIMD Vectorization (AVX2)
 add_executable(simd_PartA
         simd_PartA.cpp
@@ -88,3 +108,10 @@ add_executable(openmp_PartB
 target_compile_options(openmp_PartB PRIVATE  -fopenmp -O3)
 target_include_directories(openmp_PartB PRIVATE ${OpenMP_CXX_INCLUDE_DIRS})
 target_link_libraries(openmp_PartB PRIVATE ${OpenMP_CXX_LIBRARIES})
+
+add_executable(openmp_simd_PartB
+        openmp_simd_PartB.cpp
+        ../utils.cpp ../utils.hpp)
+target_compile_options(openmp_simd_PartB PRIVATE -mavx2 -fopenmp -O3)
+target_include_directories(openmp_simd_PartB PRIVATE ${OpenMP_CXX_INCLUDE_DIRS})
+target_link_libraries(openmp_simd_PartB PRIVATE ${OpenMP_CXX_LIBRARIES})
