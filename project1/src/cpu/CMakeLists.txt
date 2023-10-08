@@ -50,9 +50,16 @@ target_link_libraries(mpi_PartA ${MPI_LIBRARIES})
 add_executable(mpi_PartB
         mpi_PartB.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(mpi_PartB PRIVATE -O2)
+target_compile_options(mpi_PartB PRIVATE -O3)
 target_include_directories(mpi_PartB PRIVATE ${MPI_CXX_INCLUDE_DIRS})
 target_link_libraries(mpi_PartB ${MPI_LIBRARIES})
+
+add_executable(mpi_PartB_og
+        mpi_PartB_og.cpp
+        ../utils.cpp ../utils.hpp)
+target_compile_options(mpi_PartB_og PRIVATE -O3)
+target_include_directories(mpi_PartB_og PRIVATE ${MPI_CXX_INCLUDE_DIRS})
+target_link_libraries(mpi_PartB_og ${MPI_LIBRARIES})
 
 ## Pthread
 add_executable(pthread_PartA

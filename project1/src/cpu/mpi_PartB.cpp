@@ -298,7 +298,6 @@ int main(int argc, char** argv) {
                 }
                 ++temp_row;     
             }
-
             // Send the gray image back to the master
             MPI_Send(filteredImage, length0, MPI_CHAR, MASTER, 0, MPI_COMM_WORLD);
 
