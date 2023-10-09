@@ -94,7 +94,7 @@ int main(int argc, char** argv) {
 
     // Read JPEG File
     const char * input_filepath = argv[1];
-    std::cout << "Input file from: " << input_filepath << "\n";
+    // std::cout << "Input file from: " << input_filepath << "\n";
     auto input_jpeg = read_from_jpeg(input_filepath);
     if (input_jpeg.buffer == NULL) {
         std::cerr << "Failed to read input JPEG image\n";
