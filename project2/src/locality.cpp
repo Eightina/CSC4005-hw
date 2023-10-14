@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <chrono>
 #include "matrix.hpp"
+#include <string.h>
 
 void inline kij_mm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result) {
     for (int k = 0; k < K; ++k) {
@@ -63,14 +64,20 @@ void inline ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix
         for (int j = 0; j < N; j+=block_size) {
             for (int k = 0; k < K; k+=block_size) {
                 
+                // int preload_r1[] = 
+
                 // #pragma GCC unroll 64
                 for (int k1 = k; k1 < k+block_size; ++k1) {
                     // #pragma GCC unroll 64
+                    register int preload_matrix2[block_size];
+                    memcpy(preload_matrix2, matrix2[k1], block_size);
                     for (int i1 = i; i1 < i+block_size; ++i1) {
                         register int r1 = matrix1[i1][k1];
+                        register int preload_result[block_size];
+                        memcpy(preload_result, result[i1], block_size);
                         // #pragma GCC unroll 64
                         for (int j1 = j; j1 < j+block_size; ++j1) {
-                            result[i1][j1] += r1 * matrix2[k1][j1];  
+                            result[i1][j1] = preload_result[j1-j] + r1 * preload_matrix2[j1-j];  
                         }
                     }
                 }
@@ -104,9 +111,9 @@ Matrix matrix_multiply_locality(const Matrix& matrix1, const Matrix& matrix2) {
     // kij_tmm(M, N, K, matrix1, matrix2, result, 64);      // kij 1024*1024:4543ms; 
     // kij_tmm(M, N, K, matrix1, matrix2, result, 4);       // kij 1024*1024:5275ms; 
 
-    // ijk_kij_tmm(M, N, K, matrix1, matrix2, result, 32);     // ijk_kij 1024*1024:3693ms; 
-    ijk_kij_tmm(M, N, K, matrix1, matrix2, result, 64);     // ijk_kij 1024*1024:3674ms; 
-    // ijk_kij_tmm(M, N, K, matrix1, matrix2, result, 128);     // ijk_kij 1024*1024:4571ms; 
+    // ijk_kij_tmm(M, N, K, matrix1, matrix2, result, 32);     // ijk_kij 1024:3693ms; 
+    ijk_kij_tmm(M, N, K, matrix1, matrix2, result, 64);     // ijk_kij 1024:3674ms; preload1024:2394ms;
+    // ijk_kij_tmm(M, N, K, matrix1, matrix2, result, 128);    // ijk_kij 1024:4571ms; 
 
     // Your Code Here!
     // Optimizing Matrix Multiplication 
