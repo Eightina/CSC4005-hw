@@ -9,6 +9,78 @@
 #include <chrono>
 #include "matrix.hpp"
 
+void inline kij_mm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result) {
+    for (int k = 0; k < K; ++k) {
+        for (int i = 0; i < M; ++i) {
+            int r = matrix1[i][k];
+            for (int j = 0; j < N; ++j) {
+                result[i][j] += r * matrix2[k][j];  
+            }
+        }
+    }
+}
+
+void inline ijk_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result, int block_size) {
+    for (int i = 0; i < M; i+=block_size) {
+        for (int j = 0; j < N; j+=block_size) {
+            for (int k = 0; k < K; k+=block_size) {
+                
+                for (int i1 = i; i1 < i+block_size; ++i1) {
+                    for (int j1 = j; j1 < j+block_size; ++j1) {
+                        for (int k1= k; k1 < k+block_size; ++k1) {
+                            result[i1][j1] += matrix1[i1][k1] * matrix2[k1][j1];
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+void inline kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result, int block_size) {
+    for (int k = 0; k < K; k+=block_size) {
+        for (int i = 0; i < M; i+=block_size) {
+            // int r = matrix1[i][k];
+            for (int j = 0; j < N; j+=block_size) {
+
+                for (int k1 = k; k1 < k+block_size; ++k1) {
+                    for (int i1 = i; i1 < i+block_size; ++i1) {
+                        int r1 = matrix1[i1][k1];
+                        for (int j1 = j; j1 < j+block_size; ++j1) {
+                            result[i1][j1] += r1 * matrix2[k1][j1];  
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+void inline ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result, int block_size) {
+    for (int i = 0; i < M; i+=block_size) {
+        for (int j = 0; j < N; j+=block_size) {
+            for (int k = 0; k < K; k+=block_size) {
+                
+                // #pragma GCC unroll 64
+                for (int k1 = k; k1 < k+block_size; ++k1) {
+                    // #pragma GCC unroll 64
+                    for (int i1 = i; i1 < i+block_size; ++i1) {
+                        register int r1 = matrix1[i1][k1];
+                        // #pragma GCC unroll 64
+                        for (int j1 = j; j1 < j+block_size; ++j1) {
+                            result[i1][j1] += r1 * matrix2[k1][j1];  
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+
 Matrix matrix_multiply_locality(const Matrix& matrix1, const Matrix& matrix2) {
     if (matrix1.getCols() != matrix2.getRows()) {
         throw std::invalid_argument(
@@ -19,12 +91,31 @@ Matrix matrix_multiply_locality(const Matrix& matrix1, const Matrix& matrix2) {
 
     Matrix result(M, N);
 
+    // kij_mm(M, N, K, matrix1, matrix2, result);       // kij 1024*1024:3816ms; 
+
+    // ijk_tmm(M, N, K, matrix1, matrix2, result, 8);       // ijk 1024*1024:6132ms; 
+    // ijk_tmm(M, N, K, matrix1, matrix2, result, 16);      // ijk 1024*1024:6447ms; 
+    // ijk_tmm(M, N, K, matrix1, matrix2, result, 32);      // ijk 1024*1024:6202ms; 
+    // ijk_tmm(M, N, K, matrix1, matrix2, result, 64);      // ijk 1024*1024:6116ms; best block_size = 64
+    // ijk_tmm(M, N, K, matrix1, matrix2, result, 128);     // ijk 1024*1024:6195ms; 
+    // ijk_tmm(M, N, K, matrix1, matrix2, result, 512);     // ijk 1024*1024:7466ms;
+
+    // kij_tmm(M, N, K, matrix1, matrix2, result, 16);      // kij 1024*1024:4688ms; 
+    // kij_tmm(M, N, K, matrix1, matrix2, result, 64);      // kij 1024*1024:4543ms; 
+    // kij_tmm(M, N, K, matrix1, matrix2, result, 4);       // kij 1024*1024:5275ms; 
+
+    // ijk_kij_tmm(M, N, K, matrix1, matrix2, result, 32);     // ijk_kij 1024*1024:3693ms; 
+    ijk_kij_tmm(M, N, K, matrix1, matrix2, result, 64);     // ijk_kij 1024*1024:3674ms; 
+    // ijk_kij_tmm(M, N, K, matrix1, matrix2, result, 128);     // ijk_kij 1024*1024:4571ms; 
+
     // Your Code Here!
     // Optimizing Matrix Multiplication 
     // Considering Memory Locality and Avoiding Cache Missing
     // Hints:
     // 1. Change the order of the tripple nested loop
     // 2. Apply Tiled Matrix Multiplication
+
+
 
     return result;
 }
