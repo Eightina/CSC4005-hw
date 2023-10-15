@@ -10,10 +10,18 @@
 #include "matrix.hpp"
 #include <string.h>
 
-void inline preload_block(int *__restrict dst, const Matrix& src, int src_row, int src_col, int block_size) {
-    #pragma GCC unroll 64
+void inline no_sse_memcpy(int *__restrict dst, const int *src, int block_size) {
+    // #pragma GCC unroll 64
     for (int i = 0; i < block_size; ++i) {
-        memcpy(dst, src[src_row]+src_col, block_size);
+        dst[i] = src[i];
+    }
+}
+
+void inline preload_block(int *__restrict dst, const Matrix& src, int src_row, int src_col, int block_size) {
+    // #pragma GCC unroll 64
+    for (int i = 0; i < block_size; ++i) {
+        // memcpy(dst, src[src_row]+src_col, block_size);
+        no_sse_memcpy(dst, src[src_row]+src_col, block_size);
         dst += block_size;
         src_row++;
     }
@@ -89,18 +97,18 @@ void inline ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix
                     // #pragma GCC unroll 64
 
                     // memcpy(preload_matrix2, zeroload_matrix2 + ((k1 - k)*block_size), block_size);
-                    memcpy(preload_matrix2, matrix2[k1], block_size);
+                    no_sse_memcpy(preload_matrix2, matrix2[k1], block_size);
 
                     for (int i1 = i; i1 < i+block_size; ++i1) {
                         
                         // register int r1 = *(zeroload_matrix1+(i1 - i)*block_size+(k1-k));
                         register int r1 = matrix1[i1][k1];
-                        memcpy(preload_result, result[i1], block_size);
+                        no_sse_memcpy(preload_result, result[i1], block_size);
                         // #pragma GCC unroll 64
                         for (int jx = 0; jx < block_size; ++jx) {
                             preload_result[jx] += r1 * preload_matrix2[jx];
                         }
-                        memcpy(result[i1] + j, preload_result, block_size);  //why is memcpy so fast....
+                        no_sse_memcpy(result[i1] + j, preload_result, block_size);  //why is memcpy so fast....okay it uses SIMD...FUCK
                         // #pragma GCC unroll 64
                         // for (int j1 = j; j1 < j+block_size; ++j1) {
                         //     // result[i1][j1] = preload_result[j1-j] + r1 * preload_matrix2[j1-j];  
@@ -116,47 +124,52 @@ void inline ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix
     }
 }
 
-// void inline kij_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result, int block_size) {
-//     for (int k = 0; k < K; k+=block_size) {
-//         for (int i = 0; i < N; i+=block_size) {
-//             // int zeroload_result[block_size * block_size];
-//             // preload_block(zeroload_result, result[i]+j, block_size);
-//             for (int j = 0; j < K; j+=block_size) {
+void inline ijk_ikj_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result, int block_size) {
+    for (int i = 0; i < M; i+=block_size) {
+        for (int j = 0; j < N; j+=block_size) {
+            // int zeroload_result[block_size * block_size];
+            // preload_block(zeroload_result, result[i]+j, block_size);
+            for (int k = 0; k < K; k+=block_size) {
                 
-//                 // register int zeroload_matrix1[block_size * block_size];
-//                 // preload_block(zeroload_matrix1, matrix1, i, k, block_size);
-//                 // register int zeroload_matrix2[block_size * block_size];
-//                 // preload_block(zeroload_matrix2, matrix2, k, j, block_size);
+                // register int zeroload_matrix1[block_size * block_size];
+                // preload_block(zeroload_matrix1, matrix1, i, k, block_size);
+                // register int zeroload_matrix2[block_size * block_size];
+                // preload_block(zeroload_matrix2, matrix2, k, j, block_size);
 
-//                 //------------------kernel----------------------------
-//                 // #pragma GCC unroll 64
-//                 for (int k1 = k; k1 < k+block_size; ++k1) {
-//                     // #pragma GCC unroll 64
-//                     register int preload_matrix2[block_size];
-//                     // memcpy(preload_matrix2, zeroload_matrix2 + ((k1 - k)*block_size), block_size);
-//                     memcpy(preload_matrix2, matrix2[k1], block_size);
+                //------------------kernel----------------------------
+                // #pragma GCC unroll 64
+                int preload_matrix2[block_size];
+                int preload_result[block_size];
+                for (int i1 = i; i1 < i+block_size; ++i1) {
+                    // #pragma GCC unroll 64
+                    no_sse_memcpy(preload_result, result[i1], block_size);
+                    // memcpy(preload_matrix2, zeroload_matrix2 + ((k1 - k)*block_size), block_size);
 
-//                     for (int i1 = i; i1 < i+block_size; ++i1) {
-                        
-//                         // register int r1 = *(zeroload_matrix1+(i1 - i)*block_size+(k1-k));
-//                         register int r1 = matrix1[i1][k1];
+                    for (int k1 = k; k1 < k+block_size; ++k1) {
 
-//                         // register int preload_result[block_size];
-//                         // memcpy(preload_result, result[i1], block_size);
-//                         // #pragma GCC unroll 64
-//                         for (int j1 = j; j1 < j+block_size; ++j1) {
-//                             // result[i1][j1] = preload_result[j1-j] + r1 * preload_matrix2[j1-j];  
-//                             result[i1][j1] += r1 * preload_matrix2[j1-j];  
-//                         }
+                        no_sse_memcpy(preload_matrix2, matrix2[k1], block_size);
+                        // register int r1 = *(zeroload_matrix1+(i1 - i)*block_size+(k1-k));
+                        register int r1 = matrix1[i1][k1];
+                        // #pragma GCC unroll 64
+                        for (int jx = 0; jx < block_size; ++jx) {
+                            preload_result[jx] += r1 * preload_matrix2[jx];
+                        }
+                        no_sse_memcpy(result[i1] + j, preload_result, block_size);  //why is memcpy so fast....okay it uses SIMD...FUCK
+                        // #pragma GCC unroll 64
+                        // for (int j1 = j; j1 < j+block_size; ++j1) {
+                        //     // result[i1][j1] = preload_result[j1-j] + r1 * preload_matrix2[j1-j];  
+                        //     result[i1][j1] = preload_result[j1-j];  
+                        // }
 
-//                     }
-//                 }
-//                 //------------------kernel----------------------------
+                    }
+                }
+                //------------------kernel----------------------------
 
-//             }
-//         }
-//     }
-// }
+            }
+        }
+    }
+}
+
 
 Matrix matrix_multiply_locality(const Matrix& matrix1, const Matrix& matrix2) {
     if (matrix1.getCols() != matrix2.getRows()) {
@@ -182,8 +195,11 @@ Matrix matrix_multiply_locality(const Matrix& matrix1, const Matrix& matrix2) {
     // kij_tmm(M, N, K, matrix1, matrix2, result, 4);       // kij 1024*1024:5275ms; 
 
     // ijk_kij_tmm(M, N, K, matrix1, matrix2, result, 32);     // ijk_kij 1024:3693ms; 
-    ijk_kij_tmm(M, N, K, matrix1, matrix2, result, 64);     // ijk_kij 1024:3674ms; preload1024:1983ms;
+    ijk_kij_tmm(M, N, K, matrix1, matrix2, result, 64);     // ijk_kij 1024:3674ms; preload1024:1983ms; betterpreload:1652ms;
     // ijk_kij_tmm(M, N, K, matrix1, matrix2, result, 128);    // ijk_kij 1024:4571ms; 
+    
+    // ijk_ikj_tmm(M, N, K, matrix1, matrix2, result, 64);    // ijk_kij 1024:2256; 
+
 
     // Your Code Here!
     // Optimizing Matrix Multiplication 
