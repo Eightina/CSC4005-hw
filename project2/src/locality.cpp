@@ -83,9 +83,11 @@ void inline ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix
 
                 //------------------kernel----------------------------
                 // #pragma GCC unroll 64
+                int preload_matrix2[block_size];
+                int preload_result[block_size];
                 for (int k1 = k; k1 < k+block_size; ++k1) {
                     // #pragma GCC unroll 64
-                    int preload_matrix2[block_size];
+
                     // memcpy(preload_matrix2, zeroload_matrix2 + ((k1 - k)*block_size), block_size);
                     memcpy(preload_matrix2, matrix2[k1], block_size);
 
@@ -93,8 +95,6 @@ void inline ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix
                         
                         // register int r1 = *(zeroload_matrix1+(i1 - i)*block_size+(k1-k));
                         register int r1 = matrix1[i1][k1];
-
-                        int preload_result[block_size];
                         memcpy(preload_result, result[i1], block_size);
                         // #pragma GCC unroll 64
                         for (int jx = 0; jx < block_size; ++jx) {

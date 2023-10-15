@@ -1,5 +1,7 @@
 Memory Locality Matrix Multiplication (Optimized with -O2)
 Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
-Execution Time: 907 milliseconds
+Execution Time: 901 milliseconds
+[ perf record: Woken up 2 times to write data ]
+[ perf record: Captured and wrote 0.416 MB /nfsmnt/223040076/coursecode/project2/src/../perf/locality.data (5397 samples) ]
 

@@ -21,7 +21,7 @@ target_compile_options(naive PRIVATE -O2)
 add_executable(locality
         locality.cpp
         matrix.cpp matrix.hpp)
-target_compile_options(locality PRIVATE -O2)
+target_compile_options(locality PRIVATE -O2 -fno-strict-aliasing)
 
 ## SIMD Vectorization (AVX2)
 add_executable(simd
