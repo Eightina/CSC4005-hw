@@ -22,6 +22,8 @@ add_executable(locality
         locality.cpp
         matrix.cpp matrix.hpp)
 target_compile_options(locality PRIVATE -O2 -fno-strict-aliasing)
+# target_compile_options(locality PRIVATE -O2 -ftree-loop-vectorize -ftree-slp-vectorize -fno-strict-aliasing)
+# target_compile_options(locality PRIVATE -O3)
 
 ## SIMD Vectorization (AVX2)
 add_executable(simd

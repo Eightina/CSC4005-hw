@@ -10,10 +10,20 @@
 #include "matrix.hpp"
 #include <string.h>
 
-void inline no_sse_memcpy(int *__restrict dst, const int *src, int block_size) {
+// void inline no_sse_memcpy(int *__restrict dst, const int *src, int block_size) {
+//     // #pragma GCC unroll 64
+//     for (int i = 0; i < block_size; ++i) {
+//         dst[i] = src[i];
+//     }
+// }
+
+void inline no_sse_memcpy(void* __restrict dst, const void* __restrict src, int block_size) {
     // #pragma GCC unroll 64
+    long long *d_dst = (long long*)dst; 
+    long long *d_src = (long long*)src; 
+    block_size /= 2;
     for (int i = 0; i < block_size; ++i) {
-        dst[i] = src[i];
+        d_dst[i] = d_src[i];
     }
 }
 
@@ -27,54 +37,54 @@ void inline preload_block(int *__restrict dst, const Matrix& src, int src_row, i
     }
 }
 
-void inline kij_mm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result) {
-    for (int k = 0; k < K; ++k) {
-        for (int i = 0; i < M; ++i) {
-            int r = matrix1[i][k];
-            for (int j = 0; j < N; ++j) {
-                result[i][j] += r * matrix2[k][j];  
-            }
-        }
-    }
-}
+// void inline kij_mm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result) {
+//     for (int k = 0; k < K; ++k) {
+//         for (int i = 0; i < M; ++i) {
+//             int r = matrix1[i][k];
+//             for (int j = 0; j < N; ++j) {
+//                 result[i][j] += r * matrix2[k][j];  
+//             }
+//         }
+//     }
+// }
 
-void inline ijk_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result, int block_size) {
-    for (int i = 0; i < M; i+=block_size) {
-        for (int j = 0; j < N; j+=block_size) {
-            for (int k = 0; k < K; k+=block_size) {
+// void inline ijk_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result, int block_size) {
+//     for (int i = 0; i < M; i+=block_size) {
+//         for (int j = 0; j < N; j+=block_size) {
+//             for (int k = 0; k < K; k+=block_size) {
                 
-                for (int i1 = i; i1 < i+block_size; ++i1) {
-                    for (int j1 = j; j1 < j+block_size; ++j1) {
-                        for (int k1= k; k1 < k+block_size; ++k1) {
-                            result[i1][j1] += matrix1[i1][k1] * matrix2[k1][j1];
-                        }
-                    }
-                }
+//                 for (int i1 = i; i1 < i+block_size; ++i1) {
+//                     for (int j1 = j; j1 < j+block_size; ++j1) {
+//                         for (int k1= k; k1 < k+block_size; ++k1) {
+//                             result[i1][j1] += matrix1[i1][k1] * matrix2[k1][j1];
+//                         }
+//                     }
+//                 }
 
-            }
-        }
-    }
-}
+//             }
+//         }
+//     }
+// }
 
-void inline kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result, int block_size) {
-    for (int k = 0; k < K; k+=block_size) {
-        for (int i = 0; i < M; i+=block_size) {
-            // int r = matrix1[i][k];
-            for (int j = 0; j < N; j+=block_size) {
+// void inline kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result, int block_size) {
+//     for (int k = 0; k < K; k+=block_size) {
+//         for (int i = 0; i < M; i+=block_size) {
+//             // int r = matrix1[i][k];
+//             for (int j = 0; j < N; j+=block_size) {
 
-                for (int k1 = k; k1 < k+block_size; ++k1) {
-                    for (int i1 = i; i1 < i+block_size; ++i1) {
-                        int r1 = matrix1[i1][k1];
-                        for (int j1 = j; j1 < j+block_size; ++j1) {
-                            result[i1][j1] += r1 * matrix2[k1][j1];  
-                        }
-                    }
-                }
+//                 for (int k1 = k; k1 < k+block_size; ++k1) {
+//                     for (int i1 = i; i1 < i+block_size; ++i1) {
+//                         int r1 = matrix1[i1][k1];
+//                         for (int j1 = j; j1 < j+block_size; ++j1) {
+//                             result[i1][j1] += r1 * matrix2[k1][j1];  
+//                         }
+//                     }
+//                 }
 
-            }
-        }
-    }
-}
+//             }
+//         }
+//     }
+// }
 
 
 void inline ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result, int block_size) {
