@@ -35,16 +35,16 @@ void inline preload_block(int *__restrict dst, const Matrix& src, int src_row, i
 
 void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result, int block_size) {
     // int preload_matrix2[block_size];
-    int* preload_matrix2 = (int*)aligned_alloc(32, block_size * sizeof(int));
+    int* preload_matrix2 = (int*)aligned_alloc(64, block_size * sizeof(int));
     // int zeroload_matrix1[block_size * block_size];
-    int* zeroload_matrix1 = (int*)aligned_alloc(32, block_size * block_size * sizeof(int));
+    int* zeroload_matrix1 = (int*)aligned_alloc(64, block_size * block_size * sizeof(int));
 
 
 
     for (int i = 0; i < M; i+=block_size) {
         for (int j = 0; j < N; j+=block_size) {
             // int kernel_result[block_size * (block_size + 8)] = {};
-            int* kernel_result = (int*)aligned_alloc(32, block_size * block_size * sizeof(int));
+            int* kernel_result = (int*)aligned_alloc(64, block_size * block_size * sizeof(int));
             for (int k = 0; k < K; k+=block_size) {
 
                 //------------------kernel----------------------------
@@ -58,11 +58,19 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
                     for (int i1 = i; i1 < i+block_size; ++i1) {
                         const int temp_loc = (i1 - i) * block_size;
                         const int r1_iter_loc = temp_loc + (k1 - k);
-                        register int r1 = *(zeroload_matrix1 + r1_iter_loc);
+                        // register int r1 = *(zeroload_matrix1 + r1_iter_loc);
+                        // register __m512i r1 = _mm512_load_epi32(zeroload_matrix1 + r1_iter_loc);
+                        register __m512i r1 = _mm512_set1_epi32(*(zeroload_matrix1 + r1_iter_loc));
                         // #pragma GCC unroll 16
-
-                        for (int j1 = j; j1 < j + block_size; ++j1) {
-                            kernel_result[temp_loc + j1-j] += r1 * preload_matrix2[j1-j];  
+                        
+                        const int avxed_lim = block_size / 16;
+                        for (int j1 = j; j1 < j + avxed_lim; j1 += 16) {
+                            // kernel_result[temp_loc + j1 - j] += r1 * preload_matrix2[j1-j];
+                            __m512i kernel_res_512 = _mm512_load_epi32(kernel_result + temp_loc + j1 - j);  
+                            __m512i matrix2_512 = _mm512_load_epi32(preload_matrix2 + j1 - j);
+                            __m512i mul_res = _mm512_mul_epi32(r1, matrix2_512);
+                            kernel_res_512 = _mm512_add_epi32(kernel_res_512, mul_res);
+                            _mm512_store_epi32(kernel_result + temp_loc + j1 - j, kernel_res_512);
                         }
                     }
                 }

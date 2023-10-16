@@ -1,5 +1,5 @@
 SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)
 Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
-Execution Time: 161 milliseconds
+Execution Time: 56 milliseconds
 
