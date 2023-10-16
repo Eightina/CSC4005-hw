@@ -18,7 +18,8 @@ Matrix::Matrix(size_t rows, size_t cols) : rows(rows), cols(cols) {
     data = new int*[rows];
     for (size_t i = 0; i < rows; ++i) {
         // +8 for SIMD convenience
-        data[i] = new int[cols + 8];
+        // data[i] = new int[cols + 8];
+        data[i] = (int*)aligned_alloc(1024, (cols + 8) * sizeof(int));
         memset(data[i], 0, cols * sizeof(int));
     }
 }
