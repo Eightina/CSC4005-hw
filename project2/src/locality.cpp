@@ -214,7 +214,7 @@ Matrix matrix_multiply_locality(const Matrix& matrix1, const Matrix& matrix2) {
 
     ijk_kij_tmm(M, N, K, matrix1, matrix2, result, 64);     
     // ijk_kij 1024:3674ms; preload1024:1983ms; betterpreload:1652ms; load_res_block:829ms; 
-    // load_res&mat1_block:790ms; +eliminate_useless_inits:774ms;
+    // load_res&mat1_block:790ms; +eliminate_useless_inits:774ms; 64_load+mem_align:769ms
 
     // ijk_ijk_tmm(M, N, K, matrix1, matrix2, result, 64);    // ijk_kij 1024:4571ms; 
     
