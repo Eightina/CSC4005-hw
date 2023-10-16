@@ -14,8 +14,8 @@
 
 void inline avx_memcpy(void* __restrict dst, const void* __restrict src, int block_size) {
     // #pragma GCC unroll 64
-    __m256i *d_dst = static_cast<__m256i*>(dst); // memory not aligned? 512 gets segmentation fault
-    __m256i *d_src = static_cast<__m256i*>(const_cast<void*>(src)); 
+    __m256i *d_dst = (__m256i*)dst; // memory not aligned? 512 gets segmentation fault
+    __m256i *d_src = (__m256i*)src; 
     block_size /= 8;
     for (int i = 0; i < block_size; ++i) {
         d_dst[i] = d_src[i];
@@ -35,16 +35,16 @@ void inline preload_block(int *__restrict dst, const Matrix& src, int src_row, i
 
 void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result, int block_size) {
     // int preload_matrix2[block_size];
-    int* preload_matrix2 = (int*)aligned_alloc(256, block_size * sizeof(int));
+    int* preload_matrix2 = (int*)aligned_alloc(32, block_size * sizeof(int));
     // int zeroload_matrix1[block_size * block_size];
-    int* zeroload_matrix1 = (int*)aligned_alloc(256, block_size * block_size * sizeof(int));
+    int* zeroload_matrix1 = (int*)aligned_alloc(32, block_size * block_size * sizeof(int));
 
 
 
     for (int i = 0; i < M; i+=block_size) {
         for (int j = 0; j < N; j+=block_size) {
             // int kernel_result[block_size * (block_size + 8)] = {};
-            int* kernel_result = (int*)aligned_alloc(256, block_size * block_size * sizeof(int));
+            int* kernel_result = (int*)aligned_alloc(32, block_size * block_size * sizeof(int));
             for (int k = 0; k < K; k+=block_size) {
 
                 //------------------kernel----------------------------
@@ -53,6 +53,7 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
                 for (int k1 = k; k1 < k+block_size; ++k1) {
                     // #pragma GCC unroll 64
                     avx_memcpy(preload_matrix2, matrix2[k1], block_size);
+                    // memcpy(preload_matrix2, matrix2[k1], block_size);
 
                     for (int i1 = i; i1 < i+block_size; ++i1) {
                         const int temp_loc = (i1 - i) * block_size;
@@ -71,6 +72,7 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
 
             for (int row = 0; row < block_size; ++row) {
                 avx_memcpy(result[i + row] + j, &kernel_result[row * block_size], block_size);
+                // memcpy(result[i + row] + j, &kernel_result[row * block_size], block_size);
             }
 
         }

@@ -30,8 +30,8 @@ add_executable(simd
         simd.cpp
         matrix.cpp matrix.hpp)
 # target_compile_options(simd PRIVATE -O2 -mavx2)
-target_compile_options(simd PRIVATE -O2 -mavx512f)
-# target_compile_options(simd PRIVATE -O2 -mavx512f -ftree-loop-vectorize -ftree-slp-vectorize -fno-strict-aliasing)
+# target_compile_options(simd PRIVATE -O2 -mavx512f -fno-strict-aliasing)
+target_compile_options(simd PRIVATE -O2 -mavx512f -ftree-loop-vectorize -ftree-slp-vectorize -fno-strict-aliasing)
 # target_compile_options(simd PRIVATE -O3 -mavx512f)
 
 ## OpenMP

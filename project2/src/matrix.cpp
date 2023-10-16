@@ -19,7 +19,7 @@ Matrix::Matrix(size_t rows, size_t cols) : rows(rows), cols(cols) {
     for (size_t i = 0; i < rows; ++i) {
         // +8 for SIMD convenience
         // data[i] = new int[cols + 8];
-        data[i] = (int*)aligned_alloc(1024, (cols + 8) * sizeof(int));
+        data[i] = (int*)aligned_alloc(32, (cols) * sizeof(int));
         memset(data[i], 0, cols * sizeof(int));
     }
 }
