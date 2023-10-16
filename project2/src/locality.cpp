@@ -88,32 +88,35 @@ void inline preload_block(int *__restrict dst, const Matrix& src, int src_row, i
 
 
 void inline ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result, int block_size) {
-    int preload_matrix2[block_size];
+    // int preload_matrix2[block_size];
     int zeroload_matrix1[block_size * block_size];
+    int zeroload_matrix2[block_size * block_size];
+
 
     for (int i = 0; i < M; i+=block_size) {
         for (int j = 0; j < N; j+=block_size) {
             int kernel_result[block_size * block_size] = {};
             for (int k = 0; k < K; k+=block_size) {
 
-                // int zeroload_matrix2[block_size * block_size];
-                // preload_block(zeroload_matrix2, matrix2, k, j, block_size);
 
                 //------------------kernel----------------------------
 
                 preload_block(zeroload_matrix1, matrix1, i, k, block_size);
+                preload_block(zeroload_matrix2, matrix2, k, j, block_size);
+
                 // int preload_result[block_size];
                 // #pragma GCC unroll 64
                 for (int k1 = k; k1 < k+block_size; ++k1) {
+                    const int temp_kloc = (k1 - k) * block_size;  
                     // #pragma GCC unroll 64
 
                     // memcpy(preload_matrix2, zeroload_matrix2 + ((k1 - k)*block_size), block_size);
-                    no_sse_memcpy(preload_matrix2, matrix2[k1], block_size);
+                    // no_sse_memcpy(preload_matrix2, matrix2[k1] + j, block_size);
                     // no_sse_memcpy(preload_matrix2, &zeroload_matrix2[(k1 - k)*block_size], block_size);
 
                     for (int i1 = i; i1 < i+block_size; ++i1) {
-                        const int temp_loc = (i1 - i) * block_size;
-                        const int r1_iter_loc = temp_loc + (k1 - k);
+                        const int temp_iloc = (i1 - i) * block_size;
+                        const int r1_iter_loc = temp_iloc + (k1 - k);
                         register int r1 = *(zeroload_matrix1 + r1_iter_loc);
                         // register int r1 = matrix1[i1][k1];
                         // no_sse_memcpy(preload_result, result[i1], block_size);
@@ -128,8 +131,8 @@ void inline ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix
                         for (int j1 = j; j1 < j + block_size; ++j1) {
                             // result[i1][j1] += r1 * preload_matrix2[j1-j];  
 
-                            kernel_result[temp_loc + j1-j] += r1 * preload_matrix2[j1-j];  
-                            // kernel_result[temp_loc + j1-j] += r1 * zeroload_matrix2[temp_loc + j1-j];  
+                            // kernel_result[temp_loc + j1-j] += r1 * preload_matrix2[j1-j];
+                            kernel_result[temp_iloc + j1-j] += r1 * zeroload_matrix2[temp_kloc + j1 - j];  
                             // result[i1][j1] = preload_result[j1-j];  
                         }
 
