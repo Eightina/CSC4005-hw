@@ -1,10 +1,3 @@
-//
-// Created by Yang Yufan on 2023/10/07.
-// Email: yufanyang1@link.cuhk.edu.cn
-//
-// Reordering Matrix Multiplication
-//
-
 #include <stdexcept>
 #include <chrono>
 #include "matrix.hpp"

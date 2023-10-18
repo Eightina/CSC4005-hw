@@ -39,7 +39,9 @@ target_compile_options(simd PRIVATE -O2 -mavx512f -ftree-loop-vectorize -ftree-s
 add_executable(openmp
         openmp.cpp
         matrix.cpp matrix.hpp)
-target_compile_options(openmp PRIVATE -O2 -fopenmp -mavx2)
+# target_compile_options(openmp PRIVATE -O2 -mavx512f -fopenmp)
+target_compile_options(openmp PRIVATE -O2 -fopenmp -mavx512f -ftree-loop-vectorize -ftree-slp-vectorize -fno-strict-aliasing -ffast-math)
+# target_compile_options(openmp PRIVATE -O3 -fopenmp -mavx512f -fno-strict-aliasing)
 target_include_directories(openmp PRIVATE ${OpenMP_CXX_INCLUDE_DIRS})
 target_link_libraries(openmp PRIVATE ${OpenMP_CXX_LIBRARIES})
 

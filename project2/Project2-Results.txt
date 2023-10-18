@@ -1,4 +1,31 @@
-
+OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)
+Number of cores: 1
 Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
-Execution Time: 118 milliseconds
+Execution Time: 126 milliseconds
+
+Number of cores: 2
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 123 milliseconds
+
+Number of cores: 4
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 70 milliseconds
+
+Number of cores: 8
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 43 milliseconds
+
+Number of cores: 16
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 50 milliseconds
+
+Number of cores: 32
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 50 milliseconds
+

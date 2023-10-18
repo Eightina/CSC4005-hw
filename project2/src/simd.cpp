@@ -1,10 +1,3 @@
-//
-// Created by Yang Yufan on 2023/10/07.
-// Email: yufanyang1@link.cuhk.edu.cn
-//
-// SIMD + Reordering Matrix Multiplication
-//
-
 #include <immintrin.h>
 #include <string.h>
 #include <memory>
@@ -72,7 +65,7 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
                             // kernel_result[temp_loc + j1 - j] += r1 * preload_matrix2[j1-j];
                             __m512i kernel_res_512 = _mm512_load_epi32(kernel_result + temp_iloc + j1 - j);  
                             __m512i matrix2_512 = _mm512_load_epi32(zeroload_matrix2 + temp_kloc + j1 - j);
-                            __m512i mul_res = _mm512_mullo_epi32(r1, matrix2_512);
+                            __m512i mul_res = _mm512_mullo_epi32(r1, matrix2_512); // dont use _mul_epi :(
                             kernel_res_512 = _mm512_add_epi32(kernel_res_512, mul_res);
                             _mm512_store_epi32(kernel_result + temp_iloc + j1 - j, kernel_res_512);
                         }
