@@ -49,6 +49,9 @@ target_link_libraries(openmp PRIVATE ${OpenMP_CXX_LIBRARIES})
 add_executable(mpi
         mpi.cpp
         matrix.cpp matrix.hpp)
-target_compile_options(mpi PRIVATE -O2 -fopenmp -mavx2)
+# target_compile_options(mpi PRIVATE -O2 -fopenmp -mavx2)
+# target_compile_options(mpi PRIVATE -O0 -fopenmp -mavx512f)
+target_compile_options(mpi PRIVATE -O2 -fopenmp -mavx512f)
+# target_compile_options(mpi PRIVATE -O2 -fopenmp -mavx512f -ftree-loop-vectorize -ftree-slp-vectorize -fno-strict-aliasing -ffast-math)
 target_include_directories(mpi PRIVATE ${MPI_CXX_INCLUDE_DIRS} ${OpenMP_CXX_INCLUDE_DIRS})
 target_link_libraries(mpi ${MPI_LIBRARIES} ${OpenMP_CXX_LIBRARIES})
