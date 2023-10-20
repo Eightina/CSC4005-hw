@@ -45,37 +45,68 @@ void inline preload_block(int *__restrict dst, const Matrix& src, int src_row,
     }
 }
 
-void inline avx512_kernel(int k, int i, int j, int* zeroload_matrix1, int* zeroload_matrix2, int* kernel_result,
+// void inline avx512_kernel(int k, int i, int j, int* zeroload_matrix1, int* zeroload_matrix2, int* kernel_result,
+//                         int block_size_k, int block_size_i, int block_size_j) {
+                            
+//     for (int k1 = k; k1 < k + block_size_k; ++k1) {
+//         const int temp_kloc = (k1 - k) * block_size_j;  
+//         for (int i1 = i; i1 < i+block_size_i; ++i1) {
+//             const int rest = block_size_j % 16;
+//             const int r1_iter_loc = (i1 - i) * block_size_k + (k1 - k);
+//             register __m512i r1 = _mm512_set1_epi32(*(zeroload_matrix1 + r1_iter_loc));
+
+//             const int result_iter_loc = (i1 - i) * block_size_j;
+//             int j1;
+//             for (j1 = j; j1 < j + block_size_j; j1 += 16) {
+//                 // kernel_result[temp_loc + j1 - j] += r1 * preload_matrix2[j1-j];
+//                 __m512i kernel_res_512 = _mm512_load_epi32(kernel_result + result_iter_loc + j1 - j);  
+//                 __m512i matrix2_512 = _mm512_load_epi32(zeroload_matrix2 + temp_kloc + j1 - j);
+//                 __m512i mul_res = _mm512_mullo_epi32(r1, matrix2_512); // dont use _mul_epi :(
+//                 kernel_res_512 = _mm512_add_epi32(kernel_res_512, mul_res);
+//                 _mm512_store_epi32(kernel_result + result_iter_loc + j1 - j, kernel_res_512);
+//             }
+//             if (rest) {
+//                 j1 -= 16;
+//                 for (; j1 < j + block_size_j; ++j1) {
+//                     kernel_result[result_iter_loc + j1 - j] += r1[0] * zeroload_matrix2[temp_kloc + j1 - j];  
+//                 }
+//             }
+            
+            
+//         }
+//     }
+// }
+
+void inline avx256_kernel(int k, int i, int j, int* zeroload_matrix1, int* zeroload_matrix2, int* kernel_result,
                         int block_size_k, int block_size_i, int block_size_j) {
                             
     for (int k1 = k; k1 < k + block_size_k; ++k1) {
         const int temp_kloc = (k1 - k) * block_size_j;  
         for (int i1 = i; i1 < i+block_size_i; ++i1) {
-            const int rest = block_size_j % 16;
+            const int rest = block_size_j % 8;
             const int r1_iter_loc = (i1 - i) * block_size_k + (k1 - k);
-            register __m512i r1 = _mm512_set1_epi32(*(zeroload_matrix1 + r1_iter_loc));
+            register __m256i r1 = _mm256_set1_epi32(*(zeroload_matrix1 + r1_iter_loc));
 
             const int result_iter_loc = (i1 - i) * block_size_j;
             int j1;
-            for (j1 = j; j1 < j + block_size_j; j1 += 16) {
+            for (j1 = j; j1 + 8 <= j + block_size_j; j1 += 8) {
                 // kernel_result[temp_loc + j1 - j] += r1 * preload_matrix2[j1-j];
-                __m512i kernel_res_512 = _mm512_load_epi32(kernel_result + result_iter_loc + j1 - j);  
-                __m512i matrix2_512 = _mm512_load_epi32(zeroload_matrix2 + temp_kloc + j1 - j);
-                __m512i mul_res = _mm512_mullo_epi32(r1, matrix2_512); // dont use _mul_epi :(
-                kernel_res_512 = _mm512_add_epi32(kernel_res_512, mul_res);
-                _mm512_store_epi32(kernel_result + result_iter_loc + j1 - j, kernel_res_512);
+                __m256i kernel_res_256 = _mm256_lddqu_si256((__m256i*)(kernel_result + result_iter_loc + j1 - j));  
+                __m256i matrix2_256 = _mm256_lddqu_si256((__m256i*)(zeroload_matrix2 + temp_kloc + j1 - j));
+                __m256i mul_res = _mm256_mullo_epi32(r1, matrix2_256); // dont use _mul_epi :(
+                kernel_res_256 = _mm256_add_epi32(kernel_res_256, mul_res);
+                _mm256_storeu_si256((__m256i*)(kernel_result + result_iter_loc + j1 - j), kernel_res_256);
             }
             if (rest) {
-                j1 -= 16;
                 for (; j1 < j + block_size_j; ++j1) {
                     kernel_result[result_iter_loc + j1 - j] += r1[0] * zeroload_matrix2[temp_kloc + j1 - j];  
                 }
             }
             
-            
         }
     }
 }
+
 
 void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result) {
     printf("M:%d, N:%d, K:%d\n", M, N, K);
@@ -125,7 +156,7 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
                 preload_block(zeroload_matrix2, matrix2, k, j, block_size_k, block_size_j);
                 
                 //------------------kernel----------------------------
-                avx512_kernel(k, i, j, zeroload_matrix1, zeroload_matrix2, kernel_result,
+                avx256_kernel(k, i, j, zeroload_matrix1, zeroload_matrix2, kernel_result,
                                 block_size_k, block_size_i, block_size_j);
                 //------------------kernel----------------------------
 

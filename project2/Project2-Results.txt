@@ -1,3 +1,12 @@
 SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)
-srun: error: node32: task 0: Segmentation fault (core dumped)
+M:1024, N:1024, K:1024
+blk_M:64, blk_N:64, blk_K:64
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 212 milliseconds
+M:1145, N:810, K:1919
+blk_M:64, blk_N:64, blk_K:64
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result_g.txt
+Multiplication Complete!
+Execution Time: 353 milliseconds
 
