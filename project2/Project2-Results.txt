@@ -1,12 +1,37 @@
 SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)
-M:1024, N:1024, K:1024
-blk_M:64, blk_N:64, blk_K:64
-Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+M:1, N:1, K:100
+blk_M:1, blk_N:1, blk_K:64
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result_a.txt
 Multiplication Complete!
-Execution Time: 212 milliseconds
+Execution Time: 0 milliseconds
+M:2, N:2, K:100
+blk_M:1, blk_N:1, blk_K:64
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result_b.txt
+Multiplication Complete!
+Execution Time: 0 milliseconds
+M:100, N:100, K:1
+blk_M:64, blk_N:64, blk_K:1
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result_c.txt
+Multiplication Complete!
+Execution Time: 0 milliseconds
+M:100, N:100, K:2
+blk_M:64, blk_N:64, blk_K:1
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result_d.txt
+Multiplication Complete!
+Execution Time: 0 milliseconds
+M:1023, N:1011, K:1022
+blk_M:64, blk_N:64, blk_K:64
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result_e.txt
+Multiplication Complete!
+Execution Time: 211 milliseconds
+M:127, N:120, K:129
+blk_M:64, blk_N:64, blk_K:64
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result_f.txt
+Multiplication Complete!
+Execution Time: 0 milliseconds
 M:1145, N:810, K:1919
 blk_M:64, blk_N:64, blk_K:64
 Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result_g.txt
 Multiplication Complete!
-Execution Time: 353 milliseconds
+Execution Time: 354 milliseconds
 

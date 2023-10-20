@@ -29,7 +29,7 @@ CURRENT_DIR=$(pwd)/src
 # # srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/locality ${CURRENT_DIR}/../matrices/matrix7.txt ${CURRENT_DIR}/../matrices/matrix8.txt ${CURRENT_DIR}/../build/result.txt
 # srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/locality ${CURRENT_DIR}/../matrices/matrix_a0.txt ${CURRENT_DIR}/../matrices/matrix_a1.txt ${CURRENT_DIR}/../build/result_a.txt
 # srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/locality ${CURRENT_DIR}/../matrices/matrix_b0.txt ${CURRENT_DIR}/../matrices/matrix_b1.txt ${CURRENT_DIR}/../build/result_b.txt
-# srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/locality ${CURRENT_DIR}/../matrices/matrix_b0.txt ${CURRENT_DIR}/../matrices/matrix_c1.txt ${CURRENT_DIR}/../build/result_c.txt
+# srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/locality ${CURRENT_DIR}/../matrices/matrix_c0.txt ${CURRENT_DIR}/../matrices/matrix_c1.txt ${CURRENT_DIR}/../build/result_c.txt
 # srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/locality ${CURRENT_DIR}/../matrices/matrix_d0.txt ${CURRENT_DIR}/../matrices/matrix_d1.txt ${CURRENT_DIR}/../build/result_d.txt
 # srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/locality ${CURRENT_DIR}/../matrices/matrix_e0.txt ${CURRENT_DIR}/../matrices/matrix_e1.txt ${CURRENT_DIR}/../build/result_e.txt
 # srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/locality ${CURRENT_DIR}/../matrices/matrix_f0.txt ${CURRENT_DIR}/../matrices/matrix_f1.txt ${CURRENT_DIR}/../build/result_f.txt
@@ -38,8 +38,14 @@ CURRENT_DIR=$(pwd)/src
 
 # SIMD + Reordering
 echo "SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)"
-srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
+# srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
 # srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix7.txt ${CURRENT_DIR}/../matrices/matrix8.txt ${CURRENT_DIR}/../build/result.txt
+srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix_a0.txt ${CURRENT_DIR}/../matrices/matrix_a1.txt ${CURRENT_DIR}/../build/result_a.txt
+srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix_b0.txt ${CURRENT_DIR}/../matrices/matrix_b1.txt ${CURRENT_DIR}/../build/result_b.txt
+srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix_c0.txt ${CURRENT_DIR}/../matrices/matrix_c1.txt ${CURRENT_DIR}/../build/result_c.txt
+srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix_d0.txt ${CURRENT_DIR}/../matrices/matrix_d1.txt ${CURRENT_DIR}/../build/result_d.txt
+srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix_e0.txt ${CURRENT_DIR}/../matrices/matrix_e1.txt ${CURRENT_DIR}/../build/result_e.txt
+srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix_f0.txt ${CURRENT_DIR}/../matrices/matrix_f1.txt ${CURRENT_DIR}/../build/result_f.txt
 srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix_g0.txt ${CURRENT_DIR}/../matrices/matrix_g1.txt ${CURRENT_DIR}/../build/result_g.txt
 echo ""
 
