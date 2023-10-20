@@ -1,15 +1,3 @@
-Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/sample_result_bx.txt
-Multiplication Complete!
-Execution Time: 0 milliseconds
-Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/sample_result_cx.txt
-Multiplication Complete!
-Execution Time: 0 milliseconds
-Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/sample_result_dx.txt
-Multiplication Complete!
-Execution Time: 0 milliseconds
-Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/sample_result_ex.txt
-Multiplication Complete!
-Execution Time: 11787 milliseconds
-Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/sample_result_fx.txt
-Multiplication Complete!
-Execution Time: 19 milliseconds
+SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)
+srun: error: node32: task 0: Segmentation fault (core dumped)
+

@@ -36,11 +36,12 @@ CURRENT_DIR=$(pwd)/src
 # srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/locality ${CURRENT_DIR}/../matrices/matrix_g0.txt ${CURRENT_DIR}/../matrices/matrix_g1.txt ${CURRENT_DIR}/../build/result_g.txt
 # echo ""
 
-# # SIMD + Reordering
-# echo "SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)"
+# SIMD + Reordering
+echo "SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)"
 # srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
-# # srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix7.txt ${CURRENT_DIR}/../matrices/matrix8.txt ${CURRENT_DIR}/../build/result.txt
-# echo ""
+# srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix7.txt ${CURRENT_DIR}/../matrices/matrix8.txt ${CURRENT_DIR}/../build/result.txt
+srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix_g0.txt ${CURRENT_DIR}/../matrices/matrix_g1.txt ${CURRENT_DIR}/../build/result_g.txt
+echo ""
 
 # # # OpenMP + SIMD + Reordering
 # echo "OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)"

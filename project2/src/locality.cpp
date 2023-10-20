@@ -3,8 +3,6 @@
 #include "matrix.hpp"
 #include <string.h>
 
-
-
 int inline assign_block_size(int M) {   
     if (M >= 64) {
         return 64;
