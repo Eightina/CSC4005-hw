@@ -22,12 +22,13 @@ int inline assign_block_size(int M) {
 
 void inline no_sse_memcpy(void* __restrict dst, const void* __restrict src, int block_size_col) {
     // #pragma GCC unroll 64
-    long long *d_dst = (long long*)dst; 
-    long long *d_src = (long long*)src; 
-    block_size_col /= 2;
-    for (int i = 0; i < block_size_col; ++i) {
-        d_dst[i] = d_src[i];
-    }
+    memcpy(dst, src, block_size_col*sizeof(int));
+    // long long *d_dst = (long long*)dst; 
+    // long long *d_src = (long long*)src; 
+    // block_size_col /= 2;
+    // for (int i = 0; i < block_size_col; ++i) {
+    //     d_dst[i] = d_src[i];
+    // }
 }
 
 // void inline no_sse_memcpy32(int *__restrict dst, const int *src, int block_size) {
@@ -42,7 +43,10 @@ void inline load_block(int *__restrict dst, const Matrix& src, int src_row,
     // #pragma GCC unroll 64
     for (int i = 0; i < block_size_row; ++i) {
         // memcpy(dst, src[src_row]+src_col, block_size);
+        // no_sse_memcpy(dst, src[src_row]+src_col, block_size_col);
+        // printf("refering row:%d ...", src_row);
         no_sse_memcpy(dst, src[src_row]+src_col, block_size_col);
+        // printf("done\n");
         dst += block_size_col;
         src_row++;
     }
@@ -109,9 +113,13 @@ void inline load_block(int *__restrict dst, const Matrix& src, int src_row,
 
 
 void inline ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result) {
-    int block_size_i = assign_block_size(M);
-    int block_size_k = assign_block_size(K);
-    int block_size_j = assign_block_size(N);
+    printf("M:%d, N:%d, K:%d\n", M, N, K);
+    const int std_block_size_i = assign_block_size(M);
+    const int std_block_size_k = assign_block_size(K);
+    const int std_block_size_j = assign_block_size(N);
+    int block_size_i = std_block_size_i, block_size_j = std_block_size_j, block_size_k = std_block_size_k;
+    printf("blk_M:%d, blk_N:%d, blk_K:%d\n", block_size_i, block_size_j, block_size_k);
+
     // const int block_num_i = M / block_size_i;
     // const int block_num_k = K / block_size_k;
     // const int block_num_j = N / block_size_j;
@@ -121,23 +129,42 @@ void inline ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix
     const int block_range_i = M - i_res;
     const int block_range_k = K - k_res;
     const int block_range_j = N - j_res;
+    bool i_switch = false;
+    bool j_switch = false;
+    bool k_switch = false;
+
 
     int zeroload_matrix1[block_size_i * block_size_k];
     int zeroload_matrix2[block_size_k * block_size_j];
 
 
-    for (int i = 0; i < M; i+=block_size_i) {
-        if (i == block_range_i) block_size_i = i_res;
-        for (int j = 0; j < N; j+=block_size_j) {
-            if (j == block_range_j) block_size_j = j_res;
+    for (int i = 0; i <= block_range_i;) {
+        if (i == M) break;
+        if (i == block_range_i) {
+            block_size_i = i_res;
+            i_switch = true;
+        }
+        for (int j = 0; j <= block_range_j;) {
+            if (j == N) break;
+            if (j == block_range_j) {
+                block_size_j = j_res;
+                j_switch = true;
+            }
             int kernel_result[block_size_i * block_size_j] = {};
-            for (int k = 0; k < K; k+=block_size_k) {
-                if (k == block_range_k) block_size_k = k_res;
-
+            for (int k = 0; k <= block_range_k;) {
+                if (k == K) break;
+                if (k == block_range_k) {
+                    block_size_k = k_res;
+                    k_switch = true;
+                }
                 //------------------kernel----------------------------
-
+                // printf("load matrix1 block i:%d, k:%d i_size:%d, k_size:%d ...", i, k, block_size_i, block_size_k);
                 load_block(zeroload_matrix1, matrix1, i, k, block_size_i, block_size_k);
+                // printf("done\n");
+                // printf("load matrix2 block k:%d, j:%d k_size:%d, j_size:%d...", k, j, block_size_k, block_size_j);
                 load_block(zeroload_matrix2, matrix2, k, j, block_size_k, block_size_j);
+                // printf("done\n");
+
                 for (int k1 = k; k1 < k+block_size_k; ++k1) {
                     const int temp_kloc = (k1 - k) * block_size_j;  
                     for (int i1 = i; i1 < i+block_size_i; ++i1) {
@@ -155,10 +182,27 @@ void inline ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix
                     }
                 }
                 //------------------kernel----------------------------
+                k += block_size_k;
+                if (k_switch) {
+                    block_size_k = std_block_size_k;
+                    k_switch = false;
+                } 
             }
             for (int row = 0; row < block_size_i; ++row) {
+                // printf("store back result row:%d, col:%d ...", i + row, j);
                 no_sse_memcpy(result[i + row] + j, &kernel_result[row * block_size_j], block_size_j);
+                // printf("%d -> %d done\n", kernel_result[row * block_size_j], *(result[i + row] + j));
             }
+            j += block_size_j;
+            if (j_switch) {
+                block_size_j = std_block_size_j;
+                j_switch = false;
+            }
+        }
+        i += block_size_i;
+        if (i_switch) {
+            block_size_i = std_block_size_i;
+            i_switch = false;
         }
     }
 
