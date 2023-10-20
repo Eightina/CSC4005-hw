@@ -22,16 +22,21 @@ int inline assign_block_size(int M) {
 
 void inline no_sse_memcpy(void* __restrict dst, const void* __restrict src, int block_size_col) {
     // #pragma GCC unroll 64
-    memcpy(dst, src, block_size_col*sizeof(int));
-    // long long *d_dst = (long long*)dst; 
-    // long long *d_src = (long long*)src; 
-    // block_size_col /= 2;
-    // for (int i = 0; i < block_size_col; ++i) {
-    //     d_dst[i] = d_src[i];
-    // }
+    // memcpy(dst, src, block_size_col*sizeof(int));
+    bool odd = block_size_col % 2;
+    long long *d_dst = (long long*)dst; 
+    long long *d_src = (long long*)src; 
+    block_size_col /= 2;
+    int i;
+    for (i = 0; i < block_size_col; ++i) {
+        d_dst[i] = d_src[i];
+    }
+    if (odd) {
+        ((int*)dst)[2*block_size_col] = ((int*)src)[2*block_size_col];
+    }
 }
 
-// void inline no_sse_memcpy32(int *__restrict dst, const int *src, int block_size) {
+// void inline no_sse_memcpy(int *__restrict dst, const int *src, int block_size) {
 //     // #pragma GCC unroll 64
 //     for (int i = 0; i < block_size; ++i) {
 //         dst[i] = src[i];
