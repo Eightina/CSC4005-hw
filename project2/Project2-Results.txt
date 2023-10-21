@@ -1,14 +1,8 @@
-Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/sample_result_hx.txt
+MPI + OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)
+Number of Processes: 16, Number of Threads: 2
+row_split: 1
+0 i_cuts:0 1 2 
+0 j_cuts:0 0 0 
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result_b.txt
 Multiplication Complete!
-Execution Time: 0 milliseconds
-OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)
-Number of cores: 1
-Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result_h.txt
-Multiplication Complete!
-Execution Time: 0 milliseconds
-
-Number of cores: 32
-Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result_h.txt
-Multiplication Complete!
-Execution Time: 5 milliseconds
-
+Execution Time: 3 milliseconds

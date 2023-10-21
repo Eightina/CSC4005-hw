@@ -88,7 +88,7 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
     int id = omp_get_thread_num();
 
     const int std_block_size_i = assign_block_size(row_cuts[id+1] - row_cuts[id]);
-    if (std_block_size_i == 0) return;
+    // if (std_block_size_i == 0) return;
     const int std_block_size_k = assign_block_size(K);
     const int std_block_size_j = assign_block_size(N);
     // printf("blk_M:%d, blk_N:%d, blk_K:%d\n", block_size_i, block_size_j, block_size_k);
