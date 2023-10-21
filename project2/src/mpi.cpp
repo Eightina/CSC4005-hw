@@ -17,6 +17,21 @@
 #define MASTER 0
 #define TAG_GATHER 0
 
+int inline assign_block_size(int M) {   
+    if (M >= 64) {
+        return 64;
+    } else if (M >= 32) {
+        return 32;
+    } else if (M >= 16) {
+        return 16;
+    } else if (M >= 8) {
+        return 8;
+    } else if (M >= 4) {
+        return 4;
+    } 
+    return 1;
+}
+
 void assign_cuts(int total_workload, int num_tasks, int* cuts) {
     // int total_pixel_num = input_jpeg.width * input_jpeg.height;
     int pixel_num_per_task = total_workload / num_tasks;

@@ -21,13 +21,6 @@ int inline assign_block_size(int M) {
 }
 
 void inline avx_memcpy(void* __restrict dst, const void* __restrict src, int block_size) {
-    // #pragma GCC unroll 64
-    // __m256i *d_dst = (__m256i*)dst; // memory not aligned? 512 gets segmentation fault
-    // __m256i *d_src = (__m256i*)src; 
-    // block_size /= 8;
-    // for (int i = 0; i < block_size; ++i) {
-    //     d_dst[i] = d_src[i];
-    // }
     memcpy(dst, src, block_size*sizeof(int));
 }
 

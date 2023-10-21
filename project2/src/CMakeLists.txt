@@ -4,7 +4,7 @@ find_package(MPI REQUIRED)
 if (MPI_FOUND)
     message("MPI FOUND, Version: ${MPI_CXX_VERSION}")
 endif ()
-## OpenMP
+## OpenMPmake
 find_package(OpenMP REQUIRED)
 if (OpenMP_CXX_FOUND)
     message("OPENMP FOUND, Version: " ${OpenMP_CXX_VERSION})
@@ -41,8 +41,8 @@ target_compile_options(simd PRIVATE -O2 -mavx2 -mavx512f -fno-strict-aliasing -m
 add_executable(openmp
         openmp.cpp
         matrix.cpp matrix.hpp)
-# target_compile_options(openmp PRIVATE -O2 -mavx512f -fno-strict-aliasing -fopenmp)
-target_compile_options(openmp PRIVATE -O0 -mavx512f -fno-strict-aliasing -fopenmp)
+target_compile_options(openmp PRIVATE -O2 -mavx512f -fno-strict-aliasing -fopenmp)
+# target_compile_options(openmp PRIVATE -g3 -O0 -mavx512f -fno-strict-aliasing -fopenmp)
 # target_compile_options(openmp PRIVATE -O2 -fopenmp -mavx512f -ftree-loop-vectorize -ftree-slp-vectorize -fno-strict-aliasing -ffast-math)
 # target_compile_options(openmp PRIVATE -O3 -fopenmp -mavx512f -fno-strict-aliasing)
 target_include_directories(openmp PRIVATE ${OpenMP_CXX_INCLUDE_DIRS})

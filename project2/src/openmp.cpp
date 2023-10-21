@@ -27,7 +27,9 @@ void inline avx_memcpy(void* __restrict dst, const void* __restrict src, int blo
 
 void inline preload_block(int *__restrict dst, const Matrix& src, int src_row,
                              int src_col, int block_size_row, int block_size_col) {
+    // printf("called range to:%d + %d = %d\n", src_row, block_size_row, src_row + block_size_row);
     for (int i = 0; i < block_size_row; ++i) {
+        // if (src_row == 1145) printf(">>??\n");
         avx_memcpy(dst, src[src_row]+src_col, block_size_col);
         dst += block_size_col;
         src_row++;
@@ -86,6 +88,7 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
     int id = omp_get_thread_num();
 
     const int std_block_size_i = assign_block_size(row_cuts[id+1] - row_cuts[id]);
+    if (std_block_size_i == 0) return;
     const int std_block_size_k = assign_block_size(K);
     const int std_block_size_j = assign_block_size(N);
     // printf("blk_M:%d, blk_N:%d, blk_K:%d\n", block_size_i, block_size_j, block_size_k);
@@ -93,7 +96,7 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
     const int i_res = (row_cuts[id+1] - row_cuts[id]) % std_block_size_i;
     const int k_res = K % std_block_size_k;
     const int j_res = N % std_block_size_j;
-    const int block_range_i = (row_cuts[id+1] - row_cuts[id]) - i_res;
+    const int block_range_i = row_cuts[id+1] - i_res;
     const int block_range_k = K - k_res;
     const int block_range_j = N - j_res;
 
@@ -113,11 +116,15 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
             memset(kernel_result, 0, block_size_i * block_size_j * sizeof(int));
             for (int k = 0; k < K;) {
 
-                printf("%d load block m1 i:%d k:%d ...\n", id, i, k);
+                // if (i == 1145) printf("xxxxx\n");
+
+                // printf("%d load block m1 i:%d k:%d ...\n", id, i, k);
+                // printf("caller i:%d\n", i);
                 preload_block(zeroload_matrix1, matrix1, i, k, block_size_i, block_size_k);
                 // printf("done\n");
                 
-                printf("%d load block m2 k:%d j:%d ...\n", id, k, j);
+                // printf("%d load block m2 k:%d j:%d ...\n", id, k, j);
+                // printf("caller k:%d\n", k);
                 preload_block(zeroload_matrix2, matrix2, k, j, block_size_k, block_size_j);
                 // printf("done\n");
                 //------------------kernel----------------------------
