@@ -6,3 +6,6 @@ row_split: 1
 Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result_b.txt
 Multiplication Complete!
 Execution Time: 3 milliseconds
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+slurmstepd: error: *** JOB 122561 ON node32 CANCELLED AT 2023-10-20T23:28:24 DUE TO TIME LIMIT ***
+slurmstepd: error: *** STEP 122561.0 ON node32 CANCELLED AT 2023-10-20T23:28:24 DUE TO TIME LIMIT ***

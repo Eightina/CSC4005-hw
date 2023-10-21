@@ -1,6 +1,8 @@
-//
-// Created by Yang Yufan on 2023/10/07.
-// Email: yufanyang1@link.cuhk.edu.cn
-//
-// Matrix Multiplication with CUDA, for bonus
-//
+#include <stdexcept>
+#include <chrono>
+#include "matrix.hpp"
+#include <string.h>
+
+int main() {
+    return 0;
+}
