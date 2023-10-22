@@ -114,6 +114,7 @@ CURRENT_DIR=$(pwd)/src
 # cuda
 echo "cuda Matrix Multiplication"
 # srun -n 1 --gpus 1 ${CURRENT_DIR}/../build/src/gpu/cuda ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
-# srun -n 1 --gpus 1 ${CURRENT_DIR}/../build/src/gpu/cuda ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
-srun -n 1 --gpus 1 ${CURRENT_DIR}/../build/src/gpu/cuda ${CURRENT_DIR}/../matrices/matrix_h0.txt ${CURRENT_DIR}/../matrices/matrix_h1.txt ${CURRENT_DIR}/../build/result.txt
+srun -n 1 --gpus 1 ${CURRENT_DIR}/../build/src/gpu/cuda ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
+# srun -n 1 --gpus 1 ${CURRENT_DIR}/../build/src/gpu/cuda ${CURRENT_DIR}/../matrices/matrix_h0.txt ${CURRENT_DIR}/../matrices/matrix_h1.txt ${CURRENT_DIR}/../build/result.txt
+srun -n 1 --gpus 1 ${CURRENT_DIR}/../build/src/gpu/cuda ${CURRENT_DIR}/../matrices/matrix_g0.txt ${CURRENT_DIR}/../matrices/matrix_g1.txt ${CURRENT_DIR}/../build/result_g.txt
 echo ""

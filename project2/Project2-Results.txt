@@ -4,5 +4,11 @@ CUDA error: no error
 CUDA error: invalid resource handle
 Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
-Execution Time: -4.03727e+06 milliseconds
+Execution Time: 1.23874e-16 milliseconds
+CUDA error: no error
+CUDA error: no error
+CUDA error: invalid resource handle
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result_g.txt
+Multiplication Complete!
+Execution Time: 1.61591e+38 milliseconds
 

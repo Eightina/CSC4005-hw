@@ -16,11 +16,20 @@ __global__ void cudaKernel(int M, int N, int K, int* matrix1, int* matrix2, int*
         int temp = 0;
         for (int k = 0; k < K; ++k) {
             temp += matrix1[tm * K + k] * matrix2[k * N + tn];
+            // printf("(%d, %d) += %d * %d \n", tm, tn, matrix1[tm * K + k], matrix2[k * N + tn]);
         }
         result[tm * N + tn] += temp;
     }
 }
 
+// void seematrx(int* d_matrix1, int M, int K) {
+//     for (int i = 0; i < M; ++i) {
+//         for (int j = 0; j < K; ++i) {
+//             printf("%d ", d_matrix1[i*K + j]);
+//         }
+//         printf("\n");
+//     }
+// }
 
 float matrix_multiply_cuda(const Matrix& matrix1, const Matrix& matrix2, Matrix& result) {
     if (matrix1.getCols() != matrix2.getRows()) {
@@ -45,10 +54,12 @@ float matrix_multiply_cuda(const Matrix& matrix1, const Matrix& matrix2, Matrix&
     // printf("after: heap size is %d MB\n", cuda_heap_size / 1024 / 1024);
 
     // copy input data from host to device
-    for (int i = 0; i < M; ++i) cudaMemcpy(d_matrix1 + i * K, matrix1[i], K, cudaMemcpyHostToDevice);
-    for (int i = 0; i < K; ++i) cudaMemcpy(d_matrix2 + i * N, matrix2[i], N, cudaMemcpyHostToDevice);
+    for (int i = 0; i < M; ++i) cudaMemcpy(d_matrix1 + i * K, matrix1[i], K*sizeof(int), cudaMemcpyHostToDevice);
+    for (int i = 0; i < K; ++i) cudaMemcpy(d_matrix2 + i * N, matrix2[i], N*sizeof(int), cudaMemcpyHostToDevice);
     cudaCheckError();
 
+    // seematrx(d_matrix1, M, K);
+    // seematrx(d_matrix2, K, N);
 
     // start time counting
     cudaEvent_t start, stop;
@@ -70,7 +81,7 @@ float matrix_multiply_cuda(const Matrix& matrix1, const Matrix& matrix2, Matrix&
     cudaEventSynchronize(stop);
     cudaEventElapsedTime(&gpuDuration, start, stop);
     
-    for (int i = 0; i < M; ++i) cudaMemcpy(result[i], &d_result[i * N], N, cudaMemcpyDeviceToHost);
+    for (int i = 0; i < M; ++i) cudaMemcpy(result[i], d_result+ i * N, N*sizeof(int), cudaMemcpyDeviceToHost);
     cudaCheckError();
 
     return gpuDuration;
