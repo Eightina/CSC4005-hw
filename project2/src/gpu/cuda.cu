@@ -4,33 +4,76 @@
 #include <cuda_runtime.h> // CUDA Header
 #include <string.h>
 
-__global__ void cuda_kernel(int M, int N, int K, int* matrix1, int* matrix2, int* result) {
+inline void cudaCheckError() {
+    cudaError_t error_0 = cudaGetLastError();
+    printf("CUDA error: %s\n", cudaGetErrorString(error_0));
+}
+
+__global__ void cudaKernel(int M, int N, int K, int* matrix1, int* matrix2, int* result) {
+    int tn = blockIdx.x * blockDim.x + threadIdx.x;
+    int tm = blockIdx.y * blockDim.y + threadIdx.y;
+    if (tm < M && tn < N) {
+        int temp = 0;
+        for (int k = 0; k < K; ++k) {
+            temp += matrix1[tm * K + k] * matrix2[k * N + tn];
+        }
+        result[tm * N + tn] += temp;
+    }
 }
 
 
-void matrix_multiply_cuda(const Matrix& matrix1, const Matrix& matrix2, Matrix& result) {
+float matrix_multiply_cuda(const Matrix& matrix1, const Matrix& matrix2, Matrix& result) {
     if (matrix1.getCols() != matrix2.getRows()) {
         throw std::invalid_argument(
             "Matrix dimensions are not compatible for multiplication.");
     }
 
+    size_t M = matrix1.getRows(), K = matrix1.getCols(), N = matrix2.getCols();
+
+    // gpu mem allocation
+    int *d_matrix1, *d_matrix2, *d_result;
+    cudaMalloc((void**)&d_matrix1, M * K * sizeof(int));
+    cudaMalloc((void**)&d_matrix2, K * N * sizeof(int));
+    cudaMalloc((void**)&d_result, M * N * sizeof(int));
+
+    // check and assign heap memory
+    // size_t cuda_heap_size = 0;
+    // cudaDeviceGetLimit(&cuda_heap_size, cudaLimitMallocHeapSize);
+    // printf("before: heap size is %d MB\n", cuda_heap_size / 1024 / 1024);
+    // cudaDeviceSetLimit(cudaLimitMallocHeapSize, M * N * K *sizeof(unsigned char));
+    // cudaDeviceGetLimit(&cuda_heap_size, cudaLimitMallocHeapSize);
+    // printf("after: heap size is %d MB\n", cuda_heap_size / 1024 / 1024);
+
+    // copy input data from host to device
+    for (int i = 0; i < M; ++i) cudaMemcpy(d_matrix1 + i * K, matrix1[i], K, cudaMemcpyHostToDevice);
+    for (int i = 0; i < K; ++i) cudaMemcpy(d_matrix2 + i * N, matrix2[i], N, cudaMemcpyHostToDevice);
+    cudaCheckError();
+
+
+    // start time counting
     cudaEvent_t start, stop;
     float gpuDuration;
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
 
-    size_t M = matrix1.getRows(), K = matrix1.getCols(), N = matrix2.getCols();
-
-
-    // ijk_kij_tmm(M, N, K, matrix1, matrix2, result);     
     // run the kernel
+    int blockdimx = 32;
+    int blockdimy = 4;
+    const dim3 blockshape(blockdimx, blockdimy);
+    const dim3 gridshape((N + blockdimx - 1) / blockdimx, (M + blockdimy - 1) / blockdimy);
+    cudaKernel<<<gridshape, blockshape>>>(
+        M, N, K, d_matrix1, d_matrix2, d_result
+    );
+    cudaCheckError();
 
     cudaEventRecord(stop, 0); // GPU end time
     cudaEventSynchronize(stop);
-
     cudaEventElapsedTime(&gpuDuration, start, stop);
+    
+    for (int i = 0; i < M; ++i) cudaMemcpy(result[i], &d_result[i * N], N, cudaMemcpyDeviceToHost);
+    cudaCheckError();
 
-    // return result;
+    return gpuDuration;
 }
 
 
@@ -48,20 +91,19 @@ int main(int argc, char** argv) {
 
     const std::string result_path = argv[3];
 
+    // cpu mem allocation
     Matrix matrix1 = Matrix::loadFromFile(matrix1_path);
     Matrix matrix2 = Matrix::loadFromFile(matrix2_path);
     Matrix result(matrix1.getRows(), matrix2.getCols());
 
-
-    // Matrix result = matrix_multiply_cuda(matrix1, matrix2);
-
+    float elapsed_time = matrix_multiply_cuda(matrix1, matrix2, result);
 
     result.saveToFile(result_path);
 
     std::cout << "Output file to: " << result_path << std::endl;
 
     std::cout << "Multiplication Complete!" << std::endl;
-    std::cout << "Execution Time: " << elapsed_time.count() << " milliseconds"
+    std::cout << "Execution Time: " << elapsed_time << " milliseconds"
               << std::endl;
 
     return 0;

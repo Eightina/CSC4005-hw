@@ -1,11 +1,8 @@
-MPI + OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)
-Number of Processes: 16, Number of Threads: 2
-row_split: 1
-0 i_cuts:0 1 2 
-0 j_cuts:0 0 0 
-Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result_b.txt
+cuda Matrix Multiplication
+CUDA error: no error
+CUDA error: no error
+CUDA error: invalid resource handle
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
-Execution Time: 3 milliseconds
-srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
-slurmstepd: error: *** JOB 122561 ON node32 CANCELLED AT 2023-10-20T23:28:24 DUE TO TIME LIMIT ***
-slurmstepd: error: *** STEP 122561.0 ON node32 CANCELLED AT 2023-10-20T23:28:24 DUE TO TIME LIMIT ***
+Execution Time: -4.03727e+06 milliseconds
+

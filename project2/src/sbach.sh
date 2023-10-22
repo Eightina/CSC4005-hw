@@ -75,7 +75,7 @@ CURRENT_DIR=$(pwd)/src
 # done
 
 # MPI + OpenMP + SIMD + Reordering
-echo "MPI + OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)"
+# echo "MPI + OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)"
 # echo "Number of Processes: 1, Number of Threads: 32"
 # srun -n 1 --cpus-per-task 32 --mpi=pmi2 ${CURRENT_DIR}/../build/src/mpi 32 ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
 # echo ""
@@ -100,7 +100,7 @@ echo "MPI + OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized wit
 # srun -n 32 --cpus-per-task 1 --mpi=pmi2 ${CURRENT_DIR}/../build/src/mpi 1 ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
 # echo ""
 
-echo "Number of Processes: 16, Number of Threads: 2"
+# echo "Number of Processes: 16, Number of Threads: 2"
 # srun -n 16 --cpus-per-task 2 --mpi=pmi2 ${CURRENT_DIR}/../build/src/mpi 2 ${CURRENT_DIR}/../matrices/matrix_a0.txt ${CURRENT_DIR}/../matrices/matrix_a1.txt ${CURRENT_DIR}/../build/result_a.txt
 # srun -n 16 --cpus-per-task 2 --mpi=pmi2 ${CURRENT_DIR}/../build/src/mpi 2 ${CURRENT_DIR}/../matrices/matrix_b0.txt ${CURRENT_DIR}/../matrices/matrix_b1.txt ${CURRENT_DIR}/../build/result_b.txt
 # srun -n 16 --cpus-per-task 2 --mpi=pmi2 ${CURRENT_DIR}/../build/src/mpi 2 ${CURRENT_DIR}/../matrices/matrix_c0.txt ${CURRENT_DIR}/../matrices/matrix_c1.txt ${CURRENT_DIR}/../build/result_c.txt
@@ -109,4 +109,11 @@ echo "Number of Processes: 16, Number of Threads: 2"
 # srun -n 16 --cpus-per-task 2 --mpi=pmi2 ${CURRENT_DIR}/../build/src/mpi 2 ${CURRENT_DIR}/../matrices/matrix_f0.txt ${CURRENT_DIR}/../matrices/matrix_f1.txt ${CURRENT_DIR}/../build/result_f.txt
 # srun -n 16 --cpus-per-task 2 --mpi=pmi2 ${CURRENT_DIR}/../build/src/mpi 2 ${CURRENT_DIR}/../matrices/matrix_g0.txt ${CURRENT_DIR}/../matrices/matrix_g1.txt ${CURRENT_DIR}/../build/result_g.txt
 # srun -n 16 --cpus-per-task 2 --mpi=pmi2 ${CURRENT_DIR}/../build/src/mpi 2 ${CURRENT_DIR}/../matrices/matrix_h0.txt ${CURRENT_DIR}/../matrices/matrix_h1.txt ${CURRENT_DIR}/../build/result_h.txt
+# echo ""
+
+# cuda
+echo "cuda Matrix Multiplication"
+# srun -n 1 --gpus 1 ${CURRENT_DIR}/../build/src/gpu/cuda ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
+# srun -n 1 --gpus 1 ${CURRENT_DIR}/../build/src/gpu/cuda ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
+srun -n 1 --gpus 1 ${CURRENT_DIR}/../build/src/gpu/cuda ${CURRENT_DIR}/../matrices/matrix_h0.txt ${CURRENT_DIR}/../matrices/matrix_h1.txt ${CURRENT_DIR}/../build/result.txt
 echo ""
