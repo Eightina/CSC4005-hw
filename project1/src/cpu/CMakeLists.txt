@@ -23,7 +23,7 @@ add_executable(sequential_PartA
         ../utils.cpp ../utils.hpp)
 target_compile_options(sequential_PartA PRIVATE -O2)
 add_executable(sequential_PartB
-        sequential_PartB.cpp
+        sequential_PartB_optimized.cpp
         ../utils.cpp ../utils.hpp)
 target_compile_options(sequential_PartB PRIVATE -O2)
 # add_executable(sequential_PartB_O3
@@ -54,6 +54,11 @@ add_executable(simd_PartB
         simd_PartB.cpp
         ../utils.cpp ../utils.hpp)
 target_compile_options(simd_PartB PRIVATE  -mavx2 -O2)
+
+add_executable(simd_PartB
+        simd_PartB.cpp
+        ../utils.cpp ../utils.hpp)
+target_compile_options(simd_PartB PRIVATE -O2 -mavx2)
 
 ## MPI
 add_executable(mpi_PartA
