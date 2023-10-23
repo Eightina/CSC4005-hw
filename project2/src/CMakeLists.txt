@@ -43,7 +43,7 @@ target_compile_options(simd PRIVATE -O2 -mavx2 -mavx512f -fno-strict-aliasing -m
 add_executable(openmp
         openmp.cpp
         matrix.cpp matrix.hpp)
-target_compile_options(openmp PRIVATE -O2 -mavx512f -fno-strict-aliasing -fopenmp)
+target_compile_options(openmp PRIVATE -O2 -mavx512f -fno-strict-aliasing -fopenmp -march=native)
 # target_compile_options(openmp PRIVATE -g3 -O0 -mavx512f -fno-strict-aliasing -fopenmp)
 # target_compile_options(openmp PRIVATE -O2 -fopenmp -mavx512f -ftree-loop-vectorize -ftree-slp-vectorize -fno-strict-aliasing -ffast-math)
 # target_compile_options(openmp PRIVATE -O3 -fopenmp -mavx512f -fno-strict-aliasing)
@@ -56,9 +56,14 @@ add_executable(mpi
         matrix.cpp matrix.hpp)
 # target_compile_options(mpi PRIVATE -O2 -fopenmp -mavx2)
 # target_compile_options(mpi PRIVATE -O0 -fopenmp -mavx512f)
-target_compile_options(mpi PRIVATE -O2 -fopenmp -mavx512f -fno-strict-aliasing)
+target_compile_options(mpi PRIVATE -O2 -fopenmp -mavx512f -fno-strict-aliasing -march=native)
 # target_compile_options(mpi PRIVATE -O2 -fopenmp -mavx512f -ftree-loop-vectorize -ftree-slp-vectorize -fno-strict-aliasing -ffast-math)
 target_include_directories(mpi PRIVATE ${MPI_CXX_INCLUDE_DIRS} ${OpenMP_CXX_INCLUDE_DIRS})
 target_link_libraries(mpi ${MPI_LIBRARIES} ${OpenMP_CXX_LIBRARIES})
+
+add_executable(compare
+        compare.cpp
+        matrix.cpp matrix.hpp)
+target_compile_options(naive PRIVATE -O3)
 
 add_subdirectory(gpu)

@@ -82,7 +82,7 @@ float matrix_multiply_cuda(const Matrix& matrix1, const Matrix& matrix2, Matrix&
     cudaEventElapsedTime(&gpuDuration, start, stop);
     
     for (int i = 0; i < M; ++i) cudaMemcpy(result[i], d_result+ i * N, N*sizeof(int), cudaMemcpyDeviceToHost);
-    cudaCheckError();
+    // cudaCheckError();
 
     return gpuDuration;
 }
