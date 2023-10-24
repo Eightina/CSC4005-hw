@@ -2,33 +2,46 @@ MPI + OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)
 Number of Processes: 2, Number of Threads: 32
 numtasks:2
 numtasks:2
-reassigned numtasks:2, row_split:1
-, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+512 1024
+512 1024
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
-Execution Time: 114 milliseconds
+Execution Time: 113 milliseconds
 numtasks:2
 numtasks:2
-reassigned numtasks:2, row_split:1
-, srun: error: node32: task 0: Segmentation fault (core dumped)
-srun: error: node33: task 1: Segmentation fault (core dumped)
+1024 2048
+1024 2048
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 600 milliseconds
 
 Number of Processes: 4, Number of Threads: 16
 numtasks:4
 numtasks:4
 numtasks:4
 numtasks:4
-reassigned numtasks:4, row_split:1
-, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+512 768
+768 1024
+256 512
+512 768
+256 512
+768 1024
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
-Execution Time: 123 milliseconds
+Execution Time: 111 milliseconds
 numtasks:4
 numtasks:4
 numtasks:4
 numtasks:4
-reassigned numtasks:4, row_split:1
-, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+1024 1536
+512 1024
+1536 2048
+1024 1536
+512 1024
+1536 2048
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
-Execution Time: 596 milliseconds
+Execution Time: 615 milliseconds
 
 Number of Processes: 8, Number of Threads: 8
 numtasks:8
@@ -39,8 +52,21 @@ numtasks:8
 numtasks:8
 numtasks:8
 numtasks:8
-reassigned numtasks:8, row_split:1
-, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+128 256
+384 512
+256 384
+640 768
+896 1024
+768 896
+512 640
+256 384
+128 256
+512 640
+768 896
+640 768
+896 1024
+384 512
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
 Execution Time: 131 milliseconds
 numtasks:8
@@ -51,10 +77,23 @@ numtasks:8
 numtasks:8
 numtasks:8
 numtasks:8
-reassigned numtasks:8, row_split:1
-, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+1792 2048
+1280 1536
+768 1024
+256 512
+512 768
+1536 1792
+1024 1280
+256 512
+1280 1536
+1536 1792
+512 768
+1024 1280
+1792 2048
+768 1024
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
-Execution Time: 691 milliseconds
+Execution Time: 635 milliseconds
 
 Number of Processes: 16, Number of Threads: 4
 numtasks:16
@@ -73,8 +112,37 @@ numtasks:16
 numtasks:16
 numtasks:16
 numtasks:16
-reassigned numtasks:16, row_split:1
-, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+320 384
+704 768
+64 128
+192 256
+960 1024
+576 640
+512 576
+640 704
+768 832
+832 896
+896 960
+448 512
+128 192
+256 320
+384 448
+960 1024
+640 704
+512 576
+768 832
+896 960
+128 192
+448 512
+320 384
+704 768
+192 256
+576 640
+832 896
+64 128
+256 320
+384 448
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
 Execution Time: 90 milliseconds
 numtasks:16
@@ -93,10 +161,39 @@ numtasks:16
 numtasks:16
 numtasks:16
 numtasks:16
-reassigned numtasks:16, row_split:1
-, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+128 256
+256 384
+768 896
+512 640
+640 768
+896 1024
+1024 1152
+1280 1408
+1792 1920
+1920 2048
+1664 1792
+1152 1280
+1408 1536
+384 512
+1536 1664
+128 256
+256 384
+512 640
+896 1024
+1280 1408
+768 896
+640 768
+1024 1152
+1792 1920
+1920 2048
+384 512
+1408 1536
+1152 1280
+1664 1792
+1536 1664
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
-Execution Time: 468 milliseconds
+Execution Time: 475 milliseconds
 
 Number of Processes: 32, Number of Threads: 2
 numtasks:32
@@ -131,10 +228,71 @@ numtasks:32
 numtasks:32
 numtasks:32
 numtasks:32
-reassigned numtasks:32, row_split:1
-, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+512 544
+480 512
+64 96
+192 224
+128 160
+384 416
+448 480
+256 288
+416 448
+768 800
+960 992
+640 672
+896 928
+320 352
+704 736
+992 1024
+928 960
+832 864
+160 192
+224 256
+96 128
+288 320
+32 64
+608 640
+672 704
+736 768
+800 832
+544 576
+864 896
+352 384
+576 608
+512 544
+64 96
+480 512
+192 224
+416 448
+448 480
+128 160
+768 800
+256 288
+640 672
+896 928
+320 352
+960 992
+992 1024
+928 960
+704 736
+832 864
+96 128
+160 192
+32 64
+224 256
+288 320
+384 416
+608 640
+864 896
+352 384
+544 576
+672 704
+736 768
+800 832
+576 608
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
-Execution Time: 81 milliseconds
+Execution Time: 80 milliseconds
 numtasks:32
 numtasks:32
 numtasks:32
@@ -167,10 +325,71 @@ numtasks:32
 numtasks:32
 numtasks:32
 numtasks:32
-reassigned numtasks:32, row_split:1
-, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+384 448
+960 1024
+640 704
+512 576
+832 896
+192 256
+448 512
+704 768
+768 832
+576 640
+64 128
+1280 1344
+1536 1600
+1664 1728
+1856 1920
+1920 1984
+1152 1216
+1024 1088
+1984 2048
+128 192
+1088 1152
+1216 1280
+1344 1408
+1472 1536
+1600 1664
+1728 1792
+1408 1472
+896 960
+1792 1856
+320 384
+256 320
+448 512
+192 256
+704 768
+640 704
+64 128
+768 832
+576 640
+832 896
+1280 1344
+1536 1600
+1024 1088
+1216 1280
+1088 1152
+1344 1408
+128 192
+1728 1792
+1600 1664
+896 960
+384 448
+1408 1472
+1792 1856
+320 384
+256 320
+1984 2048
+1152 1216
+1856 1920
+1472 1536
+960 1024
+1920 1984
+512 576
+1664 1728
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
-Execution Time: 461 milliseconds
+Execution Time: 459 milliseconds
 
 Number of Processes: 64, Number of Threads: 1
 numtasks:64
@@ -237,10 +456,135 @@ numtasks:64
 numtasks:64
 numtasks:64
 numtasks:64
-reassigned numtasks:64, row_split:1
-, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+32 48
+512 528
+544 560
+80 96
+112 128
+384 400
+128 144
+400 416
+256 272
+288 304
+160 176
+192 208
+64 80
+416 432
+448 464
+96 112
+352 368
+224 240
+464 480
+432 448
+320 336
+48 64
+960 976
+144 160
+736 752
+480 496
+496 512
+16 32
+528 544
+592 608
+176 192
+784 800
+704 720
+272 288
+304 320
+976 992
+832 848
+336 352
+928 944
+944 960
+368 384
+816 832
+560 576
+624 640
+992 1008
+864 880
+208 224
+1008 1024
+240 256
+576 592
+640 656
+720 736
+672 688
+896 912
+912 928
+608 624
+688 704
+768 784
+656 672
+752 768
+800 816
+848 864
+880 896
+32 48
+544 560
+512 528
+80 96
+112 128
+384 400
+128 144
+400 416
+192 208
+256 272
+288 304
+416 432
+64 80
+352 368
+224 240
+320 336
+432 448
+464 480
+448 464
+960 976
+144 160
+48 64
+528 544
+480 496
+496 512
+176 192
+96 112
+336 352
+976 992
+272 288
+560 576
+832 848
+368 384
+944 960
+592 608
+864 880
+16 32
+928 944
+816 832
+208 224
+576 592
+1008 1024
+240 256
+912 928
+992 1008
+160 176
+640 656
+736 752
+672 688
+896 912
+784 800
+608 624
+624 640
+768 784
+800 816
+304 320
+704 720
+656 672
+688 704
+720 736
+752 768
+880 896
+848 864
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
-Execution Time: 78 milliseconds
+Execution Time: 75 milliseconds
 numtasks:64
 numtasks:64
 numtasks:64
@@ -305,8 +649,133 @@ numtasks:64
 numtasks:64
 numtasks:64
 numtasks:64
-reassigned numtasks:64, row_split:1
-, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+1120 1152
+128 160
+64 96
+160 192
+224 256
+32 64
+96 128
+192 224
+832 864
+416 448
+288 320
+864 896
+256 288
+480 512
+640 672
+384 416
+704 736
+768 800
+352 384
+512 544
+800 832
+960 992
+672 704
+736 768
+448 480
+544 576
+992 1024
+608 640
+320 352
+1440 1472
+576 608
+1184 1216
+1248 1280
+1312 1344
+1376 1408
+928 960
+1504 1536
+1568 1600
+896 928
+1632 1664
+1024 1056
+1152 1184
+1280 1312
+1408 1440
+1696 1728
+1760 1792
+1088 1120
+1792 1824
+1472 1504
+1536 1568
+1216 1248
+1344 1376
+1856 1888
+1664 1696
+1728 1760
+1952 1984
+1824 1856
+1888 1920
+1600 1632
+1984 2016
+2016 2048
+1920 1952
+1056 1088
+1120 1152
+128 160
+160 192
+224 256
+96 128
+192 224
+32 64
+832 864
+416 448
+288 320
+480 512
+352 384
+864 896
+384 416
+640 672
+704 736
+544 576
+608 640
+448 480
+800 832
+64 96
+736 768
+1184 1216
+1248 1280
+1376 1408
+256 288
+672 704
+1568 1600
+768 800
+1632 1664
+320 352
+928 960
+1696 1728
+1760 1792
+1312 1344
+960 992
+1408 1440
+1280 1312
+992 1024
+1216 1248
+1152 1184
+1344 1376
+512 544
+1664 1696
+1952 1984
+1888 1920
+1536 1568
+1824 1856
+1600 1632
+1472 1504
+896 928
+2016 2048
+1792 1824
+1856 1888
+1920 1952
+1984 2016
+576 608
+1728 1760
+1504 1536
+1440 1472
+1024 1056
+1088 1120
+1056 1088
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
 Multiplication Complete!
-Execution Time: 472 milliseconds
+Execution Time: 598 milliseconds
 

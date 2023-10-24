@@ -158,9 +158,9 @@ void inline omp_simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, con
     // printf("blk_M:%d, blk_N:%d, blk_K:%d\n", block_size_i, block_size_j, block_size_k);
 
 
-    int* zeroload_matrix1 = (int*)aligned_alloc(64, block_size_i * block_size_k * sizeof(int));
-    int* zeroload_matrix2 = (int*)aligned_alloc(64, block_size_k * block_size_j * sizeof(int));
-    int* kernel_result = (int*)aligned_alloc(64, block_size_i * block_size_j * sizeof(int));
+    int* zeroload_matrix1 = (int*)aligned_alloc(64, (block_size_i * block_size_k + 8) * sizeof(int));
+    int* zeroload_matrix2 = (int*)aligned_alloc(64, (block_size_k * block_size_j + 8) * sizeof(int));
+    int* kernel_result = (int*)aligned_alloc(64, (block_size_i * block_size_j + 8) * sizeof(int));
 
     for (int i = row_cuts[id]; i < row_cuts[id+1];) {
         // printf("Hey, I'm thread %d inside the par zone!\n", omp_get_thread_num()); 
@@ -285,22 +285,49 @@ int main(int argc, char** argv) {
     // int task_blocks = total_blocks / numtasks;
     // int left_blocks = total_block / 
     // int i_range_array[numtasks + 1], j_range_array[numtasks + 1];
+    
     bool row_split = false, col_split = false;
-    int *i_cuts, *j_cuts;
+    int *i_cuts0, *j_cuts0;
     while ((!row_split) && (!col_split)) {
-        i_cuts = (int*)calloc((numtasks + 1) , sizeof(int));
-        j_cuts = (int*)calloc((numtasks + 1) , sizeof(int));
+        i_cuts0 = (int*)calloc((numtasks + 1) , sizeof(int));
+        j_cuts0 = (int*)calloc((numtasks + 1) , sizeof(int));
 
         if (matrix1.getRows() >= numtasks) {
-            assign_cuts(matrix1.getRows(), numtasks, i_cuts);
+            assign_cuts(matrix1.getRows(), numtasks, i_cuts0);
             row_split = true;
+            break;
         } else if (matrix2.getCols() >= numtasks) {
-            assign_cuts(matrix2.getCols(), numtasks, j_cuts);
+            assign_cuts(matrix2.getCols(), numtasks, j_cuts0);
             col_split = true;
-        } else {
-            numtasks = (matrix1.getRows() >= matrix2.getCols()) ? matrix1.getRows() : matrix2.getCols();
+            break;
         }
+        numtasks = (matrix1.getRows() >= matrix2.getCols()) ? matrix1.getRows() : matrix2.getCols();
     }
+    int i_cuts[numtasks + 1], j_cuts[numtasks + 1];
+    if (row_split) {
+        for (int i = 0; i < numtasks + 1; ++i) i_cuts[i] = i_cuts0[i];
+    } else {
+        for (int i = 0; i < numtasks + 1; ++i) j_cuts[i] = j_cuts0[i];
+    }
+
+
+    // int *i_cuts, *j_cuts;
+    // while ((!row_split) && (!col_split)) {
+    //     i_cuts = (int*)calloc((numtasks + 1) , sizeof(int));
+    //     j_cuts = (int*)calloc((numtasks + 1) , sizeof(int));
+
+    //     if (matrix1.getRows() >= numtasks) {
+    //         assign_cuts(matrix1.getRows(), numtasks, i_cuts);
+    //         row_split = true;
+    //     } else if (matrix2.getCols() >= numtasks) {
+    //         assign_cuts(matrix2.getCols(), numtasks, j_cuts);
+    //         col_split = true;
+    //     } else {
+    //         numtasks = (matrix1.getRows() >= matrix2.getCols()) ? matrix1.getRows() : matrix2.getCols();
+    //     }
+    // }
+
+
     
 
     // if (row_split) {
@@ -336,7 +363,7 @@ int main(int argc, char** argv) {
             int length = 0;
             if (row_split) length = (i_cuts[i + 1] - i_cuts[i]) * matrix2.getCols();
             else length = matrix1.getRows() * (j_cuts[i + 1] - j_cuts[i]);
-            int start_pos[length];
+            int *start_pos = (int*)malloc(length * sizeof(int));
             MPI_Recv(start_pos, length, MPI_INT32_T, i, TAG_GATHER, MPI_COMM_WORLD, &status);
             if (row_split) store_res(result, start_pos, i_cuts[i], 0, i_cuts[i + 1] - i_cuts[i], matrix2.getCols());
             else store_res(result, start_pos, 0, j_cuts[i], matrix1.getRows(), j_cuts[i + 1] - j_cuts[i]);
@@ -355,12 +382,13 @@ int main(int argc, char** argv) {
         std::cout << "Multiplication Complete!" << std::endl;
         std::cout << "Execution Time: " << elapsed_time.count()
                   << " milliseconds" << std::endl;
-        delete []i_cuts;
-        delete []j_cuts;
+
+        delete []i_cuts0;
+        delete []j_cuts0;
+
     } else {
-        if (taskid >= numtasks) {
-            return 0;
-        }
+        printf("%d %d\n", i_cuts[taskid], i_cuts[taskid + 1]);
+
         Matrix result = matrix_multiply_mpi(matrix1, matrix2, row_split,
                                             i_cuts[taskid], i_cuts[taskid + 1],
                                             j_cuts[taskid], j_cuts[taskid + 1], thread_num);
@@ -368,17 +396,20 @@ int main(int argc, char** argv) {
         if (row_split) length = (i_cuts[taskid + 1] - i_cuts[taskid]) * matrix2.getCols();
         else length = matrix1.getRows() * (j_cuts[taskid + 1] - j_cuts[taskid]);
         // int length = (i_cuts[taskid + 1] - i_cuts[taskid]) * (j_cuts[taskid + 1] - j_cuts[taskid]);
-        int start_pos[length];
+        int *start_pos = (int*)malloc(length * sizeof(int));
         
         // MPI_Recv(start_pos, length, MPI_INT, i, TAG_GATHER, MPI_COMM_WORLD, &status);
+        printf("%d %d\n", i_cuts[taskid], i_cuts[taskid + 1]);
         if (row_split) load_res(start_pos, result, i_cuts[taskid], 0, i_cuts[taskid + 1] - i_cuts[taskid], matrix2.getCols());
         else load_res(start_pos, result, 0, j_cuts[taskid], matrix1.getRows(), j_cuts[taskid + 1] - j_cuts[taskid]);
-        MPI_Send(start_pos, length, MPI_INT, MASTER, TAG_GATHER, MPI_COMM_WORLD);
+        MPI_Send(start_pos, length, MPI_INT32_T, MASTER, TAG_GATHER, MPI_COMM_WORLD);
         // Your Code Here for Synchronization!
         // printf("%d sent: result %d~%d(%d), total: %d\n", taskid, start_pos[0], start_pos[length-1], result[i_cuts[taskid + 1] - 1][matrix2.getCols() - 1] ,length);
         // delete []start_pos;
     }
 
+
     MPI_Finalize();
+
     return 0;
 }
