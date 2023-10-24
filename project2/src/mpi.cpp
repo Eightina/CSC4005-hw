@@ -242,8 +242,6 @@ Matrix matrix_multiply_mpi(const Matrix& matrix1, const Matrix& matrix2, bool ro
 }
 
 int main(int argc, char** argv) {
-    int i=0;
-    while (0 == i) std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
     // Verify input argument format
     if (argc != 5) {
