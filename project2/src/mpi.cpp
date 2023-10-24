@@ -154,8 +154,8 @@ void inline omp_simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, con
     bool i_switch = false;
     bool j_switch = false;
     bool k_switch = false;
-    printf("M:%d, N:%d, K:%d\n", M, N, K);
-    printf("blk_M:%d, blk_N:%d, blk_K:%d\n", block_size_i, block_size_j, block_size_k);
+    // printf("M:%d, N:%d, K:%d\n", M, N, K);
+    // printf("blk_M:%d, blk_N:%d, blk_K:%d\n", block_size_i, block_size_j, block_size_k);
 
 
     int* zeroload_matrix1 = (int*)aligned_alloc(64, block_size_i * block_size_k * sizeof(int));
@@ -255,6 +255,7 @@ int main(int argc, char** argv) {
     // How many processes are running
     int numtasks;
     MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
+    printf("numtasks:%d\n", numtasks);
     // What's my rank?
     int taskid;
     MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
@@ -300,6 +301,7 @@ int main(int argc, char** argv) {
             numtasks = (matrix1.getRows() >= matrix2.getCols()) ? matrix1.getRows() : matrix2.getCols();
         }
     }
+    
 
     // if (row_split) {
     //     int *j_cuts_t = j_cuts;
@@ -312,17 +314,19 @@ int main(int argc, char** argv) {
 
     auto start_time = std::chrono::high_resolution_clock::now();
     if (taskid == MASTER) {
-        printf("row_split: %d\n", row_split);
-        printf("%d i_cuts:", taskid);
-        for (int i = 0; i < numtasks + 1; i++) {
-            printf("%d ", i_cuts[i]);
-        }
-        printf("\n");
-        printf("%d j_cuts:", taskid);
-        for (int i = 0; i < numtasks + 1; i++) {
-            printf("%d ", j_cuts[i]);
-        }
-        printf("\n");
+        // printf("reassigned numtasks:%d, row_split:%d\n, ", numtasks, row_split);
+
+        // printf("row_split: %d\n", row_split);
+        // printf("%d i_cuts:", taskid);
+        // for (int i = 0; i < numtasks + 1; i++) {
+        //     printf("%d ", i_cuts[i]);
+        // }
+        // printf("\n");
+        // printf("%d j_cuts:", taskid);
+        // for (int i = 0; i < numtasks + 1; i++) {
+        //     printf("%d ", j_cuts[i]);
+        // }
+        // printf("\n");
 
         Matrix result = matrix_multiply_mpi(matrix1, matrix2, row_split,
                                              i_cuts[0], i_cuts[1], j_cuts[0], j_cuts[1], thread_num);

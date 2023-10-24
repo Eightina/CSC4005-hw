@@ -1,7 +1,312 @@
 MPI + OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)
-Number of Processes: 2, Number of Threads: 16
-myID is 150525
-myID is 150526
-srun: error: node32: task 1: Segmentation fault (core dumped)
-srun: error: node32: task 0: Segmentation fault (core dumped)
+Number of Processes: 2, Number of Threads: 32
+numtasks:2
+numtasks:2
+reassigned numtasks:2, row_split:1
+, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 114 milliseconds
+numtasks:2
+numtasks:2
+reassigned numtasks:2, row_split:1
+, srun: error: node32: task 0: Segmentation fault (core dumped)
+srun: error: node33: task 1: Segmentation fault (core dumped)
+
+Number of Processes: 4, Number of Threads: 16
+numtasks:4
+numtasks:4
+numtasks:4
+numtasks:4
+reassigned numtasks:4, row_split:1
+, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 123 milliseconds
+numtasks:4
+numtasks:4
+numtasks:4
+numtasks:4
+reassigned numtasks:4, row_split:1
+, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 596 milliseconds
+
+Number of Processes: 8, Number of Threads: 8
+numtasks:8
+numtasks:8
+numtasks:8
+numtasks:8
+numtasks:8
+numtasks:8
+numtasks:8
+numtasks:8
+reassigned numtasks:8, row_split:1
+, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 131 milliseconds
+numtasks:8
+numtasks:8
+numtasks:8
+numtasks:8
+numtasks:8
+numtasks:8
+numtasks:8
+numtasks:8
+reassigned numtasks:8, row_split:1
+, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 691 milliseconds
+
+Number of Processes: 16, Number of Threads: 4
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+reassigned numtasks:16, row_split:1
+, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 90 milliseconds
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+numtasks:16
+reassigned numtasks:16, row_split:1
+, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 468 milliseconds
+
+Number of Processes: 32, Number of Threads: 2
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+reassigned numtasks:32, row_split:1
+, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 81 milliseconds
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+numtasks:32
+reassigned numtasks:32, row_split:1
+, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 461 milliseconds
+
+Number of Processes: 64, Number of Threads: 1
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+reassigned numtasks:64, row_split:1
+, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 78 milliseconds
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+numtasks:64
+reassigned numtasks:64, row_split:1
+, Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 472 milliseconds
 
