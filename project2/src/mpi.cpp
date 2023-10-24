@@ -164,7 +164,7 @@ void inline omp_simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, con
 
     for (int i = row_cuts[id]; i < row_cuts[id+1];) {
         // printf("Hey, I'm thread %d inside the par zone!\n", omp_get_thread_num()); 
-        printf("id: %d i: %d max_i: %d\n", id, i, row_cuts[id+1]);
+        // printf("id: %d i: %d max_i: %d\n", id, i, row_cuts[id+1]);
         for (int j = j_start; j < j_end;) {
             // int kernel_result[block_size * (block_size + 8)] = {};
             memset(kernel_result, 0, block_size_i * block_size_j * sizeof(int));
