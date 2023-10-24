@@ -102,12 +102,12 @@ void inline avx256_kernel(int k, int i, int j, int* zeroload_matrix1, int* zerol
 
 
 void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result) {
-    printf("M:%d, N:%d, K:%d\n", M, N, K);
+    // printf("M:%d, N:%d, K:%d\n", M, N, K);
     const int std_block_size_i = assign_block_size(M);
     const int std_block_size_k = assign_block_size(K);
     const int std_block_size_j = assign_block_size(N);
     int block_size_i = std_block_size_i, block_size_j = std_block_size_j, block_size_k = std_block_size_k;
-    printf("blk_M:%d, blk_N:%d, blk_K:%d\n", block_size_i, block_size_j, block_size_k);
+    // printf("blk_M:%d, blk_N:%d, blk_K:%d\n", block_size_i, block_size_j, block_size_k);
 
     const int i_res = M % block_size_i;
     const int k_res = K % block_size_k;

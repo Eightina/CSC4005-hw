@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include <chrono>
 #include "matrix.hpp"
+// #include <iostream>
+#include <thread>
 
 #define MASTER 0
 #define TAG_GATHER 0
@@ -139,6 +141,7 @@ void inline omp_simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, con
     const int std_block_size_k = assign_block_size(K);
     const int std_block_size_j = assign_block_size(j_end - j_start);
 
+
     const int i_res = (row_cuts[id+1] - row_cuts[id]) % std_block_size_i;
     const int k_res = K % std_block_size_k;
     const int j_res = (j_end - j_start) % std_block_size_j;
@@ -151,6 +154,9 @@ void inline omp_simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, con
     bool i_switch = false;
     bool j_switch = false;
     bool k_switch = false;
+    printf("M:%d, N:%d, K:%d\n", M, N, K);
+    printf("blk_M:%d, blk_N:%d, blk_K:%d\n", block_size_i, block_size_j, block_size_k);
+
 
     int* zeroload_matrix1 = (int*)aligned_alloc(64, block_size_i * block_size_k * sizeof(int));
     int* zeroload_matrix2 = (int*)aligned_alloc(64, block_size_k * block_size_j * sizeof(int));
@@ -158,6 +164,7 @@ void inline omp_simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, con
 
     for (int i = row_cuts[id]; i < row_cuts[id+1];) {
         // printf("Hey, I'm thread %d inside the par zone!\n", omp_get_thread_num()); 
+        printf("id: %d i: %d max_i: %d\n", id, i, row_cuts[id+1]);
         for (int j = j_start; j < j_end;) {
             // int kernel_result[block_size * (block_size + 8)] = {};
             memset(kernel_result, 0, block_size_i * block_size_j * sizeof(int));
@@ -235,6 +242,9 @@ Matrix matrix_multiply_mpi(const Matrix& matrix1, const Matrix& matrix2, bool ro
 }
 
 int main(int argc, char** argv) {
+    int i=0;
+    while (0 == i) std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
     // Verify input argument format
     if (argc != 5) {
         throw std::invalid_argument(

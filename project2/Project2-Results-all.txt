@@ -1,0 +1,168 @@
+Naive Matrix Multiplication (Optimized with -O2)
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/sample_result_1024.txt
+Multiplication Complete!
+Execution Time: 7062 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/sample_result_2048.txt
+Multiplication Complete!
+Execution Time: 72622 milliseconds
+Memory Locality Matrix Multiplication (Optimized with -O2)
+M:1024, N:1024, K:1024
+blk_M:64, blk_N:64, blk_K:64
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 777 milliseconds
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 6311 milliseconds
+/var/spool/slurmd/job130262/slurm_script: line 40: SIMD: command not found
+M:1024, N:1024, K:1024
+blk_M:64, blk_N:64, blk_K:64
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 208 milliseconds
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 1740 milliseconds
+OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)
+Number of cores: 1
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 211 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 1843 milliseconds
+
+Number of cores: 2
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 197 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 1640 milliseconds
+
+Number of cores: 4
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 114 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 848 milliseconds
+
+Number of cores: 8
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 70 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 437 milliseconds
+
+Number of cores: 16
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 58 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 236 milliseconds
+
+Number of cores: 32
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 38 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 168 milliseconds
+
+MPI + OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)
+Number of Processes: 1, Number of Threads: 32
+row_split: 1
+0 i_cuts:0 1024 
+0 j_cuts:0 0 
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 42 milliseconds
+row_split: 1
+0 i_cuts:0 2048 
+0 j_cuts:0 0 
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 179 milliseconds
+
+Number of Processes: 2, Number of Threads: 16
+row_split: 1
+0 i_cuts:0 512 1024 
+0 j_cuts:0 0 0 
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 42 milliseconds
+row_split: 1
+0 i_cuts:0 1024 2048 
+0 j_cuts:0 0 0 
+srun: error: node32: task 1: Segmentation fault (core dumped)
+srun: error: node32: task 0: Segmentation fault (core dumped)
+
+Number of Processes: 4, Number of Threads: 8
+row_split: 1
+0 i_cuts:0 256 512 768 1024 
+0 j_cuts:0 0 0 0 0 
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 51 milliseconds
+row_split: 1
+0 i_cuts:0 512 1024 1536 2048 
+0 j_cuts:0 0 0 0 0 
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 195 milliseconds
+
+Number of Processes: 8, Number of Threads: 4
+row_split: 1
+0 i_cuts:0 128 256 384 512 640 768 896 1024 
+0 j_cuts:0 0 0 0 0 0 0 0 0 
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 36 milliseconds
+row_split: 1
+0 i_cuts:0 256 512 768 1024 1280 1536 1792 2048 
+0 j_cuts:0 0 0 0 0 0 0 0 0 
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 149 milliseconds
+
+Number of Processes: 16, Number of Threads: 2
+row_split: 1
+0 i_cuts:0 64 128 192 256 320 384 448 512 576 640 704 768 832 896 960 1024 
+0 j_cuts:0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 27 milliseconds
+row_split: 1
+0 i_cuts:0 128 256 384 512 640 768 896 1024 1152 1280 1408 1536 1664 1792 1920 2048 
+0 j_cuts:0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 144 milliseconds
+
+Number of Processes: 32, Number of Threads: 1
+row_split: 1
+0 i_cuts:0 32 64 96 128 160 192 224 256 288 320 352 384 416 448 480 512 544 576 608 640 672 704 736 768 800 832 864 896 928 960 992 1024 
+0 j_cuts:0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 35 milliseconds
+row_split: 1
+0 i_cuts:0 64 128 192 256 320 384 448 512 576 640 704 768 832 896 960 1024 1088 1152 1216 1280 1344 1408 1472 1536 1600 1664 1728 1792 1856 1920 1984 2048 
+0 j_cuts:0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 166 milliseconds
+
+cuda Matrix Multiplication
+/nfsmnt/223040076/coursecode/project2/src/../build/src/gpu/cuda: error while loading shared libraries: libcudart.so.11.0: cannot open shared object file: No such file or directory
+srun: error: node32: task 0: Exited with exit code 127
+srun: error: node32: task 0: Exited with exit code 127
+/nfsmnt/223040076/coursecode/project2/src/../build/src/gpu/cuda: error while loading shared libraries: libcudart.so.11.0: cannot open shared object file: No such file or directory
+

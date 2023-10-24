@@ -1,14 +1,104 @@
-cuda Matrix Multiplication
-CUDA error: no error
-CUDA error: no error
-CUDA error: invalid resource handle
-Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
-Multiplication Complete!
-Execution Time: 1.23874e-16 milliseconds
-CUDA error: no error
-CUDA error: no error
-CUDA error: invalid resource handle
-Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result_g.txt
-Multiplication Complete!
-Execution Time: 1.61591e+38 milliseconds
+MPI + OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)
+Number of Processes: 2, Number of Threads: 16
+row_split: 1
+0 i_cuts:0 1024 2048 
+0 j_cuts:0 0 0 
+M:2048, N:2048, K:2048
+M:2048, N:2048, K:2048
+M:2048, N:2048, K:2048
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+blk_M:64, blk_N:64, blk_K:64
+M:2048, N:2048, K:2048
+M:2048, N:2048, K:2048
+M:2048, N:2048, K:2048
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+M:2048, N:2048, K:2048
+M:2048, N:2048, K:2048
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+blk_M:64, blk_N:64, blk_K:64
+M:2048, N:2048, K:2048
+M:2048, N:2048, K:2048
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+blk_M:64, blk_N:64, blk_K:64
+blk_M:64, blk_N:64, blk_K:64
+id: 0 i: 0 max_i: 64
+blk_M:64, blk_N:64, blk_K:64
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+blk_M:64, blk_N:64, blk_K:64
+blk_M:64, blk_N:64, blk_K:64
+blk_M:64, blk_N:64, blk_K:64
+blk_M:64, blk_N:64, blk_K:64
+blk_M:64, blk_N:64, blk_K:64
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+id: 6 i: 384 max_i: 448
+id: 8 i: 512 max_i: 576
+id: 9 i: 576 max_i: 640
+id: 13 i: 832 max_i: 896
+id: 1 i: 64 max_i: 128
+id: 10 i: 640 max_i: 704
+id: 12 i: 768 max_i: 832
+id: 14 i: 896 max_i: 960
+id: 15 i: 960 max_i: 1024
+id: 11 i: 704 max_i: 768
+id: 4 i: 256 max_i: 320
+id: 7 i: 448 max_i: 512
+id: 3 i: 192 max_i: 256
+id: 5 i: 320 max_i: 384
+id: 2 i: 128 max_i: 192
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+M:2048, N:2048, K:2048
+M:2048, N:2048, K:2048
+M:2048, N:2048, K:2048
+id: 0 i: 1024 max_i: 1088
+M:2048, N:2048, K:2048
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+M:2048, N:2048, K:2048
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+M:2048, N:2048, K:2048
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+blk_M:64, blk_N:64, blk_K:64
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+blk_M:64, blk_N:64, blk_K:64
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+blk_M:64, blk_N:64, blk_K:64
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+blk_M:64, blk_N:64, blk_K:64
+blk_M:64, blk_N:64, blk_K:64
+blk_M:64, blk_N:64, blk_K:64
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+id: 13 i: 1856 max_i: 1920
+id: 8 i: 1536 max_i: 1600
+id: 10 i: 1664 max_i: 1728
+M:2048, N:2048, K:2048
+blk_M:64, blk_N:64, blk_K:64
+id: 5 i: 1344 max_i: 1408
+id: 1 i: 1088 max_i: 1152
+id: 6 i: 1408 max_i: 1472
+id: 14 i: 1920 max_i: 1984
+id: 3 i: 1216 max_i: 1280
+id: 4 i: 1280 max_i: 1344
+id: 9 i: 1600 max_i: 1664
+id: 15 i: 1984 max_i: 2048
+id: 11 i: 1728 max_i: 1792
+id: 12 i: 1792 max_i: 1856
+id: 2 i: 1152 max_i: 1216
+id: 7 i: 1472 max_i: 1536
+srun: error: node32: task 1: Segmentation fault (core dumped)
+srun: error: node32: task 0: Segmentation fault (core dumped)
 

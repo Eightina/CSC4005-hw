@@ -9,27 +9,30 @@
 CURRENT_DIR=$(pwd)/src
 
 # Naive
-echo "Naive Matrix Multiplication (Optimized with -O2)"
-srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/naive ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
-echo ""
+# echo "Naive Matrix Multiplication (Optimized with -O2)"
+# srun -n 1 --cpus-per-task 1 perf record -e cpu-cycles,cache-misses,page-faults,alignment-faults -g -o ${CURRENT_DIR}/../perf/naive_1024.data ${CURRENT_DIR}/../build/src/naive ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
+# srun -n 1 --cpus-per-task 1 perf record -e cpu-cycles,cache-misses,page-faults,alignment-faults -g -o ${CURRENT_DIR}/../perf/naive_2048.data ${CURRENT_DIR}/../build/src/naive ${CURRENT_DIR}/../matrices/matrix7.txt ${CURRENT_DIR}/../matrices/matrix8.txt ${CURRENT_DIR}/../build/result.txt
+# echo ""
 
 # Memory Locality
-echo "Memory Locality Matrix Multiplication (Optimized with -O2)"
-srun -n 1 --cpus-per-task 1 perf record -e cpu-cycles,cache-misses,page-faults -g -o ${CURRENT_DIR}/../perf/locality_1024.data ${CURRENT_DIR}/../build/src/locality ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
-srun -n 1 --cpus-per-task 1 perf record -e cpu-cycles,cache-misses,page-faults -g -o ${CURRENT_DIR}/../perf/locality_2048.data ${CURRENT_DIR}/../build/src/locality ${CURRENT_DIR}/../matrices/matrix7.txt ${CURRENT_DIR}/../matrices/matrix8.txt ${CURRENT_DIR}/../build/result.txt
-echo ""
+# echo "Memory Locality Matrix Multiplication (Optimized with -O2)"
+# srun -n 1 --cpus-per-task 1 perf record -e cpu-cycles,cache-misses,page-faults,alignment-faults -g -o ${CURRENT_DIR}/../perf/locality_1024.data ${CURRENT_DIR}/../build/src/locality ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
+# srun -n 1 --cpus-per-task 1 perf record -e cpu-cycles,cache-misses,page-faults,alignment-faults -g -o ${CURRENT_DIR}/../perf/locality_2048.data ${CURRENT_DIR}/../build/src/locality ${CURRENT_DIR}/../matrices/matrix7.txt ${CURRENT_DIR}/../matrices/matrix8.txt ${CURRENT_DIR}/../build/result.txt
+# echo ""
 
 # SIMD + Reordering
-echo "SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)"
-srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
-echo ""
+# echo "SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)"
+# srun -n 1 --cpus-per-task 1 perf record -e cpu-cycles,cache-misses,page-faults,alignment-faults -g -o ${CURRENT_DIR}/../perf/simd_1024.data ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
+# srun -n 1 --cpus-per-task 1 perf record -e cpu-cycles,cache-misses,page-faults,alignment-faults -g -o ${CURRENT_DIR}/../perf/simd_2048.data ${CURRENT_DIR}/../build/src/simd ${CURRENT_DIR}/../matrices/matrix7.txt ${CURRENT_DIR}/../matrices/matrix8.txt ${CURRENT_DIR}/../build/result.txt
+# echo ""
 
-# # OpenMP + SIMD + Reordering
+# OpenMP + SIMD + Reordering
 # echo "OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)"
 # for num_cores in 1 2 4 8 16 32
 # do
 #   echo "Number of cores: $num_cores"
-#   srun -n 1 --cpus-per-task $num_cores ${CURRENT_DIR}/../build/src/openmp $num_cores ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
+#   srun -n 1 --cpus-per-task $num_cores perf record -e cpu-cycles,cache-misses,page-faults,alignment-faults -g -o ${CURRENT_DIR}/../perf/omp_1024_$num_cores.data ${CURRENT_DIR}/../build/src/openmp $num_cores ${CURRENT_DIR}/../matrices/matrix5.txt ${CURRENT_DIR}/../matrices/matrix6.txt ${CURRENT_DIR}/../build/result.txt
+#   srun -n 1 --cpus-per-task $num_cores perf record -e cpu-cycles,cache-misses,page-faults,alignment-faults -g -o ${CURRENT_DIR}/../perf/omp_2048_$num_cores.data ${CURRENT_DIR}/../build/src/openmp $num_cores ${CURRENT_DIR}/../matrices/matrix7.txt ${CURRENT_DIR}/../matrices/matrix8.txt ${CURRENT_DIR}/../build/result.txt
 #   echo ""
 # done
 
