@@ -63,7 +63,7 @@ float matrix_multiply_cuda(const Matrix& matrix1, const Matrix& matrix2, Matrix&
 
     // start time counting
     cudaEvent_t start, stop;
-    float gpuDuration;
+    float gpuDuration = 0;
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
 

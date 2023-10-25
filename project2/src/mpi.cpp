@@ -255,7 +255,7 @@ int main(int argc, char** argv) {
     // How many processes are running
     int numtasks;
     MPI_Comm_size(MPI_COMM_WORLD, &numtasks);
-    printf("numtasks:%d\n", numtasks);
+    // printf("numtasks:%d\n", numtasks);
     // What's my rank?
     int taskid;
     MPI_Comm_rank(MPI_COMM_WORLD, &taskid);
@@ -368,6 +368,7 @@ int main(int argc, char** argv) {
             if (row_split) store_res(result, start_pos, i_cuts[i], 0, i_cuts[i + 1] - i_cuts[i], matrix2.getCols());
             else store_res(result, start_pos, 0, j_cuts[i], matrix1.getRows(), j_cuts[i + 1] - j_cuts[i]);
             // printf("%d recvd: result %d, totoal: %d\n", status.MPI_SOURCE, start_pos[0], length);
+            delete []start_pos;
         }
 
         auto end_time = std::chrono::high_resolution_clock::now();
@@ -387,7 +388,7 @@ int main(int argc, char** argv) {
         delete []j_cuts0;
 
     } else {
-        printf("%d %d\n", i_cuts[taskid], i_cuts[taskid + 1]);
+        // printf("%d %d\n", i_cuts[taskid], i_cuts[taskid + 1]);
 
         Matrix result = matrix_multiply_mpi(matrix1, matrix2, row_split,
                                             i_cuts[taskid], i_cuts[taskid + 1],
@@ -399,13 +400,13 @@ int main(int argc, char** argv) {
         int *start_pos = (int*)malloc(length * sizeof(int));
         
         // MPI_Recv(start_pos, length, MPI_INT, i, TAG_GATHER, MPI_COMM_WORLD, &status);
-        printf("%d %d\n", i_cuts[taskid], i_cuts[taskid + 1]);
+        // printf("%d %d\n", i_cuts[taskid], i_cuts[taskid + 1]);
         if (row_split) load_res(start_pos, result, i_cuts[taskid], 0, i_cuts[taskid + 1] - i_cuts[taskid], matrix2.getCols());
         else load_res(start_pos, result, 0, j_cuts[taskid], matrix1.getRows(), j_cuts[taskid + 1] - j_cuts[taskid]);
         MPI_Send(start_pos, length, MPI_INT32_T, MASTER, TAG_GATHER, MPI_COMM_WORLD);
         // Your Code Here for Synchronization!
         // printf("%d sent: result %d~%d(%d), total: %d\n", taskid, start_pos[0], start_pos[length-1], result[i_cuts[taskid + 1] - 1][matrix2.getCols() - 1] ,length);
-        // delete []start_pos;
+        delete []start_pos;
     }
 
 

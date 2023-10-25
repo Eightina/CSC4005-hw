@@ -1,0 +1,49 @@
+MPI + OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)
+Number of Processes: 2, Number of Threads: 32
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 63 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 198 milliseconds
+
+Number of Processes: 4, Number of Threads: 16
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 54 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 183 milliseconds
+
+Number of Processes: 8, Number of Threads: 8
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 46 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 184 milliseconds
+
+Number of Processes: 16, Number of Threads: 4
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 42 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 168 milliseconds
+
+Number of Processes: 32, Number of Threads: 2
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 45 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 157 milliseconds
+
+Number of Processes: 64, Number of Threads: 1
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 33 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 171 milliseconds
+

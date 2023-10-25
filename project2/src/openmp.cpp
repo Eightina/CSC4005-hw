@@ -86,7 +86,6 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
 #pragma omp parallel 
 {
     int id = omp_get_thread_num();
-
     const int std_block_size_i = assign_block_size(row_cuts[id+1] - row_cuts[id]);
     // if (std_block_size_i == 0) return;
     const int std_block_size_k = assign_block_size(K);

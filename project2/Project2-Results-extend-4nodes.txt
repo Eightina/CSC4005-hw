@@ -1,0 +1,42 @@
+/var/spool/slurmd/job133306/slurm_script: line 14: MPI: command not found
+MPI + OpenMP + SIMD + Memory Locality Matrix Multiplication (Optimized with -O2)
+Number of Processes: 4, Number of Threads: 16
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 66 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 215 milliseconds
+
+Number of Processes: 8, Number of Threads: 8
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 53 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 198 milliseconds
+
+Number of Processes: 16, Number of Threads: 4
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 55 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 197 milliseconds
+
+Number of Processes: 32, Number of Threads: 2
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 51 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 195 milliseconds
+
+Number of Processes: 64, Number of Threads: 1
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/resultwhat.txt
+Multiplication Complete!
+Execution Time: 40 milliseconds
+Output file to: /nfsmnt/223040076/coursecode/project2/src/../build/result.txt
+Multiplication Complete!
+Execution Time: 204 milliseconds
+
