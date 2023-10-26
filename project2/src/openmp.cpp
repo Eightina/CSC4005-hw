@@ -27,9 +27,7 @@ void inline avx_memcpy(void* __restrict dst, const void* __restrict src, int blo
 
 void inline preload_block(int *__restrict dst, const Matrix& src, int src_row,
                              int src_col, int block_size_row, int block_size_col) {
-    // printf("called range to:%d + %d = %d\n", src_row, block_size_row, src_row + block_size_row);
     for (int i = 0; i < block_size_row; ++i) {
-        // if (src_row == 1145) printf(">>??\n");
         avx_memcpy(dst, src[src_row]+src_col, block_size_col);
         dst += block_size_col;
         src_row++;
@@ -49,7 +47,6 @@ void inline avx256_kernel(int k, int i, int j, int* zeroload_matrix1, int* zerol
             const int result_iter_loc = (i1 - i) * block_size_j;
             int j1;
             for (j1 = j; j1 + 8 <= j + block_size_j; j1 += 8) {
-                // kernel_result[temp_loc + j1 - j] += r1 * preload_matrix2[j1-j];
                 __m256i kernel_res_256 = _mm256_lddqu_si256((__m256i*)(kernel_result + result_iter_loc + j1 - j));  
                 __m256i matrix2_256 = _mm256_lddqu_si256((__m256i*)(zeroload_matrix2 + temp_kloc + j1 - j));
                 __m256i mul_res = _mm256_mullo_epi32(r1, matrix2_256); // dont use _mul_epi :(
@@ -68,7 +65,6 @@ void inline avx256_kernel(int k, int i, int j, int* zeroload_matrix1, int* zerol
 
 void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result, int thread_num) {
 
-    // printf("M:%d, N:%d, K:%d\n", M, N, K);
     int row_num_per_thread = M / thread_num;
     int left_row_num = M % thread_num;
     int row_cuts[thread_num + 1];
@@ -82,15 +78,12 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
     }
 
 
-// shared(M, N, K, matrix1, matrix2, result, std_block_size_i, std_block_size_k, std_block_size_j) 
 #pragma omp parallel 
 {
     int id = omp_get_thread_num();
     const int std_block_size_i = assign_block_size(row_cuts[id+1] - row_cuts[id]);
-    // if (std_block_size_i == 0) return;
     const int std_block_size_k = assign_block_size(K);
     const int std_block_size_j = assign_block_size(N);
-    // printf("blk_M:%d, blk_N:%d, blk_K:%d\n", block_size_i, block_size_j, block_size_k);
 
     const int i_res = (row_cuts[id+1] - row_cuts[id]) % std_block_size_i;
     const int k_res = K % std_block_size_k;
@@ -115,17 +108,9 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
             memset(kernel_result, 0, block_size_i * block_size_j * sizeof(int));
             for (int k = 0; k < K;) {
 
-                // if (i == 1145) printf("xxxxx\n");
 
-                // printf("%d load block m1 i:%d k:%d ...\n", id, i, k);
-                // printf("caller i:%d\n", i);
                 preload_block(zeroload_matrix1, matrix1, i, k, block_size_i, block_size_k);
-                // printf("done\n");
-                
-                // printf("%d load block m2 k:%d j:%d ...\n", id, k, j);
-                // printf("caller k:%d\n", k);
                 preload_block(zeroload_matrix2, matrix2, k, j, block_size_k, block_size_j);
-                // printf("done\n");
                 //------------------kernel----------------------------
                 avx256_kernel(k, i, j, zeroload_matrix1, zeroload_matrix2, kernel_result,
                                 block_size_k, block_size_i, block_size_j);
@@ -163,58 +148,11 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
         }
 
     }
+    free(zeroload_matrix1);
+    free(zeroload_matrix2);
+    free(kernel_result);
 }
 }
-
-// void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result, int block_size) {
-// #pragma omp parallel shared(M, N, K, matrix1, matrix2, result, block_size) 
-// {
-//     int* zeroload_matrix1 = (int*)aligned_alloc(64, block_size * block_size * sizeof(int));
-//     int* zeroload_matrix2 = (int*)aligned_alloc(64, block_size * block_size * sizeof(int));
-
-//     #pragma omp for
-//     for (int i = 0; i < M; i+=block_size) {
-//         // printf("Hey, I'm thread %d inside the par zone!\n", omp_get_thread_num()); 
-//         for (int j = 0; j < N; j+=block_size) {
-//             // int kernel_result[block_size * (block_size + 8)] = {};
-//             int* kernel_result = (int*)aligned_alloc(64, block_size * block_size * sizeof(int));
-//             memset(kernel_result, 0, block_size * block_size * sizeof(int));
-
-//             for (int k = 0; k < K; k+=block_size) {
-
-//                 //------------------kernel----------------------------
-//                 preload_block(zeroload_matrix1, matrix1, i, k, block_size);
-//                 preload_block(zeroload_matrix2, matrix2, k, j, block_size);
-
-//                 for (int k1 = k; k1 < k+block_size; ++k1) {
-//                     const int temp_kloc = (k1 - k) * block_size;  
-
-//                     for (int i1 = i; i1 < i+block_size; ++i1) {
-//                         const int temp_iloc = (i1 - i) * block_size;
-//                         const int r1_iter_loc = temp_iloc + (k1 - k);
-//                         register __m512i r1 = _mm512_set1_epi32(*(zeroload_matrix1 + r1_iter_loc));
-
-//                         for (int j1 = j; j1 < j + block_size; j1 += 16) {
-//                             __m512i kernel_res_512 = _mm512_load_epi32(kernel_result + temp_iloc + j1 - j);  
-//                             __m512i matrix2_512 = _mm512_load_epi32(zeroload_matrix2 + temp_kloc + j1 - j);
-//                             __m512i mul_res = _mm512_mullo_epi32(r1, matrix2_512); // dont use _mul_epi :(
-//                             kernel_res_512 = _mm512_add_epi32(kernel_res_512, mul_res);
-//                             _mm512_store_epi32(kernel_result + temp_iloc + j1 - j, kernel_res_512);
-//                         }
-//                     }
-//                 }
-//                 //------------------kernel----------------------------
-
-//             }
-
-//             for (int row = 0; row < block_size; ++row) {
-//                 avx_memcpy(result[i + row] + j, &kernel_result[row * block_size], block_size);
-//             }
-
-//         }
-//     }
-// }
-// }
 
 Matrix matrix_multiply_openmp(const Matrix& matrix1, const Matrix& matrix2, int thread_num) {
     if (matrix1.getCols() != matrix2.getRows()) {
@@ -227,12 +165,7 @@ Matrix matrix_multiply_openmp(const Matrix& matrix1, const Matrix& matrix2, int 
     Matrix result(M, N);
 
     simd_ijk_kij_tmm(M, N, K, matrix1, matrix2, result, thread_num); 
-    // // Your Code Here!
-    // // Optimizing Matrix Multiplication 
-    // // In addition to SIMD, Memory Locality and Cache Missing,
-    // // Further Applying OpenMp
 
-    
     return result;
 }
 

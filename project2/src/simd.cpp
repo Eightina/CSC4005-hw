@@ -28,11 +28,7 @@ void inline preload_block(int *__restrict dst, const Matrix& src, int src_row,
                              int src_col, int block_size_row, int block_size_col) {
     // #pragma GCC unroll 64
     for (int i = 0; i < block_size_row; ++i) {
-        // memcpy(dst, src[src_row]+src_col, block_size);
-        // no_sse_memcpy(dst, src[src_row]+src_col, block_size_col);
-        // printf("refering row:%d ...", src_row);
         avx_memcpy(dst, src[src_row]+src_col, block_size_col);
-        // printf("done\n");
         dst += block_size_col;
         src_row++;
     }
@@ -83,7 +79,6 @@ void inline avx256_kernel(int k, int i, int j, int* zeroload_matrix1, int* zerol
             const int result_iter_loc = (i1 - i) * block_size_j;
             int j1;
             for (j1 = j; j1 + 8 <= j + block_size_j; j1 += 8) {
-                // kernel_result[temp_loc + j1 - j] += r1 * preload_matrix2[j1-j];
                 __m256i kernel_res_256 = _mm256_lddqu_si256((__m256i*)(kernel_result + result_iter_loc + j1 - j));  
                 __m256i matrix2_256 = _mm256_lddqu_si256((__m256i*)(zeroload_matrix2 + temp_kloc + j1 - j));
                 __m256i mul_res = _mm256_mullo_epi32(r1, matrix2_256); // dont use _mul_epi :(
@@ -102,12 +97,10 @@ void inline avx256_kernel(int k, int i, int j, int* zeroload_matrix1, int* zerol
 
 
 void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const Matrix& matrix2, Matrix& result) {
-    // printf("M:%d, N:%d, K:%d\n", M, N, K);
     const int std_block_size_i = assign_block_size(M);
     const int std_block_size_k = assign_block_size(K);
     const int std_block_size_j = assign_block_size(N);
     int block_size_i = std_block_size_i, block_size_j = std_block_size_j, block_size_k = std_block_size_k;
-    // printf("blk_M:%d, blk_N:%d, blk_K:%d\n", block_size_i, block_size_j, block_size_k);
 
     const int i_res = M % block_size_i;
     const int k_res = K % block_size_k;
@@ -123,7 +116,6 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
     int* zeroload_matrix2 = (int*)aligned_alloc(64, block_size_k * block_size_j * sizeof(int));
     int* kernel_result = (int*)aligned_alloc(64, block_size_i * block_size_j * sizeof(int));
 
-
     for (int i = 0; i <= block_range_i;) {
         if (i == M) break;
         if (i == block_range_i) {
@@ -136,7 +128,6 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
                 block_size_j = j_res;
                 j_switch = true;
             }
-            // int kernel_result[block_size_i * block_size_j] = {};
             memset(kernel_result, 0, block_size_i * block_size_j * sizeof(int));
             for (int k = 0; k <= block_range_k;) {
                 if (k == K) break;
@@ -174,6 +165,9 @@ void inline simd_ijk_kij_tmm(int M, int N, int K, const Matrix& matrix1, const M
             i_switch = false;
         }
     }
+    free(zeroload_matrix1);
+    free(zeroload_matrix2);
+    free(kernel_result);
 }
 
 Matrix matrix_multiply_simd(const Matrix& matrix1, const Matrix& matrix2) {

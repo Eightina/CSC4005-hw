@@ -128,40 +128,7 @@ Matrix matrix_multiply_locality(const Matrix& matrix1, const Matrix& matrix2) {
 
     Matrix result(M, N);
 
-    // kij_mm(M, N, K, matrix1, matrix2, result);       // kij 1024*1024:3816ms; 
-
-    // ijk_tmm(M, N, K, matrix1, matrix2, result, 8);       // ijk 1024*1024:6132ms; 
-    // ijk_tmm(M, N, K, matrix1, matrix2, result, 16);      // ijk 1024*1024:6447ms; 
-    // ijk_tmm(M, N, K, matrix1, matrix2, result, 32);      // ijk 1024*1024:6202ms; 
-    // ijk_tmm(M, N, K, matrix1, matrix2, result, 64);      // ijk 1024*1024:6116ms; best block_size = 64
-    // ijk_tmm(M, N, K, matrix1, matrix2, result, 128);     // ijk 1024*1024:6195ms; 
-    // ijk_tmm(M, N, K, matrix1, matrix2, result, 512);     // ijk 1024*1024:7466ms;
-
-    // kij_tmm(M, N, K, matrix1, matrix2, result, 16);      // kij 1024*1024:4688ms; 
-    // kij_tmm(M, N, K, matrix1, matrix2, result, 64);      // kij 1024*1024:4543ms; 
-    // kij_tmm(M, N, K, matrix1, matrix2, result, 4);       // kij 1024*1024:5275ms; 
-
-    // ijk_kij_tmm(M, N, K, matrix1, matrix2, result, 32);     // ijk_kij 1024:3693ms; 
-
     ijk_kij_tmm(M, N, K, matrix1, matrix2, result);     
-    // ijk_kij 1024:3674ms; preload1024:1983ms; betterpreload:1652ms; load_res_block:829ms; 
-    // load_res&mat1_block:790ms; +eliminate_useless_inits:774ms; 64_load+mem_align:769ms
-
-    // ijk_ijk_tmm(M, N, K, matrix1, matrix2, result, 64);    // ijk_kij 1024:4571ms; 
-    
-    // ijk_ikj_tmm(M, N, K, matrix1, matrix2, result, 64);    // ijk_kij 1024:2256; 
-
-    // ikj_ikj_tmm(M, N, K, matrix1, matrix2, result, 64);
-
-
-    // Your Code Here!
-    // Optimizing Matrix Multiplication 
-    // Considering Memory Locality and Avoiding Cache Missing
-    // Hints:
-    // 1. Change the order of the tripple nested loop
-    // 2. Apply Tiled Matrix Multiplication
-
-
 
     return result;
 }
