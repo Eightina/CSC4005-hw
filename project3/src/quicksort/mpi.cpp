@@ -13,7 +13,21 @@
 
 #define MASTER 0
 
-int partition(std::vector<int> &vec, int low, int high) {
+void inline assign_cuts(int total_workload, int num_tasks, int* cuts) {
+    int work_num_per_task = total_workload / num_tasks;
+    int left_pixel_num = total_workload % num_tasks;
+
+    int divided_left = 0;
+
+    for (int i = 0; i < num_tasks; i++) {
+        if (divided_left < left_pixel_num) {
+            cuts[i+1] = cuts[i] + work_num_per_task + 1;
+            divided_left++;
+        } else cuts[i+1] = cuts[i] + work_num_per_task;
+    }
+}
+
+inline int partition(std::vector<int> &vec, int low, int high) {
     int pivot = vec[high];
     int i = low - 1;
 
@@ -28,10 +42,24 @@ int partition(std::vector<int> &vec, int low, int high) {
     return i + 1;
 }
 
-void quickSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* status) {
-    /* Your code here!
-       Implement parallel quick sort with MPI
-    */
+inline void quickSortKernel(std::vector<int> &vec, int low, int high) {
+    if (low < high) {
+        int pivotIndex = partition(vec, low, high);
+        quickSortKernel(vec, low, pivotIndex - 1);
+        quickSortKernel(vec, pivotIndex + 1, high);
+    }
+}
+
+// inline void 
+
+void quickSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* status, int cuts[]) {
+    quickSortKernel(vec, cuts[taskid], cuts[taskid + 1]);
+    if (taskid == MASTER) {
+        int *cur_res = malloc(sizeof(int) * (cuts[taskid + 1] - cuts[taskid])); 
+    } else {
+
+    }
+
 }
 
 int main(int argc, char** argv) {
@@ -62,9 +90,13 @@ int main(int argc, char** argv) {
     std::vector<int> vec = createRandomVec(size, seed);
     std::vector<int> vec_clone = vec;
 
+    // job patition
+    int cuts[numtasks + 1];
+    assign_cuts(size, numtasks, cuts);
+
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    quickSort(vec, numtasks, taskid, &status);
+    quickSort(vec, numtasks, taskid, &status, cuts);
 
     if (taskid == MASTER) {
         auto end_time = std::chrono::high_resolution_clock::now();
