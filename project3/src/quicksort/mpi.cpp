@@ -12,6 +12,7 @@
 #include "../utils.hpp"
 
 #define MASTER 0
+#define TAG_GATHER 0
 
 void inline assign_cuts(int total_workload, int num_tasks, int* cuts) {
     int work_num_per_task = total_workload / num_tasks;
@@ -53,11 +54,16 @@ inline void quickSortKernel(std::vector<int> &vec, int low, int high) {
 // inline void 
 
 void quickSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* status, int cuts[]) {
+    int *nums = vec.data();
     quickSortKernel(vec, cuts[taskid], cuts[taskid + 1]);
     if (taskid == MASTER) {
-        int *cur_res = malloc(sizeof(int) * (cuts[taskid + 1] - cuts[taskid])); 
+        int *new_res = (int *)malloc(sizeof(int) * (vec.size()));
+        for (int t_id = 1; t_id < numtasks; ++t_id) {
+            MPI_Recv(&nums[cuts[t_id]], cuts[t_id + 1] - cuts[t_id], MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD);
+        }
+        // int *cur_res = (int *)malloc(sizeof(int) * (cuts[taskid + 1] - cuts[taskid]));
     } else {
-
+        MPI_Send(&nums[cuts[taskid]], cuts[taskid + 1] - cuts[taskid], MPI_INT, MASTER, TAG_GATHER, MPI_COMM_WORLD);
     }
 
 }
