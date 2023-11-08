@@ -9,6 +9,7 @@
 #include <vector>
 #include <mpi.h>
 #include "../utils.hpp"
+#include "string.h"
 
 #define MASTER 0
 
@@ -26,7 +27,89 @@ void insertionSort(std::vector<int>& bucket) {
     }
 }
 
-void bucketSort(std::vector<int>& vec, int num_buckets, int numtasks, int taskid, MPI_Status* status) {
+std::vector<std::vector<int>>& bucketSortKernel(std::vector<int>& vec, int num_buckets) {
+    int max_val = *std::max_element(vec.begin(), vec.end());
+    int min_val = *std::min_element(vec.begin(), vec.end());
+
+    int range = max_val - min_val + 1;
+    int small_bucket_size = range / num_buckets;
+    int large_bucket_size = small_bucket_size + 1;
+    int large_bucket_num = range - small_bucket_size * num_buckets;
+    int boundary = min_val + large_bucket_num * large_bucket_size;
+
+    std::vector<std::vector<int>>* buckets = new std::vector<std::vector<int>>(num_buckets);
+    // Pre-allocate space to avoid re-allocation
+    for (std::vector<int>& bucket : *buckets) {
+        bucket.reserve(large_bucket_num);
+    }
+
+    // Place each element in the appropriate bucket
+    for (int num : vec) {
+        int index;
+        if (num < boundary) {
+            index = (num - min_val) / large_bucket_size;
+        } else {
+            index = large_bucket_num + (num - boundary) / small_bucket_size;
+        }
+        if (index >= num_buckets) {
+            // Handle elements at the upper bound
+            index = num_buckets - 1;
+        }
+        (*buckets)[index].push_back(num);
+    }
+
+    // Sort each bucket using insertion sort
+    for (std::vector<int>& bucket : *buckets) {
+        insertionSort(bucket);
+    }
+    return *buckets;
+    // Combine sorted buckets to get the final sorted array
+    // int index = 0;
+    // for (const std::vector<int>& bucket : buckets) {
+    //     for (int num : bucket) {
+    //         vec[index++] = num;
+    //     }
+    // }
+}
+
+void bucketSort(std::vector<int>& vec, int num_buckets, int numtasks, int taskid, MPI_Status* status, std::vector<int> cuts) {
+    int start = cuts[taskid], end = cuts[taskid + 1] - 1, afterEnd = cuts[taskid];
+    std::vector<int>* cur_vec = new std::vector<int>(vec.begin() + start, vec.begin() + afterEnd);
+    std::vector<std::vector<int>> cur_buckets = bucketSortKernel(*cur_vec, num_buckets);
+    int* cur_buckets_send = (int*)malloc(sizeof(int) * (cuts[taskid + 1] - cuts[taskid]));
+    
+    // communicate each others' buckets sizes
+    int* cur_buckets_sizes = (int*)malloc(sizeof(int) * num_buckets);
+    int* i_buckets_sizes = (int*)malloc(sizeof(int) * num_buckets);
+
+    int* send_counts = (int*)malloc(sizeof(int) * num_buckets);
+    memset(send_counts, num_buckets, 1);
+    int* sdispls = (int*)malloc(sizeof(int) * num_buckets);
+    for (int i = 0; i < cur_buckets.size(); ++i) sdispls[i] = i;
+    for (int i = 0; i < cur_buckets.size(); ++i) {
+        cur_buckets_sizes[i] = cur_buckets[i].size();
+    }
+
+    MPI_Alltoallv(cur_buckets_sizes, send_counts, sdispls, MPI_INT,
+                    i_buckets_sizes, send_counts, sdispls, MPI_INT, 
+                    MPI_COMM_WORLD
+                );
+    delete []cur_buckets_sizes;
+    delete []send_counts;
+    delete []sdispls;
+    
+    int* i_buckets = (int*)malloc(sizeof(int) * sum(i_buckets_sizes));
+    // i_buckets_sizes
+    MPI_Alltoallv(cur_buckets_sizes, send_counts, sdispls, MPI_INT,
+                    i_buckets_sizes, send_counts, sdispls, MPI_INT, 
+                    MPI_COMM_WORLD
+                );
+
+    for (std::vector<int> bucket : cur_buckets) {
+
+    // std::vector<int>* cur_vec = new std::vector<int>(vec.begin(), vec.begin());
+    // std::vector<int> cur_ve(vec.begin(), vec.end());
+
     /* Your code here!
        Implement parallel bucket sort with MPI
     */
@@ -62,9 +145,12 @@ int main(int argc, char** argv) {
     std::vector<int> vec = createRandomVec(size, seed);
     std::vector<int> vec_clone = vec;
 
+    // job patition
+    std::vector<int> cuts = createCuts(0, vec.size() - 1, numtasks);
+    
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    bucketSort(vec, bucket_num, numtasks, taskid, &status);
+    bucketSort(vec, bucket_num, numtasks, taskid, &status, cuts);
 
     if (taskid == MASTER) {
         auto end_time = std::chrono::high_resolution_clock::now();

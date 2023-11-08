@@ -15,3 +15,13 @@ Execution Time: 8324 milliseconds
 std::sort Time: 15058 milliseconds
 Pass the sorting result check!
 Number of cores: 16
+Quick Sort Complete!
+Execution Time: 8178 milliseconds
+std::sort Time: 15175 milliseconds
+Pass the sorting result check!
+Number of cores: 32
+Quick Sort Complete!
+Execution Time: 9070 milliseconds
+std::sort Time: 15193 milliseconds
+Pass the sorting result check!
+
