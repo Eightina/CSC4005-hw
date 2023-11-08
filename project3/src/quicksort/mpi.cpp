@@ -8,24 +8,58 @@
 
 #include <iostream>
 #include <vector>
+#include <queue>
+#include "string.h"
 #include <mpi.h>
 #include "../utils.hpp"
 
 #define MASTER 0
 #define TAG_GATHER 0
 
-void inline assign_cuts(int total_workload, int num_tasks, int* cuts) {
-    int work_num_per_task = total_workload / num_tasks;
-    int left_pixel_num = total_workload % num_tasks;
 
-    int divided_left = 0;
-
-    for (int i = 0; i < num_tasks; i++) {
-        if (divided_left < left_pixel_num) {
-            cuts[i+1] = cuts[i] + work_num_per_task + 1;
-            divided_left++;
-        } else cuts[i+1] = cuts[i] + work_num_per_task;
-    }
+struct node{
+	int value;
+	int* array; //数组索引
+	int index; 
+    int array_len;
+	node(int v, int* a, int i, int a_len){
+		value = v;
+		array = a;
+		index = i;
+        array_len = a_len;
+	}
+	bool operator<(node a)const{
+		return value < a.value;
+	}
+	bool operator>(node a)const{
+		return value > a.value;
+	}
+};
+void mergeSorted(int** nums, std::vector<int> cuts, std::vector<int>& res){
+    // printf("merging sorted...");
+	int array_num = cuts.size() - 1;
+    int total_len = cuts[array_num];
+	std::priority_queue<node, std::vector<node>, std::greater<node>> order;
+    // init priority queue
+	for (int i = 0; i < array_num; i++){
+		order.push(node(nums[i][0], nums[i], 0, cuts[i + 1] - cuts[i]));
+	}
+	int* cur_array = 0;
+    int nxt_index = 0;
+	// priority queue is full
+    int cnt = 0;
+	while (cnt < total_len){
+		node tmp = order.top();//获得优先队列中最小值元素
+		res[cnt] = tmp.value;//存入目标数组
+        ++cnt;
+		cur_array = tmp.array;//最小值元素对应数组
+		nxt_index = tmp.index + 1;//最小值元素对应数组内下一个的元素
+		order.pop();
+		if (nxt_index < tmp.array_len) {
+            order.push(node(cur_array[nxt_index], cur_array, nxt_index, tmp.array_len));
+		}
+	}
+    // printf("merging done\n");
 }
 
 inline int partition(std::vector<int> &vec, int low, int high) {
@@ -51,19 +85,40 @@ inline void quickSortKernel(std::vector<int> &vec, int low, int high) {
     }
 }
 
-// inline void 
-
-void quickSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* status, int cuts[]) {
+void quickSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* status, std::vector<int> cuts) {
     int *nums = vec.data();
-    quickSortKernel(vec, cuts[taskid], cuts[taskid + 1]);
+    std::vector<int>* res = new std::vector<int>(cuts[numtasks], 0);
+    
+    quickSortKernel(vec, cuts[taskid], cuts[taskid + 1] - 1);
     if (taskid == MASTER) {
-        int *new_res = (int *)malloc(sizeof(int) * (vec.size()));
+        // int *new_res = (int *)malloc(sizeof(int) * (vec.size()));
+        // arrays[0] = res
+        int* master_res = (int*)malloc(sizeof(int) * (cuts[MASTER + 1] - cuts[MASTER]));
+        memcpy(master_res, nums, sizeof(int) * (cuts[MASTER + 1] - cuts[MASTER]));
+
+        int **arrays = (int **)malloc(sizeof(int*) * (numtasks));
+        // int *res = (int*)malloc(sizeof(int) * cuts[numtasks-1]);
+        arrays[0] = master_res;
+
         for (int t_id = 1; t_id < numtasks; ++t_id) {
-            MPI_Recv(&nums[cuts[t_id]], cuts[t_id + 1] - cuts[t_id], MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD);
+
+            int* cur_res = (int*)malloc(sizeof(int) * (cuts[t_id + 1] - cuts[t_id]));
+            // MPI_Recv(&nums[cuts[t_id]], cuts[t_id + 1] - cuts[t_id], MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, status);
+            MPI_Recv(cur_res, cuts[t_id + 1] - cuts[t_id], MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, status);
+            arrays[t_id] = cur_res;
+            // printf("taskid %d received %d\n", t_id, cuts[t_id + 1] - cuts[t_id]);
         }
-        // int *cur_res = (int *)malloc(sizeof(int) * (cuts[taskid + 1] - cuts[taskid]));
+        // printf("all tasks received\n");
+
+        if (numtasks >= 2) {
+            // printf("res init\n");
+            mergeSorted(arrays, cuts, vec);
+        }
+        free(master_res);
+        free(arrays);
     } else {
         MPI_Send(&nums[cuts[taskid]], cuts[taskid + 1] - cuts[taskid], MPI_INT, MASTER, TAG_GATHER, MPI_COMM_WORLD);
+        // printf("taskid %d sent %d\n", taskid, cuts[taskid + 1] - cuts[taskid]);
     }
 
 }
@@ -94,11 +149,13 @@ int main(int argc, char** argv) {
     const int seed = 4005;
 
     std::vector<int> vec = createRandomVec(size, seed);
+    // print_vec(vec, 0, vec.size() -1);
     std::vector<int> vec_clone = vec;
 
     // job patition
-    int cuts[numtasks + 1];
-    assign_cuts(size, numtasks, cuts);
+    std::vector<int> cuts = createCuts(0, vec.size() - 1, numtasks);
+    // assign_cuts(size, numtasks, cuts);
+    // createCuts(0, )
 
     auto start_time = std::chrono::high_resolution_clock::now();
 
