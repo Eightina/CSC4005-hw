@@ -93,19 +93,21 @@ void quickSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* stat
     if (taskid == MASTER) {
         // int *new_res = (int *)malloc(sizeof(int) * (vec.size()));
         // arrays[0] = res
-        int* master_res = (int*)malloc(sizeof(int) * (cuts[MASTER + 1] - cuts[MASTER]));
-        memcpy(master_res, nums, sizeof(int) * (cuts[MASTER + 1] - cuts[MASTER]));
+        // int* master_res = (int*)malloc(sizeof(int) * (cuts[MASTER + 1] - cuts[MASTER]));
+        // memcpy(master_res, nums, sizeof(int) * (cuts[MASTER + 1] - cuts[MASTER]));
 
         int **arrays = (int **)malloc(sizeof(int*) * (numtasks));
-        // int *res = (int*)malloc(sizeof(int) * cuts[numtasks-1]);
-        arrays[0] = master_res;
+        int *res = (int*)malloc(sizeof(int) * cuts[numtasks-1]);
+
+        memcpy(res, nums, sizeof(int) * (cuts[MASTER + 1] - cuts[MASTER]));
+        arrays[0] = res;
 
         for (int t_id = 1; t_id < numtasks; ++t_id) {
 
-            int* cur_res = (int*)malloc(sizeof(int) * (cuts[t_id + 1] - cuts[t_id]));
+            // int* cur_res = (int*)malloc(sizeof(int) * (cuts[t_id + 1] - cuts[t_id]));
             // MPI_Recv(&nums[cuts[t_id]], cuts[t_id + 1] - cuts[t_id], MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, status);
-            MPI_Recv(cur_res, cuts[t_id + 1] - cuts[t_id], MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, status);
-            arrays[t_id] = cur_res;
+            MPI_Recv(res + cuts[t_id], cuts[t_id + 1] - cuts[t_id], MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, status);
+            arrays[t_id] = res + cuts[t_id];
             // printf("taskid %d received %d\n", t_id, cuts[t_id + 1] - cuts[t_id]);
         }
         // printf("all tasks received\n");
@@ -114,7 +116,7 @@ void quickSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* stat
             // printf("res init\n");
             mergeSorted(arrays, cuts, vec);
         }
-        free(master_res);
+        free(res);
         free(arrays);
     } else {
         MPI_Send(&nums[cuts[taskid]], cuts[taskid + 1] - cuts[taskid], MPI_INT, MASTER, TAG_GATHER, MPI_COMM_WORLD);
