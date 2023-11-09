@@ -13,6 +13,14 @@
 
 #define MASTER 0
 
+int inline sum(int* array, int len) {
+    int res = 0;
+    for (int i = 0; i < len; ++i) {
+        res+=array[i];
+    }
+    return res;
+}
+
 void insertionSort(std::vector<int>& bucket) {
     for (int i = 1; i < bucket.size(); ++i) {
         int key = bucket[i];
@@ -76,7 +84,6 @@ void bucketSort(std::vector<int>& vec, int num_buckets, int numtasks, int taskid
     int start = cuts[taskid], end = cuts[taskid + 1] - 1, afterEnd = cuts[taskid];
     std::vector<int>* cur_vec = new std::vector<int>(vec.begin() + start, vec.begin() + afterEnd);
     std::vector<std::vector<int>> cur_buckets = bucketSortKernel(*cur_vec, num_buckets);
-    int* cur_buckets_send = (int*)malloc(sizeof(int) * (cuts[taskid + 1] - cuts[taskid]));
     
     // communicate each others' buckets sizes
     int* cur_buckets_sizes = (int*)malloc(sizeof(int) * num_buckets);
@@ -85,8 +92,8 @@ void bucketSort(std::vector<int>& vec, int num_buckets, int numtasks, int taskid
     int* send_counts = (int*)malloc(sizeof(int) * num_buckets);
     memset(send_counts, num_buckets, 1);
     int* sdispls = (int*)malloc(sizeof(int) * num_buckets);
-    for (int i = 0; i < cur_buckets.size(); ++i) sdispls[i] = i;
-    for (int i = 0; i < cur_buckets.size(); ++i) {
+    for (int i = 0; i < num_buckets; ++i) sdispls[i] = i;
+    for (int i = 0; i < num_buckets; ++i) {
         cur_buckets_sizes[i] = cur_buckets[i].size();
     }
 
@@ -94,18 +101,34 @@ void bucketSort(std::vector<int>& vec, int num_buckets, int numtasks, int taskid
                     i_buckets_sizes, send_counts, sdispls, MPI_INT, 
                     MPI_COMM_WORLD
                 );
-    delete []cur_buckets_sizes;
-    delete []send_counts;
-    delete []sdispls;
+    // delete []cur_buckets_sizes;
+    // delete []send_counts;
+    // delete []sdispls;
     
-    int* i_buckets = (int*)malloc(sizeof(int) * sum(i_buckets_sizes));
-    // i_buckets_sizes
-    MPI_Alltoallv(cur_buckets_sizes, send_counts, sdispls, MPI_INT,
-                    i_buckets_sizes, send_counts, sdispls, MPI_INT, 
+    // send buckets as pre-assumed
+    int* i_buckets = (int*)malloc(sizeof(int) * sum(i_buckets_sizes, num_buckets));
+    int* cur_buckets_send = (int*)malloc(sizeof(int) * (cuts[taskid + 1] - cuts[taskid]));
+    int cpyidx = 0;
+    for (int i = 0; i < num_buckets; ++i) {
+        memcpy(cur_buckets_send + cpyidx, cur_buckets[i].data(), cur_buckets[i].size());
+    }
+    int* rdispls = (int*)malloc(sizeof(int) * num_buckets);
+    for (int i = 0; i < num_buckets; ++i) {
+        if (i == 0) {
+            sdispls[i] = 0;
+            rdispls[i] = 0;
+            continue;
+        }
+        sdispls[i] = cur_buckets_sizes[i-1];
+        rdispls[i] = i_buckets_sizes[i-1];
+    }
+    
+    MPI_Alltoallv(cur_buckets_send, cur_buckets_sizes, sdispls, MPI_INT,
+                    i_buckets, i_buckets_sizes, rdispls, MPI_INT, 
                     MPI_COMM_WORLD
                 );
 
-    for (std::vector<int> bucket : cur_buckets) {
+    // for (std::vector<int> bucket : cur_buckets) {
 
     // std::vector<int>* cur_vec = new std::vector<int>(vec.begin(), vec.begin());
     // std::vector<int> cur_ve(vec.begin(), vec.end());
