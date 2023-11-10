@@ -47,10 +47,10 @@ void bucketSort(std::vector<int>& vec, int num_buckets) {
         } else {
             index = large_bucket_num + (num - boundary) / small_bucket_size;
         }
-        if (index >= num_buckets) {
-            // Handle elements at the upper bound
-            index = num_buckets - 1;
-        }
+        // if (index == num_buckets) {
+        //     // Handle elements at the upper bound
+        //     index = num_buckets - 1;
+        // }
         buckets[index].push_back(num);
     }
 

@@ -95,7 +95,7 @@ void insertionSort(int* bucket, int bucketLen) {
     }
 }
 
-std::vector<std::vector<int>>& bucketSortKernel(int max_val, int min_val, std::vector<int>& vec, int num_buckets) {
+std::vector<std::vector<int>>& bucketSortKernel(int min_val, int max_val, std::vector<int>& vec, int num_buckets) {
     int range = max_val - min_val + 1;
     int small_bucket_size = range / num_buckets;
     int large_bucket_size = small_bucket_size + 1;
@@ -110,16 +110,20 @@ std::vector<std::vector<int>>& bucketSortKernel(int max_val, int min_val, std::v
 
     // Place each element in the appropriate bucket
     for (int num : vec) {
+        if (num <  min_val || num > max_val) {
+            continue;
+        }
         int index;
         if (num < boundary) {
             index = (num - min_val) / large_bucket_size;
         } else {
             index = large_bucket_num + (num - boundary) / small_bucket_size;
-        }
-        if (index >= num_buckets) {
-            // Handle elements at the upper bound
-            index = num_buckets - 1;
-        }
+        } 
+        // if (index >= num_buckets || index < 0) {
+        //     // Handle elements at the upper bound
+        //     // index = num_buckets - 1;
+        //     continue;
+        // }
         (*buckets)[index].push_back(num);
     }
 
@@ -138,102 +142,111 @@ std::vector<std::vector<int>>& bucketSortKernel(int max_val, int min_val, std::v
     // }
 }
 
-void bucketSort(std::vector<int>& vec, int num_buckets, int numtasks, int taskid, MPI_Status* status, std::vector<int> cuts) {
+void bucketSort(std::vector<int>& vec, int num_buckets, int numtasks, int taskid, MPI_Status* status) {
     // attention here, buckets should be split as the full vector
-    int start = cuts[taskid], end = cuts[taskid + 1] - 1, afterEnd = cuts[taskid + 1];
-    std::vector<int>* cur_vec = new std::vector<int>(vec.begin() + start, vec.begin() + afterEnd);
-    int max_val = *std::max_element(vec.begin(), vec.end());
-    int min_val = *std::min_element(vec.begin(), vec.end());
-    std::vector<std::vector<int>> cur_buckets = bucketSortKernel(max_val, min_val, *cur_vec, num_buckets); 
+    // int start = cuts[taskid], end = cuts[taskid + 1] - 1, afterEnd = cuts[taskid + 1];
+    // std::vector<int>* cur_vec = new std::vector<int>(vec.begin() + start, vec.begin() + afterEnd);
+    int total_min_val = *std::min_element(vec.begin(), vec.end());
+    int total_max_val = *std::max_element(vec.begin(), vec.end());
+    std::vector<int> num_cuts = createCuts(total_min_val, total_max_val, numtasks);
+    // std::vector<int> bucket_cuts = createCuts(0, num_buckets - 1, numtasks);
+    int buckets_per_p = num_buckets / numtasks;
+
+    std::vector<std::vector<int>> cur_buckets = bucketSortKernel(num_cuts[taskid], num_cuts[taskid + 1] - 1 , vec, buckets_per_p); 
     
-    // communicate each others' buckets sizes
-    int* send_counts = (int*)malloc(sizeof(int) * num_buckets);
-    int* sdispls = (int*)malloc(sizeof(int) * num_buckets);
-    int* cur_buckets_sizes = (int*)malloc(sizeof(int) * num_buckets);
-    int* i_buckets_sizes = (int*)malloc(sizeof(int) * num_buckets);
-    for (int i = 0; i < num_buckets; ++i) {
-        send_counts[i] = 1;
-        sdispls[i] = i;
+    // // communicate each others' buckets sizes
+    // int* send_counts = (int*)malloc(sizeof(int) * num_buckets);
+    int* sdispls = (int*)malloc(sizeof(int) * buckets_per_p);
+    int* cur_buckets_sizes = (int*)malloc(sizeof(int) * buckets_per_p);
+    // int* i_buckets_sizes = (int*)malloc(sizeof(int) * num_buckets);
+    int cur_nums_size = 0;
+    for (int i = 0; i < buckets_per_p; ++i) {
+        // send_counts[i] = 1;
+        // sdispls[i] = i;
+        cur_nums_size += cur_buckets[i].size();
         cur_buckets_sizes[i] = cur_buckets[i].size();
     }
     
-    printf("%d init\n", taskid);
-    MPI_Alltoallv(cur_buckets_sizes, send_counts, sdispls, MPI_INT,
-                    i_buckets_sizes, send_counts, sdispls, MPI_INT, 
-                    MPI_COMM_WORLD
-                );
-    printf("%d buckets sizes comm\n", taskid);
-    // MPI_Barrier(MPI_COMM_WORLD); // sync
+    // printf("%d init\n", taskid);
+    // MPI_Alltoallv(cur_buckets_sizes, send_counts, sdispls, MPI_INT,
+    //                 i_buckets_sizes, send_counts, sdispls, MPI_INT, 
+    //                 MPI_COMM_WORLD
+    //             );
+    // printf("%d buckets sizes comm\n", taskid);
+    // // MPI_Barrier(MPI_COMM_WORLD); // sync
     
     // send buckets as pre-assumed
-    int* i_buckets = (int*)malloc(sizeof(int) * lenSum(i_buckets_sizes, num_buckets));
-    int* rdispls = (int*)malloc(sizeof(int) * num_buckets);
-    for (int i = 0; i < num_buckets; ++i) {
+    // int* i_buckets = (int*)malloc(sizeof(int) * lenSum(i_buckets_sizes, num_buckets));
+    // int* rdispls = (int*)malloc(sizeof(int) * num_buckets);
+    for (int i = 0; i < buckets_per_p; ++i) {
         if (i == 0) {
             sdispls[i] = 0;
-            rdispls[i] = 0;
+            // rdispls[i] = 0;
             continue;
         }
         sdispls[i] = cur_buckets_sizes[i - 1] + sdispls[i - 1];
-        rdispls[i] = i_buckets_sizes[i - 1] + rdispls[i - 1];
+        // rdispls[i] = i_buckets_sizes[i - 1] + rdispls[i - 1];
     }
-    int* cur_buckets_send = (int*)malloc(sizeof(int) * (cuts[taskid + 1] - cuts[taskid]));
-    for (int i = 0; i < num_buckets; ++i) {
+    int* cur_buckets_send = (int*)malloc(sizeof(int) * cur_nums_size);
+    for (int i = 0; i < buckets_per_p; ++i) {
         memcpy(cur_buckets_send + sdispls[i], cur_buckets[i].data(), cur_buckets_sizes[i] * sizeof(int));
         // printf("%d, %d, %d\n",sdispls[i], cur_buckets[i].data()[3], cur_buckets_sizes[i]);
     }
     
-    MPI_Alltoallv(cur_buckets_send, cur_buckets_sizes, sdispls, MPI_INT,
-                    i_buckets, i_buckets_sizes, rdispls, MPI_INT, 
-                    MPI_COMM_WORLD
-                );
-    printf("%d i buckets comm\n", taskid);
+    // MPI_Alltoallv(cur_buckets_send, cur_buckets_sizes, sdispls, MPI_INT,
+    //                 i_buckets, i_buckets_sizes, rdispls, MPI_INT, 
+    //                 MPI_COMM_WORLD
+    //             );
+    // printf("%d i buckets comm\n", taskid);
     // MPI_Barrier(MPI_COMM_WORLD); // sync
     
     // sort the gathered i buckets  
-    int i_buckets_total_len = lenSum(i_buckets_sizes, num_buckets);
+    // int i_buckets_total_len = lenSum(i_buckets_sizes, num_buckets);
     // insertionSort(i_buckets, i_buckets_total_len);
-    quickSort(i_buckets, 0, i_buckets_total_len - 1);
-    printf("%d i buckets sorted\n", taskid);
+    // quickSort(i_buckets, 0, i_buckets_total_len - 1);
+    // printf("%d i buckets sorted\n", taskid);
 
     // master gather all i buckets from slaves
     MPI_Barrier(MPI_COMM_WORLD); // sync
     MPI_Status recv_status;
-    int is_sent;
+    // int is_sent;
     int finished_num = 0;
     int* recv_t = vec.data();
 
     if (taskid == MASTER) {
-        memcpy(recv_t, i_buckets, sizeof(int) * i_buckets_total_len);
-        recv_t += i_buckets_total_len;
+        memcpy(recv_t, cur_buckets_send, sizeof(int) * cur_nums_size);
+        recv_t += cur_nums_size;
         ++finished_num;
-        while (finished_num < numtasks) {
+        // while (finished_num < numtasks) {
+        for (int t_id  = 1; t_id < numtasks; ++t_id) {
             // MPI_Recv(vec.data() + rdispls[i], )
-            MPI_Iprobe(MPI_ANY_SOURCE, TAG_GATHER, MPI_COMM_WORLD, &is_sent, &recv_status);
-            if (!is_sent) {
-                continue;
-            }
+            // do {
+            MPI_Probe(t_id, TAG_GATHER, MPI_COMM_WORLD, &recv_status);
+            // } while (recv_status.MPI_SOURCE != t_id);
+            // if (!is_sent) {
+            //     continue;
+            // }
             int recv_length = 0;
             MPI_Get_count(&recv_status, MPI_INT, &recv_length);
-            MPI_Recv(recv_t, recv_length, MPI_INT, recv_status.MPI_SOURCE, TAG_GATHER, MPI_COMM_WORLD, &recv_status);
-            printf("%d received\n", recv_status.MPI_SOURCE);
+            MPI_Recv(recv_t, recv_length, MPI_INT, t_id, TAG_GATHER, MPI_COMM_WORLD, &recv_status);
+            // printf("%d received\n", recv_status.MPI_SOURCE);
             recv_t += recv_length;
             ++finished_num;            
         }
     } else {
-        MPI_Send(i_buckets, i_buckets_total_len, MPI_INT, MASTER, TAG_GATHER, MPI_COMM_WORLD);
-        printf("%d sent\n", taskid);
+        MPI_Send(cur_buckets_send, cur_nums_size, MPI_INT, MASTER, TAG_GATHER, MPI_COMM_WORLD);
+        // printf("%d sent\n", taskid);
     }
 
     // release heap memory
-    delete cur_vec;
+    // delete cur_vec;
     delete []cur_buckets_sizes;
-    delete []i_buckets_sizes;
-    delete []i_buckets;
+    // delete []i_buckets_sizes;
+    // delete []i_buckets;
     delete []cur_buckets_send;
-    delete []send_counts;
+    // delete []send_counts;
     delete []sdispls;
-    delete []rdispls;
+    // delete []rdispls;
 
 }
 
@@ -266,13 +279,10 @@ int main(int argc, char** argv) {
 
     std::vector<int> vec = createRandomVec(size, seed);
     std::vector<int> vec_clone = vec;
-
-    // job patition
-    std::vector<int> cuts = createCuts(0, vec.size() - 1, numtasks);
     
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    bucketSort(vec, bucket_num, numtasks, taskid, &status, cuts);
+    bucketSort(vec, bucket_num, numtasks, taskid, &status);
 
     if (taskid == MASTER) {
         auto end_time = std::chrono::high_resolution_clock::now();

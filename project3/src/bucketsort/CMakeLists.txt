@@ -15,6 +15,6 @@ add_executable(bucketsort_mpi
         mpi.cpp
         ../utils.cpp ../utils.hpp)
 # target_compile_options(bucketsort_mpi PRIVATE -g3 -O0)
-target_compile_options(bucketsort_mpi PRIVATE -O2)
+# target_compile_options(bucketsort_mpi PRIVATE -O2)
 target_include_directories(bucketsort_mpi PRIVATE ${MPI_CXX_INCLUDE_DIRS})
 target_link_libraries(bucketsort_mpi ${MPI_LIBRARIES})
