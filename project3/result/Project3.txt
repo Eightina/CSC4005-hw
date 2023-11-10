@@ -1,0 +1,406 @@
+Bucket Sort MPI (Optimized with -O2)
+Number of cores: 1
+0 init
+0 buckets sizes comm
+0 i buckets comm
+0 i buckets sorted
+Bucket Sort Complete!
+Execution Time: 71 milliseconds
+std::sort Time: 0 milliseconds
+Pass the sorting result check!
+Number of cores: 2
+0 init
+1 init
+0 buckets sizes comm
+1 buckets sizes comm
+0 i buckets comm
+1 i buckets comm
+0 i buckets sorted
+1 i buckets sorted
+1 sent
+1 received
+Bucket Sort Complete!
+Execution Time: 22 milliseconds
+std::sort Time: 0 milliseconds
+Pass the sorting result check!
+Number of cores: 4
+0 init
+2 init
+1 init
+3 init
+0 buckets sizes comm
+2 buckets sizes comm
+1 buckets sizes comm
+3 buckets sizes comm
+0 i buckets comm
+1 i buckets comm
+2 i buckets comm
+3 i buckets comm
+0 i buckets sorted
+2 i buckets sorted
+1 i buckets sorted
+3 i buckets sorted
+2 sent
+1 sent
+3 sent
+2 received
+3 received
+1 received
+Bucket Sort Complete!
+Execution Time: 8 milliseconds
+std::sort Time: 1 milliseconds
+Fail to pass the sorting result check!
+2438th element of the sorted vector is expected to be 2502
+But your 2438th element is 5000
+Number of cores: 8
+0 init
+2 init
+4 init
+7 init
+5 init
+1 init
+3 init
+6 init
+0 buckets sizes comm
+1 buckets sizes comm
+2 buckets sizes comm
+3 buckets sizes comm
+4 buckets sizes comm
+5 buckets sizes comm
+7 buckets sizes comm
+0 i buckets comm
+1 i buckets comm
+2 i buckets comm
+3 i buckets comm
+4 i buckets comm
+5 i buckets comm
+6 buckets sizes comm
+7 i buckets comm
+6 i buckets comm
+0 i buckets sorted
+2 i buckets sorted
+5 i buckets sorted
+7 i buckets sorted
+3 i buckets sorted
+1 i buckets sorted
+4 i buckets sorted
+6 i buckets sorted
+1 sent
+2 sent
+2 received
+3 sent
+4 sent
+5 sent
+6 sent
+3 received
+4 received
+5 received
+6 received
+7 sent
+7 received
+1 received
+Bucket Sort Complete!
+Execution Time: 6 milliseconds
+std::sort Time: 1 milliseconds
+Fail to pass the sorting result check!
+1221th element of the sorted vector is expected to be 1250
+But your 1221th element is 2502
+Number of cores: 16
+7 init
+1 init
+6 init
+0 init
+2 init
+13 init
+15 init
+5 init
+9 init
+11 init
+3 init
+12 init
+14 init
+4 init
+8 init
+10 init
+0 buckets sizes comm
+2 buckets sizes comm
+3 buckets sizes comm
+9 buckets sizes comm
+11 buckets sizes comm
+12 buckets sizes comm
+13 buckets sizes comm
+14 buckets sizes comm
+15 buckets sizes comm
+15 i buckets comm
+0 i buckets comm
+1 buckets sizes comm
+1 i buckets comm
+2 i buckets comm
+3 i buckets comm
+4 buckets sizes comm
+5 buckets sizes comm
+5 i buckets comm
+6 buckets sizes comm
+6 i buckets comm
+7 buckets sizes comm
+7 i buckets comm
+8 buckets sizes comm
+8 i buckets comm
+9 i buckets comm
+10 buckets sizes comm
+10 i buckets comm
+11 i buckets comm
+12 i buckets comm
+13 i buckets comm
+14 i buckets comm
+14 i buckets sorted
+0 i buckets sorted
+1 i buckets sorted
+2 i buckets sorted
+3 i buckets sorted
+4 i buckets comm
+5 i buckets sorted
+6 i buckets sorted
+7 i buckets sorted
+9 i buckets sorted
+10 i buckets sorted
+11 i buckets sorted
+12 i buckets sorted
+13 i buckets sorted
+15 i buckets sorted
+4 i buckets sorted
+8 i buckets sorted
+1 sent
+1 received
+2 received
+4 received
+5 received
+2 sent
+4 sent
+8 sent
+6 received
+7 received
+8 received
+3 sent
+5 sent
+6 sent
+7 sent
+9 sent
+10 sent
+11 sent
+12 sent
+13 sent
+14 sent
+15 sent
+9 received
+10 received
+11 received
+12 received
+13 received
+14 received
+15 received
+3 received
+Bucket Sort Complete!
+Execution Time: 4 milliseconds
+std::sort Time: 1 milliseconds
+Fail to pass the sorting result check!
+1821th element of the sorted vector is expected to be 1876
+But your 1821th element is 2502
+Number of cores: 32
+5 init
+13 init
+0 init
+23 init
+20 init
+22 init
+19 init
+11 init
+7 init
+17 init
+3 init
+1 init
+9 init
+2 init
+15 init
+8 init
+10 init
+21 init
+14 init
+12 init
+16 init
+18 init
+4 init
+6 init
+28 init
+24 init
+25 init
+27 init
+29 init
+30 init
+31 init
+26 init
+1 buckets sizes comm
+2 buckets sizes comm
+3 buckets sizes comm
+4 buckets sizes comm
+5 buckets sizes comm
+6 buckets sizes comm
+7 buckets sizes comm
+8 buckets sizes comm
+9 buckets sizes comm
+10 buckets sizes comm
+10 i buckets comm
+11 buckets sizes comm
+11 i buckets comm
+12 buckets sizes comm
+12 i buckets comm
+13 buckets sizes comm
+14 buckets sizes comm
+15 buckets sizes comm
+16 buckets sizes comm
+17 buckets sizes comm
+18 buckets sizes comm
+19 buckets sizes comm
+20 buckets sizes comm
+20 i buckets comm
+21 buckets sizes comm
+22 buckets sizes comm
+22 i buckets comm
+23 buckets sizes comm
+23 i buckets comm
+23 i buckets sorted
+24 buckets sizes comm
+24 i buckets comm
+25 buckets sizes comm
+25 i buckets comm
+28 buckets sizes comm
+28 i buckets comm
+28 i buckets sorted
+0 buckets sizes comm
+0 i buckets comm
+0 i buckets sorted
+1 i buckets comm
+1 i buckets sorted
+2 i buckets comm
+2 i buckets sorted
+3 i buckets comm
+3 i buckets sorted
+4 i buckets comm
+4 i buckets sorted
+5 i buckets comm
+5 i buckets sorted
+6 i buckets comm
+6 i buckets sorted
+7 i buckets comm
+7 i buckets sorted
+8 i buckets comm
+8 i buckets sorted
+9 i buckets comm
+9 i buckets sorted
+10 i buckets sorted
+11 i buckets sorted
+12 i buckets sorted
+13 i buckets comm
+13 i buckets sorted
+14 i buckets comm
+14 i buckets sorted
+15 i buckets comm
+15 i buckets sorted
+16 i buckets comm
+16 i buckets sorted
+17 i buckets comm
+17 i buckets sorted
+18 i buckets comm
+18 i buckets sorted
+19 i buckets comm
+19 i buckets sorted
+20 i buckets sorted
+21 i buckets comm
+21 i buckets sorted
+22 i buckets sorted
+24 i buckets sorted
+25 i buckets sorted
+26 buckets sizes comm
+26 i buckets comm
+26 i buckets sorted
+27 buckets sizes comm
+27 i buckets comm
+27 i buckets sorted
+29 buckets sizes comm
+29 i buckets comm
+29 i buckets sorted
+30 buckets sizes comm
+30 i buckets comm
+30 i buckets sorted
+31 buckets sizes comm
+31 i buckets comm
+31 i buckets sorted
+2 received
+16 received
+18 received
+19 received
+20 received
+22 received
+23 received
+1 received
+3 received
+4 received
+5 received
+6 received
+7 received
+8 received
+1 sent
+2 sent
+3 sent
+4 sent
+5 sent
+6 sent
+7 sent
+8 sent
+9 sent
+10 sent
+11 sent
+12 sent
+13 sent
+14 sent
+15 sent
+16 sent
+17 sent
+18 sent
+19 sent
+20 sent
+21 sent
+22 sent
+23 sent
+9 received
+10 received
+11 received
+12 received
+13 received
+14 received
+15 received
+17 received
+21 received
+24 received
+25 received
+26 received
+27 received
+28 received
+29 received
+30 received
+31 received
+Bucket Sort Complete!
+Execution Time: 7 milliseconds
+24 sent
+25 sent
+26 sent
+27 sent
+28 sent
+29 sent
+30 sent
+31 sent
+std::sort Time: 0 milliseconds
+Fail to pass the sorting result check!
+297th element of the sorted vector is expected to be 313
+But your 297th element is 626
+

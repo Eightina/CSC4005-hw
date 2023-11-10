@@ -25,15 +25,18 @@
 
 # # Bucket Sort
 # Sequential
-echo "Bucket Sort Sequential (Optimized with -O2)"
-srun -n 1 --cpus-per-task 1 /nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_sequential 100000000 1000000
-echo ""
+# echo "Bucket Sort Sequential (Optimized with -O2)"
+# # srun -n 1 --cpus-per-task 1 /nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_sequential 100000000 1000000
+# srun -n 1 --cpus-per-task 1 /nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_sequential 100000000 10000
+# echo ""
 # MPI
 echo "Bucket Sort MPI (Optimized with -O2)"
+# for num_cores in 1 2 4 8 16 32
 for num_cores in 1 2 4 8 16 32
 do
   echo "Number of cores: $num_cores"
-  srun -n $num_cores --cpus-per-task 1 --mpi=pmi2 /nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000
+  # srun -n $num_cores --cpus-per-task 1 --mpi=pmi2 /nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000
+  srun -n $num_cores --cpus-per-task 1 --mpi=pmi2 /nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 10000 $num_cores
 done
 echo ""
 

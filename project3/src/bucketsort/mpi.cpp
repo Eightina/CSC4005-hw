@@ -12,13 +12,59 @@
 #include "string.h"
 
 #define MASTER 0
+#define TAG_GATHER 0
 
-int inline sum(int* array, int len) {
+int inline lenSum(int* array, int len) {
     int res = 0;
     for (int i = 0; i < len; ++i) {
         res+=array[i];
     }
     return res;
+}
+int partition(int* vec, int low, int high) {
+    int pivot = vec[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (vec[j] <= pivot) {
+            i++;
+            std::swap(vec[i], vec[j]);
+            // int temp = vec[i];
+            // vec[i] = vec[j];
+            // vec[j] = temp;
+        }
+    }
+
+    std::swap(vec[i + 1], vec[high]);
+    return i + 1;
+}
+void quickSort(int* vec, int low, int high) {
+    if (low < high) {
+        int pivotIndex = partition(vec, low, high);
+        quickSort(vec, low, pivotIndex - 1);
+        quickSort(vec, pivotIndex + 1, high);
+    }
+}
+int partition(std::vector<int> &vec, int low, int high) {
+    int pivot = vec[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (vec[j] <= pivot) {
+            i++;
+            std::swap(vec[i], vec[j]);
+        }
+    }
+
+    std::swap(vec[i + 1], vec[high]);
+    return i + 1;
+}
+void quickSort(std::vector<int> &vec, int low, int high) {
+    if (low < high) {
+        int pivotIndex = partition(vec, low, high);
+        quickSort(vec, low, pivotIndex - 1);
+        quickSort(vec, pivotIndex + 1, high);
+    }
 }
 
 void insertionSort(std::vector<int>& bucket) {
@@ -35,10 +81,21 @@ void insertionSort(std::vector<int>& bucket) {
     }
 }
 
-std::vector<std::vector<int>>& bucketSortKernel(std::vector<int>& vec, int num_buckets) {
-    int max_val = *std::max_element(vec.begin(), vec.end());
-    int min_val = *std::min_element(vec.begin(), vec.end());
+void insertionSort(int* bucket, int bucketLen) {
+    for (int i = 1; i < bucketLen; ++i) {
+        int key = bucket[i];
+        int j = i - 1;
 
+        while (j >= 0 && bucket[j] > key) {
+            bucket[j + 1] = bucket[j];
+            j--;
+        }
+
+        bucket[j + 1] = key;
+    }
+}
+
+std::vector<std::vector<int>>& bucketSortKernel(int max_val, int min_val, std::vector<int>& vec, int num_buckets) {
     int range = max_val - min_val + 1;
     int small_bucket_size = range / num_buckets;
     int large_bucket_size = small_bucket_size + 1;
@@ -68,7 +125,8 @@ std::vector<std::vector<int>>& bucketSortKernel(std::vector<int>& vec, int num_b
 
     // Sort each bucket using insertion sort
     for (std::vector<int>& bucket : *buckets) {
-        insertionSort(bucket);
+        // insertionSort(bucket);
+        quickSort(bucket, 0, bucket.size()-1);
     }
     return *buckets;
     // Combine sorted buckets to get the final sorted array
@@ -81,37 +139,34 @@ std::vector<std::vector<int>>& bucketSortKernel(std::vector<int>& vec, int num_b
 }
 
 void bucketSort(std::vector<int>& vec, int num_buckets, int numtasks, int taskid, MPI_Status* status, std::vector<int> cuts) {
-    int start = cuts[taskid], end = cuts[taskid + 1] - 1, afterEnd = cuts[taskid];
+    // attention here, buckets should be split as the full vector
+    int start = cuts[taskid], end = cuts[taskid + 1] - 1, afterEnd = cuts[taskid + 1];
     std::vector<int>* cur_vec = new std::vector<int>(vec.begin() + start, vec.begin() + afterEnd);
-    std::vector<std::vector<int>> cur_buckets = bucketSortKernel(*cur_vec, num_buckets);
+    int max_val = *std::max_element(vec.begin(), vec.end());
+    int min_val = *std::min_element(vec.begin(), vec.end());
+    std::vector<std::vector<int>> cur_buckets = bucketSortKernel(max_val, min_val, *cur_vec, num_buckets); 
     
     // communicate each others' buckets sizes
+    int* send_counts = (int*)malloc(sizeof(int) * num_buckets);
+    int* sdispls = (int*)malloc(sizeof(int) * num_buckets);
     int* cur_buckets_sizes = (int*)malloc(sizeof(int) * num_buckets);
     int* i_buckets_sizes = (int*)malloc(sizeof(int) * num_buckets);
-
-    int* send_counts = (int*)malloc(sizeof(int) * num_buckets);
-    memset(send_counts, num_buckets, 1);
-    int* sdispls = (int*)malloc(sizeof(int) * num_buckets);
-    for (int i = 0; i < num_buckets; ++i) sdispls[i] = i;
     for (int i = 0; i < num_buckets; ++i) {
+        send_counts[i] = 1;
+        sdispls[i] = i;
         cur_buckets_sizes[i] = cur_buckets[i].size();
     }
-
+    
+    printf("%d init\n", taskid);
     MPI_Alltoallv(cur_buckets_sizes, send_counts, sdispls, MPI_INT,
                     i_buckets_sizes, send_counts, sdispls, MPI_INT, 
                     MPI_COMM_WORLD
                 );
-    // delete []cur_buckets_sizes;
-    // delete []send_counts;
-    // delete []sdispls;
+    printf("%d buckets sizes comm\n", taskid);
+    // MPI_Barrier(MPI_COMM_WORLD); // sync
     
     // send buckets as pre-assumed
-    int* i_buckets = (int*)malloc(sizeof(int) * sum(i_buckets_sizes, num_buckets));
-    int* cur_buckets_send = (int*)malloc(sizeof(int) * (cuts[taskid + 1] - cuts[taskid]));
-    int cpyidx = 0;
-    for (int i = 0; i < num_buckets; ++i) {
-        memcpy(cur_buckets_send + cpyidx, cur_buckets[i].data(), cur_buckets[i].size());
-    }
+    int* i_buckets = (int*)malloc(sizeof(int) * lenSum(i_buckets_sizes, num_buckets));
     int* rdispls = (int*)malloc(sizeof(int) * num_buckets);
     for (int i = 0; i < num_buckets; ++i) {
         if (i == 0) {
@@ -119,23 +174,67 @@ void bucketSort(std::vector<int>& vec, int num_buckets, int numtasks, int taskid
             rdispls[i] = 0;
             continue;
         }
-        sdispls[i] = cur_buckets_sizes[i-1];
-        rdispls[i] = i_buckets_sizes[i-1];
+        sdispls[i] = cur_buckets_sizes[i - 1] + sdispls[i - 1];
+        rdispls[i] = i_buckets_sizes[i - 1] + rdispls[i - 1];
+    }
+    int* cur_buckets_send = (int*)malloc(sizeof(int) * (cuts[taskid + 1] - cuts[taskid]));
+    for (int i = 0; i < num_buckets; ++i) {
+        memcpy(cur_buckets_send + sdispls[i], cur_buckets[i].data(), cur_buckets_sizes[i] * sizeof(int));
+        // printf("%d, %d, %d\n",sdispls[i], cur_buckets[i].data()[3], cur_buckets_sizes[i]);
     }
     
     MPI_Alltoallv(cur_buckets_send, cur_buckets_sizes, sdispls, MPI_INT,
                     i_buckets, i_buckets_sizes, rdispls, MPI_INT, 
                     MPI_COMM_WORLD
                 );
+    printf("%d i buckets comm\n", taskid);
+    // MPI_Barrier(MPI_COMM_WORLD); // sync
+    
+    // sort the gathered i buckets  
+    int i_buckets_total_len = lenSum(i_buckets_sizes, num_buckets);
+    // insertionSort(i_buckets, i_buckets_total_len);
+    quickSort(i_buckets, 0, i_buckets_total_len - 1);
+    printf("%d i buckets sorted\n", taskid);
 
-    // for (std::vector<int> bucket : cur_buckets) {
+    // master gather all i buckets from slaves
+    MPI_Barrier(MPI_COMM_WORLD); // sync
+    MPI_Status recv_status;
+    int is_sent;
+    int finished_num = 0;
+    int* recv_t = vec.data();
 
-    // std::vector<int>* cur_vec = new std::vector<int>(vec.begin(), vec.begin());
-    // std::vector<int> cur_ve(vec.begin(), vec.end());
+    if (taskid == MASTER) {
+        memcpy(recv_t, i_buckets, sizeof(int) * i_buckets_total_len);
+        recv_t += i_buckets_total_len;
+        ++finished_num;
+        while (finished_num < numtasks) {
+            // MPI_Recv(vec.data() + rdispls[i], )
+            MPI_Iprobe(MPI_ANY_SOURCE, TAG_GATHER, MPI_COMM_WORLD, &is_sent, &recv_status);
+            if (!is_sent) {
+                continue;
+            }
+            int recv_length = 0;
+            MPI_Get_count(&recv_status, MPI_INT, &recv_length);
+            MPI_Recv(recv_t, recv_length, MPI_INT, recv_status.MPI_SOURCE, TAG_GATHER, MPI_COMM_WORLD, &recv_status);
+            printf("%d received\n", recv_status.MPI_SOURCE);
+            recv_t += recv_length;
+            ++finished_num;            
+        }
+    } else {
+        MPI_Send(i_buckets, i_buckets_total_len, MPI_INT, MASTER, TAG_GATHER, MPI_COMM_WORLD);
+        printf("%d sent\n", taskid);
+    }
 
-    /* Your code here!
-       Implement parallel bucket sort with MPI
-    */
+    // release heap memory
+    delete cur_vec;
+    delete []cur_buckets_sizes;
+    delete []i_buckets_sizes;
+    delete []i_buckets;
+    delete []cur_buckets_send;
+    delete []send_counts;
+    delete []sdispls;
+    delete []rdispls;
+
 }
 
 int main(int argc, char** argv) {
