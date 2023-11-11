@@ -14,6 +14,6 @@ target_compile_options(mergesort_sequential PRIVATE -O2)
 add_executable(mergesort_parallel
         parallel.cpp
         ../utils.cpp ../utils.hpp)
-target_compile_options(mergesort_parallel PRIVATE -O2 -fopenmp)
+# target_compile_options(mergesort_parallel PRIVATE -O2 -fopenmp)
 target_include_directories(mergesort_parallel PRIVATE ${OpenMP_CXX_INCLUDE_DIRS})
 target_link_libraries(mergesort_parallel PRIVATE ${OpenMP_CXX_LIBRARIES})
