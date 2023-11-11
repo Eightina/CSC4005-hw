@@ -52,6 +52,7 @@ inline void tPhase(std::vector<int>& vec, int low, int high,
     if (vec[high] > recvNum) {
         MPI_Isend(vec.data() + high, 1, MPI_INT, taskid + 1, TAG_RES, MPI_COMM_WORLD, &request);
         vec[high] = recvNum;
+        sorted = false;
     } else {
         MPI_Isend(&recvNum, 1, MPI_INT, taskid + 1, TAG_RES, MPI_COMM_WORLD, &request);
     }
@@ -114,16 +115,17 @@ void oddEvenSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* st
         if (cur_len % 2 == 0) odd_even_cuts[i] = 1;
     }
 
-    int trueEnd = vec.size() - 1; 
+    // int trueEnd = vec.size() - 1; 
     bool sorted = true;
     bool tasks_sorted[numtasks];
 
     int cnt = 0;
     int phase_flag = 0;
-    MPI_Request request;
-    MPI_Status status;
+    // MPI_Request request;
+    // MPI_Status status;
 
     while (!sorted) {
+        sorted = true;
         bool partSorted = true;
         tPhase(vec, cuts[taskid], cuts[taskid+1] - 1, taskid, numtasks, odd_even_cuts, partSorted);
         ntPhase(vec, cuts[taskid], cuts[taskid+1] - 1, taskid, numtasks, odd_even_cuts, partSorted);

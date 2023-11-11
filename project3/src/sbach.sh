@@ -43,10 +43,10 @@
 
 # # Odd-Even Sort
 # # Sequential
-echo "Odd-Even Sort Sequential (Optimized with -O2)"
-# srun -n 1 --cpus-per-task 1 /nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_sequential 200000
-srun -n 1 --cpus-per-task 1 /nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_sequential 200
-echo ""
+# echo "Odd-Even Sort Sequential (Optimized with -O2)"
+# # srun -n 1 --cpus-per-task 1 /nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_sequential 200000
+# srun -n 1 --cpus-per-task 1 /nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_sequential 200
+# echo ""
 # MPI
 echo "Odd-Even Sort MPI (Optimized with -O2)"
 for num_cores in 1 2 4 8 16 32

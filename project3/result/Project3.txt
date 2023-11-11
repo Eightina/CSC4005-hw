@@ -1,0 +1,44 @@
+Odd-Even Sort MPI (Optimized with -O2)
+Number of cores: 1
+Odd-Even Sort Complete!
+Execution Time: 0 milliseconds
+std::sort Time: 0 milliseconds
+Fail to pass the sorting result check!
+0th element of the sorted vector is expected to be 1
+But your 0th element is 147
+Number of cores: 2
+Odd-Even Sort Complete!
+Execution Time: 0 milliseconds
+std::sort Time: 0 milliseconds
+Fail to pass the sorting result check!
+0th element of the sorted vector is expected to be 1
+But your 0th element is 147
+Number of cores: 4
+Odd-Even Sort Complete!
+Execution Time: 0 milliseconds
+std::sort Time: 0 milliseconds
+Fail to pass the sorting result check!
+0th element of the sorted vector is expected to be 1
+But your 0th element is 147
+Number of cores: 8
+Odd-Even Sort Complete!
+Execution Time: 0 milliseconds
+std::sort Time: 0 milliseconds
+Fail to pass the sorting result check!
+0th element of the sorted vector is expected to be 1
+But your 0th element is 147
+Number of cores: 16
+Odd-Even Sort Complete!
+Execution Time: 0 milliseconds
+std::sort Time: 0 milliseconds
+Fail to pass the sorting result check!
+0th element of the sorted vector is expected to be 1
+But your 0th element is 147
+Number of cores: 32
+Odd-Even Sort Complete!
+Execution Time: 0 milliseconds
+std::sort Time: 0 milliseconds
+Fail to pass the sorting result check!
+0th element of the sorted vector is expected to be 1
+But your 0th element is 147
+
