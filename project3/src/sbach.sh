@@ -50,9 +50,10 @@
 # MPI
 echo "Odd-Even Sort MPI (Optimized with -O2)"
 for num_cores in 1 2 4 8 16 32
+# for num_cores in 1 2 
 do
   echo "Number of cores: $num_cores"
-  # srun -n $num_cores --cpus-per-task 1 --mpi=pmi2 /nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000
-  srun -n $num_cores --cpus-per-task 1 --mpi=pmi2 /nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200
+  srun -n $num_cores --cpus-per-task 1 --mpi=pmi2 /nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000
+  # srun -n $num_cores --cpus-per-task 1 --mpi=pmi2 /nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 20000
 done
 echo ""
