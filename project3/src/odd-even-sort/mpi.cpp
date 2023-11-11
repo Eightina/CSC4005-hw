@@ -11,11 +11,51 @@
 #include "../utils.hpp"
 
 #define MASTER 0
+#define TAG_GATHER 0
 
-void oddEvenSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* status) {
-    /* Your code here!
-       Implement parallel odd-even sort with MPI
-    */
+void oddEvenSortKernel(std::vector<int>& vec, int low, int high, int taskid, int numtasks) {
+    int trueEnd = vec.size() - 1; 
+    bool sorted = false;
+
+    int cnt = 0;
+    while (!sorted) {
+        sorted = true;
+
+        // Perform the odd phase
+        // for (int i = 1; i < vec.size() - 1; i += 2) {
+        MPI_Isend(vec.data(), 1, MPI_INT, taskid - 1);
+        for (int i = low + 1; i <= high; i += 2) { 
+            if (i == high && i < trueEnd) {
+                int next;
+
+                break;
+            }
+
+            if (vec[i] > vec[i + 1]) {
+                std::swap(vec[i], vec[i + 1]);
+                sorted = false;
+            }
+        }
+
+        MPI_Barrier(MPI_COMM_WORLD);
+        // Perform the even phase
+        // for (int i = 0; i < vec.size() - 1; i += 2) {
+        for (int i = low; i <= high; i += 2) {
+            if (i == high && i < trueEnd) {
+
+                break;
+            }
+            if (vec[i] > vec[i + 1]) {
+                std::swap(vec[i], vec[i + 1]);
+                sorted = false;
+            }
+        }
+    }
+}
+
+void oddEvenSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* status, std::vector<int>& cuts) {
+
+
 }
 
 int main(int argc, char** argv) {
@@ -46,9 +86,12 @@ int main(int argc, char** argv) {
     std::vector<int> vec = createRandomVec(size, seed);
     std::vector<int> vec_clone = vec;
 
+    // job patition
+    std::vector<int> cuts = createCuts(0, vec.size() - 1, numtasks);
+
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    oddEvenSort(vec, numtasks, taskid, &status);
+    oddEvenSort(vec, numtasks, taskid, &status, cuts);
 
     if (taskid == MASTER) {
         auto end_time = std::chrono::high_resolution_clock::now();
