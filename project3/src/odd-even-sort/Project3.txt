@@ -1,0 +1,38 @@
+Odd-Even Sort Sequential (Optimized with -O2)
+Odd-Even Sort Complete!
+Execution Time: 41120 milliseconds
+std::sort Time: 16 milliseconds
+Pass the sorting result check!
+
+Odd-Even Sort MPI (Optimized with -O2)
+Number of cores: 1
+Odd-Even Sort Complete!
+Execution Time: 40041 milliseconds
+std::sort Time: 16 milliseconds
+Pass the sorting result check!
+Number of cores: 2
+Odd-Even Sort Complete!
+Execution Time: 30103 milliseconds
+std::sort Time: 20 milliseconds
+Pass the sorting result check!
+Number of cores: 4
+Odd-Even Sort Complete!
+Execution Time: 18999 milliseconds
+std::sort Time: 20 milliseconds
+Pass the sorting result check!
+Number of cores: 8
+Odd-Even Sort Complete!
+Execution Time: 11448 milliseconds
+std::sort Time: 20 milliseconds
+Pass the sorting result check!
+Number of cores: 16
+Odd-Even Sort Complete!
+Execution Time: 6510 milliseconds
+std::sort Time: 20 milliseconds
+Pass the sorting result check!
+Number of cores: 32
+Odd-Even Sort Complete!
+Execution Time: 3622 milliseconds
+std::sort Time: 20 milliseconds
+Pass the sorting result check!
+

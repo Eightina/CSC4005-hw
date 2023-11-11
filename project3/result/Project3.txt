@@ -1,5 +1,0 @@
-Odd-Even Sort MPI (Optimized with -O2)
-Number of cores: 1
-srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
-slurmstepd: error: *** JOB 158418 ON node33 CANCELLED AT 2023-11-11T04:22:59 ***
-slurmstepd: error: *** STEP 158418.0 ON node33 CANCELLED AT 2023-11-11T04:22:59 ***
