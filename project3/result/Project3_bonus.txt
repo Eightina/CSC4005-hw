@@ -1,0 +1,17 @@
+Merge Sort Parallel (Optimized with -O2)
+Number of cores: 8
+Merge Sort Complete!
+Execution Time: 3180 milliseconds
+std::sort Time: 1048 milliseconds
+Pass the sorting result check!
+Number of cores: 16
+Merge Sort Complete!
+Execution Time: 3114 milliseconds
+std::sort Time: 1036 milliseconds
+Pass the sorting result check!
+Number of cores: 32
+Merge Sort Complete!
+Execution Time: 3075 milliseconds
+std::sort Time: 1052 milliseconds
+Pass the sorting result check!
+
