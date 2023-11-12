@@ -13,14 +13,15 @@
 
 int THREAD_NUM = 1;
 struct ThreadData {
-    int* nums;
+    std::vector<int>* vec;
     int l;
     int r;
     int threadsLim;
     pthread_mutex_t* mutex;
 };
 
-void merge(int* nums, int l, int m, int r) {
+// void merge(int* nums, int l, int m, int r) {
+void merge(std::vector<int>& nums, int l, int m, int r) {
     int n1 = m - l + 1;
     int n2 = r - m;
 
@@ -67,109 +68,100 @@ void merge(int* nums, int l, int m, int r) {
     }
 }
 
-void mergeSort(int* nums, int l, int r, int threadsLim, pthread_mutex_t* mutex);
+void mergeSort(std::vector<int>& nums, int l, int r, int threadsLim, pthread_mutex_t* mutex);
 
 // routine function
 void* mergeSortRoutine(void* arg) {
-    
+    // pthread_barrier_t barrier;
     ThreadData* data = reinterpret_cast<ThreadData*>(arg);
+    // std::vector<int> vec = *(data->vec);
+    // std::vector<int>* vec = *(data->vec);
     if (data->l < data->r) {
         int m = data->l + (data->r - data->l) / 2;
 
         // Sort first and second halves
-        pthread_mutex_lock(data->mutex);
-        if (THREAD_NUM + 1 <= data->threadsLim){
-            ++THREAD_NUM;
-            pthread_mutex_unlock(data->mutex); 
-            pthread_t thread0;
-            ThreadData threadData0;
-            threadData0.nums = data->nums;
-            threadData0.l = data->l;
-            threadData0.r = m;
-            threadData0.threadsLim = data->threadsLim;
-            threadData0.mutex = data->mutex;
-            pthread_create(&thread0, nullptr, mergeSortRoutine, &threadData0);
-        } else {
-            pthread_mutex_unlock(data->mutex); 
-            mergeSort(data->nums, data->l, m, data->threadsLim, data->mutex);
-        }
+        bool threadSpawned = false;
+        pthread_t thread;
+        ThreadData threadData0;
 
         pthread_mutex_lock(data->mutex);
         if (THREAD_NUM + 1 <= data->threadsLim) {
+            threadSpawned = true;
             ++THREAD_NUM;
-            pthread_mutex_unlock(data->mutex); 
+        } 
+        pthread_mutex_unlock(data->mutex); 
 
-            pthread_t thread0;
-            ThreadData threadData0;
-            threadData0.nums = data->nums;
+        // right half
+        if (threadSpawned) {
+            threadData0.vec = data->vec;
             threadData0.l = m + 1;
             threadData0.r = data->r;
             threadData0.threadsLim = data->threadsLim;
             threadData0.mutex = data->mutex;
-            pthread_create(&thread0, nullptr, mergeSortRoutine, &threadData0);
+            pthread_create(&thread, nullptr, mergeSortRoutine, &threadData0);
         } else {
-            pthread_mutex_unlock(data->mutex); 
-            mergeSort(data->nums, m + 1, data->r, data->threadsLim, data->mutex);
+            mergeSort(*(data->vec), m + 1, data->r, data->threadsLim, data->mutex);
         }
 
+        // left half
+        mergeSort(*(data->vec), data->l, m, data->threadsLim, data->mutex);
+
+        if (threadSpawned) pthread_join(thread, nullptr);
 
         // Merge the sorted halves
-        merge(data->nums, data->l, m, data->r);
+        // pthread_mutex_lock(data->mutex);
+        merge(*(data->vec), data->l, m, data->r);
+        // pthread_exit(0);
+        // print_vec(*(data->vec), 0, (*(data->vec)).size() - 1);
+        // pthread_mutex_unlock(data->mutex); 
+        
     }
-
+    // pthread_mutex_lock(data->mutex);
+    // --THREAD_NUM;
+    // pthread_mutex_unlock(data->mutex); 
     return nullptr;
-    pthread_mutex_lock(data->mutex);
-    --THREAD_NUM;
-    pthread_mutex_unlock(data->mutex); 
 }
 
 
 // Main function to perform merge sort on a vector v[]
-void mergeSort(int* nums, int l, int r, int threadsLim, pthread_mutex_t* mutex) {
+void mergeSort(std::vector<int>& vec, int l, int r, int threadsLim, pthread_mutex_t* mutex) {
     if (l < r) {
         int m = l + (r - l) / 2;
 
         // Sort first and second halves
-        pthread_mutex_lock(mutex);
-        if (THREAD_NUM + 1 <= threadsLim){
-            ++THREAD_NUM;
-            pthread_mutex_unlock(mutex); 
-            pthread_t thread0;
-            ThreadData threadData0;
-            threadData0.nums = nums;
-            threadData0.l = l;
-            threadData0.r = m;
-            threadData0.threadsLim = threadsLim;
-            pthread_create(&thread0, nullptr, mergeSortRoutine, &threadData0);
-        } else {
-            pthread_mutex_unlock(mutex); 
-            mergeSort(nums, l, m, threadsLim, mutex);
-        }
+        bool threadSpawned = false;
+        pthread_t thread;
+        ThreadData threadData0;
 
         pthread_mutex_lock(mutex);
         if (THREAD_NUM + 1 <= threadsLim) {
+            threadSpawned = true;
             ++THREAD_NUM;
-            pthread_mutex_unlock(mutex); 
-            pthread_t thread0;
-            ThreadData threadData0;
-            threadData0.nums = nums;
+        } 
+        pthread_mutex_unlock(mutex); 
+
+        // right half
+        if (threadSpawned) {
+            threadData0.vec = &vec;
             threadData0.l = m + 1;
             threadData0.r = r;
             threadData0.threadsLim = threadsLim;
-            pthread_create(&thread0, nullptr, mergeSortRoutine, &threadData0);
+            threadData0.mutex = mutex;
+            pthread_create(&thread, nullptr, mergeSortRoutine, &threadData0);
         } else {
-            pthread_mutex_unlock(mutex); 
-            mergeSort(nums, m + 1, r, threadsLim, mutex);
+            mergeSort(vec, m + 1, r, threadsLim, mutex);
         }
 
+        // left half
+        mergeSort(vec, l, m, threadsLim, mutex);
 
-        // Sort first and second halves
-        // mergeSort(nums, l, m);
-        // mergeSort(nums, m + 1, r);
+        if (threadSpawned) pthread_join(thread, nullptr);
 
         // Merge the sorted halves
-        merge(nums, l, m, r);
-    }
+        merge(vec, l, m, r);
+        // print_vec(vec, 0, vec.size() - 1);
+        // pthread_mutex_unlock(mutex); 
+    }   
 }
 
 int main(int argc, char** argv) {
@@ -196,7 +188,9 @@ int main(int argc, char** argv) {
     auto start_time = std::chrono::high_resolution_clock::now();
 
     pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-    mergeSort(vec.data(), 0, size - 1, thread_num, &mutex);
+    // print_vec(vec, 0, vec.size() - 1);
+    mergeSort(vec, 0, size - 1, thread_num, &mutex);
+    // print_vec(vec, 0, vec.size() - 1);
 
     auto end_time = std::chrono::high_resolution_clock::now();
     auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(
