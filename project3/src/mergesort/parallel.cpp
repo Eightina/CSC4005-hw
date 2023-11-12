@@ -33,7 +33,7 @@ struct MergeThreadData {
     std::vector<int>* kIndexes1;
     std::vector<int>* kIndexes2;
     // int threadsLim;
-    // pthread_mutex_t* mutex;
+    pthread_mutex_t* mutex;
 };
 
 void* getNKthElements(const std::vector<int>& nums1, const std::vector<int>& nums2, 
@@ -51,13 +51,13 @@ void* getNKthElements(const std::vector<int>& nums1, const std::vector<int>& num
         if (index1 == m) {
             kIndexes1.emplace_back(offset1 + index1 - 1);
             kIndexes2.emplace_back(offset2 + index2 + k - 1);
-            return;
+            return nullptr;
             // return nums2[index2 + k - 1];
         }
         if (index2 == n) {
             kIndexes1.emplace_back(offset1 + index1 + k - 1);
             kIndexes2.emplace_back(offset2 + index2 - 1);
-            return;
+            return nullptr;
             // return nums1[index1 + k - 1];
         }
         if (k == 1) {
@@ -175,9 +175,11 @@ void* mergeRoutine(void* arg) {
         j++;
         k++;
     }
+    --THREAD_NUM;
+    pthread_exit(0);
 }
 
-void nThreadsMerge(int numThreads, std::vector<int>& nums, int l, int m, int r) {
+void nThreadsMerge(int numThreads, std::vector<int>& nums, int l, int m, int r, pthread_mutex_t* mutex) {
     if (r - l < mergeMinRange) {
         merge(nums, l, m, r);
         return;
@@ -194,6 +196,11 @@ void nThreadsMerge(int numThreads, std::vector<int>& nums, int l, int m, int r) 
     int trueNumThreads = kIndexes1.size() - 1;
     pthread_t threads[trueNumThreads];
     MergeThreadData datas[trueNumThreads];
+
+    // pthread_mutex_lock(mutex);
+    THREAD_NUM += trueNumThreads;
+    // pthread_mutex_unlock(mutex); 
+
     for (int tid = 0; tid < trueNumThreads; ++tid) {
         datas[tid].tid = tid;
         datas[tid].vec = &nums;
@@ -202,14 +209,15 @@ void nThreadsMerge(int numThreads, std::vector<int>& nums, int l, int m, int r) 
         // datas[tid].m2 = kIndexes2[tid] + 1;
         // datas[tid].r = kIndexes2[tid + 1];
         // datas[tid].threadsLim = data->threadsLim;
-        // datas[tid].mutex = data->mutex;
+        datas[tid].mutex = mutex;
         pthread_create(&threads[tid], nullptr, mergeRoutine, &datas[tid]);
     }
+
 
     for (int tid = 0; tid < trueNumThreads; ++tid) {
         pthread_join(threads[tid], nullptr);
     }
-
+    THREAD_NUM -= trueNumThreads;
 }
 
 // routine function
@@ -253,7 +261,8 @@ void* mergeSortRoutine(void* arg) {
 
         // Merge the sorted halves
         // pthread_mutex_lock(data->mutex);
-        merge(*(data->vec), data->l, m, data->r);
+        // merge(*(data->vec), data->l, m, data->r);
+        nThreadsMerge(data->threadsLim - THREAD_NUM, *(data->vec), data->l, m, data->r, data->mutex);
         // print_vec(*(data->vec), 0, (*(data->vec)).size() - 1);
         // pthread_mutex_unlock(data->mutex); 
         
@@ -301,7 +310,8 @@ void mergeSort(std::vector<int>& vec, int l, int r, int threadsLim, pthread_mute
         if (threadSpawned) pthread_join(thread, nullptr);
 
         // Merge the sorted halves
-        merge(vec, l, m, r);
+        // merge(vec, l, m, r);
+        nThreadsMerge(threadsLim - THREAD_NUM, vec, l, m, r, mutex);
         // print_vec(vec, 0, vec.size() - 1);
         // pthread_mutex_unlock(mutex); 
     }   
