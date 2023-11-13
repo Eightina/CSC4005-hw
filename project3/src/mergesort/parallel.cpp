@@ -16,14 +16,17 @@ int THREAD_NUM = 1;
 // int SPLIT_THREAD_NUM = 1;
 // int minRange = 10000;
 // 100000000
-int minRange = 100000000 / 4;
+// int minRange = 10000000 / 2;
+int minRange = 100000000 / 2;
 // int mergeMinRange = 40000000;
-int mergeMinRange = 100000000 / 20;
+// int mergeMinRange = 10000000 / 8;
+int mergeMinRange = 100000000 / 8;
 
-void mergeSort(std::vector<int>& nums, int l, int r, int threadsLim, pthread_mutex_t* mutex);
+void mergeSort(std::vector<int>& nums, int* res, int l, int r, int threadsLim, pthread_mutex_t* mutex);
 
 struct ThreadData {
     std::vector<int>* vec;
+    int* res;
     int l;
     int m;
     int r;
@@ -95,38 +98,41 @@ void* getNKthElements(const std::vector<int>& nums1, const std::vector<int>& num
 }
 
 // void merge(int* nums, int l, int m, int r) {
-void merge(std::vector<int>& nums, int l, int m, int r) {
+void inline merge(std::vector<int>& nums, int* res, int l, int m, int r) {
     int n1 = m - l + 1;
     int n2 = r - m;
-    // Create temporary vectors
-    std::vector<int> L(n1);
-    std::vector<int> R(n2);
+    // // Create temporary vectors
+    int* L = nums.data() + l;
+    int* R = nums.data() + m + 1;
+    // std::vector<int> L(n1);
+    // std::vector<int> R(n2);
     // Copy data to temporary vectors L[] and R[]
-    memcpy(L.data(), nums.data() + l, n1 * sizeof(int));
-    memcpy(R.data(), nums.data() + m + 1, n2 * sizeof(int));
+    // memcpy(L.data(), nums.data() + l, n1 * sizeof(int));
+    // memcpy(R.data(), nums.data() + m + 1, n2 * sizeof(int));
     // Merge the temporary vectors back into v[l..r]
     int i = 0; // Initial index of the first subarray
     int j = 0; // Initial index of the second subarray
     int k = l; // Initial index of the merged subarray
+    // int* res = (int*)malloc(sizeof(int) * (r - l + 1));
     while (i < n1 && j < n2) {
         if (L[i] <= R[j]) {
-            nums[k] = L[i];
+            res[k] = L[i];
             i++;
         } else {
-            nums[k] = R[j];
+            res[k] = R[j];
             j++;
         }
         k++;
     }
     // Copy the remaining elements of L[], if there are any
     while (i < n1) {
-        nums[k] = L[i];
+        res[k] = L[i];
         i++;
         k++;
     }
     // Copy the remaining elements of R[], if there are any
     while (j < n2) {
-        nums[k] = R[j];
+        res[k] = R[j];
         j++;
         k++;
     }
@@ -145,12 +151,14 @@ void* mergeRoutine(void* arg) {
 
     int n1 = m1 - l + 1;
     int n2 = r - m2 + 1;
-    // Create temporary vectors
-    std::vector<int> L(n1);
-    std::vector<int> R(n2);
-    // Copy data to temporary vectors L[] and R[]
-    memcpy(L.data(), (*vec).data() + l, n1 * sizeof(int));
-    memcpy(R.data(), (*vec).data() + m2, n2 * sizeof(int));
+    // // Create temporary vectors
+    int* L = data->vec->data() + l;
+    int* R = data->vec->data() + m2;
+    // std::vector<int> L(n1);
+    // std::vector<int> R(n2);
+    // // Copy data to temporary vectors L[] and R[]
+    // memcpy(L.data(), (*vec).data() + l, n1 * sizeof(int));
+    // memcpy(R.data(), (*vec).data() + m2, n2 * sizeof(int));
     // Merge the temporary vectors back into v[l..r]
     int i = 0; // Initial index of the first subarray
     int j = 0; // Initial index of the second subarray
@@ -188,10 +196,11 @@ void* mergeRoutine(void* arg) {
     // pthread_exit(0);
 }
 
-void nThreadsMerge(int threadsLim, std::vector<int>& nums, int l, int m, int r, pthread_mutex_t* mutex) {
+void nThreadsMerge(int threadsLim, std::vector<int>& nums, int* res, int l, int m, int r, pthread_mutex_t* mutex) {
     bool usingNT = false;
     if (r - l < mergeMinRange) {
-        merge(nums, l, m, r);
+        merge(nums, res, l, m, r);
+        memcpy(nums.data() + l, res + l, sizeof(int) * (r - l + 1));
         return;
     }
     std::vector<int> nums1(nums.begin() + l, nums.begin() + m + 1);
@@ -204,14 +213,15 @@ void nThreadsMerge(int threadsLim, std::vector<int>& nums, int l, int m, int r, 
     int mergeThreadsNum = (threadsLim - THREAD_NUM) * (r - l + 1) / nums.size();
     if (mergeThreadsNum < 2) {
         pthread_mutex_unlock(mutex);
-        merge(nums, l, m, r);
+        merge(nums, res, l, m, r);
+        memcpy(nums.data() + l, res + l, sizeof(int) * (r - l + 1));
         return;    
     }
     usingNT = true; 
     THREAD_NUM += mergeThreadsNum;
     printf("%d threads merging %d ~ %d\n", mergeThreadsNum, l, r);
-    getNKthElements(nums1, nums2, mergeThreadsNum, kIndexes1, kIndexes2, l, m + 1);
     pthread_mutex_unlock(mutex);
+    getNKthElements(nums1, nums2, mergeThreadsNum, kIndexes1, kIndexes2, l, m + 1);
 
     kIndexes1.push_back(l + nums1.size() - 1);
     kIndexes2.push_back(m + 1 + nums2.size() - 1);
@@ -222,11 +232,11 @@ void nThreadsMerge(int threadsLim, std::vector<int>& nums, int l, int m, int r, 
 
     // pthread_mutex_lock(mutex);
     // pthread_mutex_unlock(mutex); 
-    int* res = (int*)malloc(sizeof(int) * (r - l + 1));
+    // int* res = (int*)malloc(sizeof(int) * (r - l + 1));
     for (int tid = 0; tid < trueNumThreads; ++tid) {
         datas[tid].tid = tid;
         datas[tid].vec = &nums;
-        datas[tid].res = res;
+        datas[tid].res = res + l;
         datas[tid].kIndexes1 = &kIndexes1;
         datas[tid].kIndexes2 = &kIndexes2;
         // datas[tid].m2 = kIndexes2[tid] + 1;
@@ -240,7 +250,8 @@ void nThreadsMerge(int threadsLim, std::vector<int>& nums, int l, int m, int r, 
         pthread_join(threads[tid], nullptr);
     }
 
-    memcpy(nums.data() + l, res, sizeof(int) * (r - l + 1));
+    memcpy(nums.data() + l, res + l, sizeof(int) * (r - l + 1));
+    return;
 
     // pthread_mutex_lock(mutex);
     // if (usingNT) {
@@ -280,6 +291,7 @@ void* mergeSortRoutine(void* arg) {
         // right half
         if (threadSpawned) {
             threadData0.vec = data->vec;
+            threadData0.res = data->res;
             threadData0.l = m + 1;
             threadData0.r = data->r;
             threadData0.threadsLim = data->threadsLim;
@@ -287,18 +299,18 @@ void* mergeSortRoutine(void* arg) {
             printf("%d threads spliting %d ~ %d\n", 1, m + 1, data->r);
             pthread_create(&thread, nullptr, mergeSortRoutine, &threadData0);
         } else {
-            mergeSort(*(data->vec), m + 1, data->r, data->threadsLim, data->mutex);
+            mergeSort(*(data->vec), data->res, m + 1, data->r, data->threadsLim, data->mutex);
         }
 
         // left half
-        mergeSort(*(data->vec), data->l, m, data->threadsLim, data->mutex);
+        mergeSort(*(data->vec), data->res, data->l, m, data->threadsLim, data->mutex);
 
         if (threadSpawned) pthread_join(thread, nullptr);
 
         // Merge the sorted halves
         // pthread_mutex_lock(data->mutex);
         // merge(*(data->vec), data->l, m, data->r);
-        nThreadsMerge(data->threadsLim, *(data->vec), data->l, m, data->r, data->mutex);
+        nThreadsMerge(data->threadsLim, *(data->vec), data->res, data->l, m, data->r, data->mutex);
         // memcpy(data->vec->data(), mergeRes, sizeof(int) * data->vec->size());
         // print_vec(*(data->vec), 0, (*(data->vec)).size() - 1);
         // pthread_mutex_unlock(data->mutex); 
@@ -314,7 +326,7 @@ void* mergeSortRoutine(void* arg) {
 
 
 // Main function to perform merge sort on a vector v[]
-void mergeSort(std::vector<int>& vec, int l, int r, int threadsLim, pthread_mutex_t* mutex) {
+void mergeSort(std::vector<int>& vec, int* res, int l, int r, int threadsLim, pthread_mutex_t* mutex) {
     if (l < r) {
         int m = l + (r - l) / 2;
         int splitThreadsLim = threadsLim / 2;
@@ -333,6 +345,7 @@ void mergeSort(std::vector<int>& vec, int l, int r, int threadsLim, pthread_mute
         // right half
         if (threadSpawned) {
             threadData0.vec = &vec;
+            threadData0.res = res;
             threadData0.l = m + 1;
             threadData0.r = r;
             threadData0.threadsLim = threadsLim;
@@ -340,18 +353,18 @@ void mergeSort(std::vector<int>& vec, int l, int r, int threadsLim, pthread_mute
             printf("%d threads spliting %d ~ %d\n", 1, m + 1, r);
             pthread_create(&thread, nullptr, mergeSortRoutine, &threadData0);
         } else {
-            mergeSort(vec, m + 1, r, threadsLim, mutex);
+            mergeSort(vec, res, m + 1, r, threadsLim, mutex);
         }
 
         // left half
-        mergeSort(vec, l, m, threadsLim, mutex);
+        mergeSort(vec, res, l, m, threadsLim, mutex);
 
         if (threadSpawned) pthread_join(thread, nullptr);
 
         // Merge the sorted halves
         // merge(vec, l, m, r);
         
-        nThreadsMerge(threadsLim, vec, l, m, r, mutex);
+        nThreadsMerge(threadsLim, vec, res, l, m, r, mutex);
         // memcpy(vec.data(), mergeRes, sizeof(int) * vec.size());
         // print_vec(vec, 0, vec.size() - 1);
         // pthread_mutex_unlock(mutex); 
@@ -383,7 +396,8 @@ int main(int argc, char** argv) {
 
     pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
     // print_vec(vec, 0, vec.size() - 1);
-    mergeSort(vec, 0, size - 1, thread_num, &mutex);
+    int* res = (int*)malloc(sizeof(int) * vec.size());
+    mergeSort(vec, res, 0, size - 1, thread_num, &mutex);
     // print_vec(vec, 0, vec.size() - 1);
 
     auto end_time = std::chrono::high_resolution_clock::now();
