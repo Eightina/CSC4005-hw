@@ -15,9 +15,10 @@
 int THREAD_NUM = 1;
 // int SPLIT_THREAD_NUM = 1;
 // int minRange = 10000;
-int minRange = 100;
+// 100000000
+int minRange = 100000000 / 4;
 // int mergeMinRange = 40000000;
-int mergeMinRange = 250;
+int mergeMinRange = 100000000 / 20;
 
 void mergeSort(std::vector<int>& nums, int l, int r, int threadsLim, pthread_mutex_t* mutex);
 
@@ -180,11 +181,15 @@ void* mergeRoutine(void* arg) {
         j++;
         k++;
     }
+    // pthread_mutex_lock(data->mutex);
+    // printf("%d threads recycled\n", 1);
     --THREAD_NUM;
-    pthread_exit(0);
+    // pthread_mutex_unlock(data->mutex); 
+    // pthread_exit(0);
 }
 
 void nThreadsMerge(int threadsLim, std::vector<int>& nums, int l, int m, int r, pthread_mutex_t* mutex) {
+    bool usingNT = false;
     if (r - l < mergeMinRange) {
         merge(nums, l, m, r);
         return;
@@ -196,12 +201,13 @@ void nThreadsMerge(int threadsLim, std::vector<int>& nums, int l, int m, int r, 
     kIndexes2.push_back(m + 1 - 1);
 
     pthread_mutex_lock(mutex);
-    int mergeThreadsNum = (threadsLim - THREAD_NUM);
+    int mergeThreadsNum = (threadsLim - THREAD_NUM) * (r - l + 1) / nums.size();
     if (mergeThreadsNum < 2) {
         pthread_mutex_unlock(mutex);
         merge(nums, l, m, r);
         return;    
-    } 
+    }
+    usingNT = true; 
     THREAD_NUM += mergeThreadsNum;
     printf("%d threads merging %d ~ %d\n", mergeThreadsNum, l, r);
     getNKthElements(nums1, nums2, mergeThreadsNum, kIndexes1, kIndexes2, l, m + 1);
@@ -236,7 +242,16 @@ void nThreadsMerge(int threadsLim, std::vector<int>& nums, int l, int m, int r, 
 
     memcpy(nums.data() + l, res, sizeof(int) * (r - l + 1));
 
-    THREAD_NUM -= mergeThreadsNum;
+    // pthread_mutex_lock(mutex);
+    // if (usingNT) {
+    //     printf("%d threads recycled\n", mergeThreadsNum);
+    //     THREAD_NUM -= mergeThreadsNum;
+    // } else {
+    //     // printf("%d threads recycled\n", 1);
+    //     THREAD_NUM -= 1;
+    // } 
+    // pthread_mutex_unlock(mutex);
+
 }
 
 // routine function
@@ -291,8 +306,9 @@ void* mergeSortRoutine(void* arg) {
     }
     // pthread_mutex_lock(data->mutex);
     --THREAD_NUM;
-    pthread_exit(0);
+    // printf("%d threads recycled\n", 1);
     // pthread_mutex_unlock(data->mutex); 
+    // pthread_exit(0);
     // return nullptr;
 } 
 
