@@ -20,7 +20,7 @@ do
   echo "Number of cores: $num_cores"
   # srun -n 1 --cpus-per-task $num_cores /nfsmnt/223040076/coursecode/project3/build/src/mergesort/mergesort_parallel $num_cores 100000000
   # srun -n 1 --cpus-per-task $num_cores /nfsmnt/223040076/coursecode/project3/build/src/mergesort/mergesort_parallel $num_cores 10000000
-  srun -n 1 --cpus-per-task $num_cores /nfsmnt/223040076/coursecode/project3/build/src/mergesort/mergesort_parallel $num_cores 10000
+  srun -n 1 --cpus-per-task $num_cores /nfsmnt/223040076/coursecode/project3/build/src/mergesort/mergesort_parallel $num_cores 1000000
 done
 echo ""
 
