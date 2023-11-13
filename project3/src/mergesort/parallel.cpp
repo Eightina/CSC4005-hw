@@ -17,10 +17,10 @@ int THREAD_NUM = 1;
 // int minRange = 10000;
 // 100000000
 // int minRange = 10000000 / 2;
-int minRange = 100000000 / 2;
+int minRange = 100000000 / 4;
 // int mergeMinRange = 40000000;
 // int mergeMinRange = 10000000 / 8;
-int mergeMinRange = 100000000 / 8;
+int mergeMinRange = 100000000 / 10;
 
 void mergeSort(std::vector<int>& nums, int* res, int l, int r, int threadsLim, pthread_mutex_t* mutex);
 
@@ -211,12 +211,15 @@ void nThreadsMerge(int threadsLim, std::vector<int>& nums, int* res, int l, int 
 
     pthread_mutex_lock(mutex);
     int mergeThreadsNum = (threadsLim - THREAD_NUM) * (r - l + 1) / nums.size();
+    // int mergeThreadsNum = (threadsLim - THREAD_NUM);
+    // int mergeThreadsNum = 2;
     if (mergeThreadsNum < 1) {
         pthread_mutex_unlock(mutex);
         merge(nums, res, l, m, r);
         memcpy(nums.data() + l, res + l, sizeof(int) * (r - l + 1));
         return;    
     }
+    // mergeThreadsNum = std::min(mergeThreadsNum, 2);
     // usingNT = true; 
     THREAD_NUM += mergeThreadsNum;
     printf("%d + 1 threads merging %d ~ %d\n", mergeThreadsNum, l, r);
@@ -256,7 +259,7 @@ void nThreadsMerge(int threadsLim, std::vector<int>& nums, int* res, int l, int 
 
     memcpy(nums.data() + l, res + l, sizeof(int) * (r - l + 1));
 
-    pthread_mutex_lock(mutex);
+    // pthread_mutex_lock(mutex);
     // if (usingNT) {
     printf("%d threads recycled\n", mergeThreadsNum);
     THREAD_NUM -= mergeThreadsNum;
@@ -264,7 +267,7 @@ void nThreadsMerge(int threadsLim, std::vector<int>& nums, int* res, int l, int 
     //     // printf("%d threads recycled\n", 1);
     //     THREAD_NUM -= 1;
     // } 
-    pthread_mutex_unlock(mutex);
+    // pthread_mutex_unlock(mutex);
     return;
 
 }
