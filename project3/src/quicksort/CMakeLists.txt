@@ -28,5 +28,6 @@ add_executable(quicksort_mpi
         mpi.cpp
         ../utils.cpp ../utils.hpp)
 target_compile_options(quicksort_mpi PRIVATE -O2)
+# target_compile_options(quicksort_mpi PRIVATE -g3)
 target_include_directories(quicksort_mpi PRIVATE ${MPI_CXX_INCLUDE_DIRS})
 target_link_libraries(quicksort_mpi ${MPI_LIBRARIES})

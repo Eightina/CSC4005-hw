@@ -49,11 +49,11 @@ void mergeSorted(int** nums, std::vector<int> cuts, std::vector<int>& res){
 	// priority queue is full
     int cnt = 0;
 	while (cnt < total_len){
-		node tmp = order.top();//获得优先队列中最小值元素
-		res[cnt] = tmp.value;//存入目标数组
+		node tmp = order.top();     // 获得优先队列中最小值元素
+		res[cnt] = tmp.value;       // 存入目标数组
         ++cnt;
-		cur_array = tmp.array;//最小值元素对应数组
-		nxt_index = tmp.index + 1;//最小值元素对应数组内下一个的元素
+		cur_array = tmp.array;      // 最小值元素对应数组
+		nxt_index = tmp.index + 1;  // 最小值元素对应数组内下一个的元素
 		order.pop();
 		if (nxt_index < tmp.array_len) {
             order.push(node(cur_array[nxt_index], cur_array, nxt_index, tmp.array_len));
