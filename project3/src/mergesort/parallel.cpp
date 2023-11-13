@@ -191,13 +191,13 @@ void* mergeRoutine(void* arg) {
     }
     // pthread_mutex_lock(data->mutex);
     // printf("%d threads recycled\n", 1);
-    --THREAD_NUM;
+    // --THREAD_NUM;
     // pthread_mutex_unlock(data->mutex); 
     // pthread_exit(0);
 }
 
 void nThreadsMerge(int threadsLim, std::vector<int>& nums, int* res, int l, int m, int r, pthread_mutex_t* mutex) {
-    bool usingNT = false;
+    // bool usingNT = false;
     if (r - l < mergeMinRange) {
         merge(nums, res, l, m, r);
         memcpy(nums.data() + l, res + l, sizeof(int) * (r - l + 1));
@@ -211,24 +211,24 @@ void nThreadsMerge(int threadsLim, std::vector<int>& nums, int* res, int l, int 
 
     pthread_mutex_lock(mutex);
     int mergeThreadsNum = (threadsLim - THREAD_NUM) * (r - l + 1) / nums.size();
-    if (mergeThreadsNum < 2) {
+    if (mergeThreadsNum < 1) {
         pthread_mutex_unlock(mutex);
         merge(nums, res, l, m, r);
         memcpy(nums.data() + l, res + l, sizeof(int) * (r - l + 1));
         return;    
     }
-    usingNT = true; 
+    // usingNT = true; 
     THREAD_NUM += mergeThreadsNum;
-    printf("%d threads merging %d ~ %d\n", mergeThreadsNum, l, r);
+    printf("%d + 1 threads merging %d ~ %d\n", mergeThreadsNum, l, r);
     pthread_mutex_unlock(mutex);
-    getNKthElements(nums1, nums2, mergeThreadsNum, kIndexes1, kIndexes2, l, m + 1);
+    getNKthElements(nums1, nums2, mergeThreadsNum + 1, kIndexes1, kIndexes2, l, m + 1);
 
     kIndexes1.push_back(l + nums1.size() - 1);
     kIndexes2.push_back(m + 1 + nums2.size() - 1);
 
     int trueNumThreads = kIndexes1.size() - 1;
-    pthread_t threads[trueNumThreads];
-    MergeThreadData datas[trueNumThreads];
+    pthread_t threads[trueNumThreads + 1];
+    MergeThreadData datas[trueNumThreads + 1];
 
     // pthread_mutex_lock(mutex);
     // pthread_mutex_unlock(mutex); 
@@ -243,25 +243,29 @@ void nThreadsMerge(int threadsLim, std::vector<int>& nums, int* res, int l, int 
         // datas[tid].r = kIndexes2[tid + 1];
         // datas[tid].threadsLim = data->threadsLim;
         datas[tid].mutex = mutex;
-        pthread_create(&threads[tid], nullptr, mergeRoutine, &datas[tid]);
+        if (tid != trueNumThreads - 1) {
+            pthread_create(&threads[tid], nullptr, mergeRoutine, &datas[tid]);
+            continue;
+        }
+        mergeRoutine(&datas[tid]);
     }
 
-    for (int tid = 0; tid < trueNumThreads; ++tid) {
+    for (int tid = 0; tid < trueNumThreads - 1; ++tid) {
         pthread_join(threads[tid], nullptr);
     }
 
     memcpy(nums.data() + l, res + l, sizeof(int) * (r - l + 1));
-    return;
 
-    // pthread_mutex_lock(mutex);
+    pthread_mutex_lock(mutex);
     // if (usingNT) {
-    //     printf("%d threads recycled\n", mergeThreadsNum);
-    //     THREAD_NUM -= mergeThreadsNum;
+    printf("%d threads recycled\n", mergeThreadsNum);
+    THREAD_NUM -= mergeThreadsNum;
     // } else {
     //     // printf("%d threads recycled\n", 1);
     //     THREAD_NUM -= 1;
     // } 
-    // pthread_mutex_unlock(mutex);
+    pthread_mutex_unlock(mutex);
+    return;
 
 }
 

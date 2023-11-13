@@ -1,43 +1,72 @@
 Merge Sort Parallel (Optimized with -O2)
 Number of cores: 4
 1 threads spliting 50000000 ~ 99999999
-3 threads merging 0 ~ 99999999
+1 + 1 threads merging 0 ~ 49999999
+1 threads recycled
+1 + 1 threads merging 50000000 ~ 99999999
+1 threads recycled
+3 + 1 threads merging 0 ~ 99999999
+3 threads recycled
 Merge Sort Complete!
-Execution Time: 14301 milliseconds
-std::sort Time: 12099 milliseconds
+Execution Time: 13792 milliseconds
+std::sort Time: 11846 milliseconds
 Pass the sorting result check!
 Number of cores: 8
 1 threads spliting 50000000 ~ 99999999
-3 threads merging 0 ~ 49999999
-3 threads merging 50000000 ~ 99999999
-7 threads merging 0 ~ 99999999
+1 + 1 threads merging 25000000 ~ 49999999
+1 + 1 threads merging 75000000 ~ 99999999
+1 threads recycled
+1 threads recycled
+1 + 1 threads merging 0 ~ 24999999
+1 threads recycled
+1 + 1 threads merging 50000000 ~ 74999999
+2 + 1 threads merging 0 ~ 49999999
+1 threads recycled
+2 + 1 threads merging 50000000 ~ 99999999
+2 threads recycled
+2 threads recycled
+7 + 1 threads merging 0 ~ 99999999
+7 threads recycled
 Merge Sort Complete!
-Execution Time: 14375 milliseconds
-std::sort Time: 12098 milliseconds
+Execution Time: 13773 milliseconds
+std::sort Time: 11850 milliseconds
 Pass the sorting result check!
 Number of cores: 16
 1 threads spliting 50000000 ~ 99999999
-3 threads merging 25000000 ~ 49999999
-3 threads merging 75000000 ~ 99999999
-3 threads merging 0 ~ 24999999
-3 threads merging 50000000 ~ 74999999
-5 threads merging 0 ~ 49999999
-7 threads merging 50000000 ~ 99999999
-15 threads merging 0 ~ 99999999
+3 + 1 threads merging 75000000 ~ 99999999
+2 + 1 threads merging 25000000 ~ 49999999
+3 threads recycled
+2 threads recycled
+3 + 1 threads merging 50000000 ~ 74999999
+3 threads recycled
+7 + 1 threads merging 50000000 ~ 99999999
+1 + 1 threads merging 0 ~ 24999999
+7 threads recycled
+1 threads recycled
+7 + 1 threads merging 0 ~ 49999999
+7 threads recycled
+15 + 1 threads merging 0 ~ 99999999
+15 threads recycled
 Merge Sort Complete!
-Execution Time: 13901 milliseconds
-std::sort Time: 12097 milliseconds
+Execution Time: 13577 milliseconds
+std::sort Time: 11846 milliseconds
 Pass the sorting result check!
 Number of cores: 32
 1 threads spliting 50000000 ~ 99999999
-7 threads merging 75000000 ~ 99999999
-5 threads merging 25000000 ~ 49999999
-7 threads merging 50000000 ~ 74999999
-7 threads merging 0 ~ 24999999
-15 threads merging 50000000 ~ 99999999
-15 threads merging 0 ~ 49999999
+7 + 1 threads merging 25000000 ~ 49999999
+7 threads recycled
+7 + 1 threads merging 75000000 ~ 99999999
+7 threads recycled
+7 + 1 threads merging 0 ~ 24999999
+7 threads recycled
+7 + 1 threads merging 50000000 ~ 74999999
+11 + 1 threads merging 0 ~ 49999999
+7 threads recycled
+11 threads recycled
+15 + 1 threads merging 50000000 ~ 99999999
+15 threads recycled
 Merge Sort Complete!
-Execution Time: 14688 milliseconds
-std::sort Time: 12111 milliseconds
+Execution Time: 14270 milliseconds
+std::sort Time: 11846 milliseconds
 Pass the sorting result check!
 
