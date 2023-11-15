@@ -1,38 +1,38 @@
 Bucket Sort Sequential (Optimized with -O2)
 Bucket Sort Complete!
-Execution Time: 12782 milliseconds
-std::sort Time: 11919 milliseconds
+Execution Time: 12798 milliseconds
+std::sort Time: 11916 milliseconds
 Pass the sorting result check!
 
 Bucket Sort MPI (Optimized with -O2)
 Number of cores: 1
 Bucket Sort Complete!
-Execution Time: 11829 milliseconds
-std::sort Time: 11825 milliseconds
+Execution Time: 13866 milliseconds
+std::sort Time: 10946 milliseconds
 Pass the sorting result check!
 Number of cores: 2
 Bucket Sort Complete!
-Execution Time: 7056 milliseconds
-std::sort Time: 15211 milliseconds
+Execution Time: 9142 milliseconds
+std::sort Time: 14323 milliseconds
 Pass the sorting result check!
 Number of cores: 4
 Bucket Sort Complete!
-Execution Time: 3960 milliseconds
-std::sort Time: 15158 milliseconds
+Execution Time: 4627 milliseconds
+std::sort Time: 14304 milliseconds
 Pass the sorting result check!
 Number of cores: 8
 Bucket Sort Complete!
-Execution Time: 2488 milliseconds
-std::sort Time: 15160 milliseconds
+Execution Time: 2891 milliseconds
+std::sort Time: 14297 milliseconds
 Pass the sorting result check!
 Number of cores: 16
 Bucket Sort Complete!
-Execution Time: 1661 milliseconds
-std::sort Time: 15279 milliseconds
+Execution Time: 1903 milliseconds
+std::sort Time: 14405 milliseconds
 Pass the sorting result check!
 Number of cores: 32
 Bucket Sort Complete!
-Execution Time: 1405 milliseconds
-std::sort Time: 15287 milliseconds
+Execution Time: 1587 milliseconds
+std::sort Time: 14475 milliseconds
 Pass the sorting result check!
 

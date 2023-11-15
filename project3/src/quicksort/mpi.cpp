@@ -49,11 +49,11 @@ void mergeSorted(int** nums, std::vector<int> cuts, std::vector<int>& res){
 	// priority queue is full
     int cnt = 0;
 	while (cnt < total_len){
-		node tmp = order.top();     // 获得优先队列中最小值元素
-		res[cnt] = tmp.value;       // 存入目标数组
+		node tmp = order.top();     // minimal element
+		res[cnt] = tmp.value;       // save it in to result
         ++cnt;
-		cur_array = tmp.array;      // 最小值元素对应数组
-		nxt_index = tmp.index + 1;  // 最小值元素对应数组内下一个的元素
+		cur_array = tmp.array;      // the array of the element popped 
+		nxt_index = tmp.index + 1;  // the next element in the array
 		order.pop();
 		if (nxt_index < tmp.array_len) {
             order.push(node(cur_array[nxt_index], cur_array, nxt_index, tmp.array_len));
@@ -87,7 +87,7 @@ inline void quickSortKernel(std::vector<int> &vec, int low, int high) {
 
 void quickSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* status, std::vector<int> cuts) {
     int *nums = vec.data();
-    std::vector<int>* res = new std::vector<int>(cuts[numtasks], 0);
+    // std::vector<int>* res = new std::vector<int>(cuts[numtasks], 0);
     
     quickSortKernel(vec, cuts[taskid], cuts[taskid + 1] - 1);
     if (taskid == MASTER) {
@@ -95,9 +95,12 @@ void quickSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* stat
         // arrays[0] = res
         // int* master_res = (int*)malloc(sizeof(int) * (cuts[MASTER + 1] - cuts[MASTER]));
         // memcpy(master_res, nums, sizeof(int) * (cuts[MASTER + 1] - cuts[MASTER]));
+        if (numtasks == 1) return;
 
         int **arrays = (int **)malloc(sizeof(int*) * (numtasks));
-        int *res = (int*)malloc(sizeof(int) * cuts[numtasks-1]);
+        // int* arrays[numtasks];
+        int *res = (int*)malloc(sizeof(int) * vec.size() + 1024);
+        // int res[vec.size()]; 
 
         memcpy(res, nums, sizeof(int) * (cuts[MASTER + 1] - cuts[MASTER]));
         arrays[0] = res;
@@ -106,6 +109,7 @@ void quickSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* stat
 
             // int* cur_res = (int*)malloc(sizeof(int) * (cuts[t_id + 1] - cuts[t_id]));
             // MPI_Recv(&nums[cuts[t_id]], cuts[t_id + 1] - cuts[t_id], MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, status);
+            // printf("taskid %d receiving %d\n", t_id, cuts[t_id + 1] - cuts[t_id]);
             MPI_Recv(res + cuts[t_id], cuts[t_id + 1] - cuts[t_id], MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, status);
             arrays[t_id] = res + cuts[t_id];
             // printf("taskid %d received %d\n", t_id, cuts[t_id + 1] - cuts[t_id]);
@@ -116,11 +120,12 @@ void quickSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* stat
             // printf("res init\n");
             mergeSorted(arrays, cuts, vec);
         }
-        free(res);
+        // print_vec(vec, 0, sizeof(vec) - 1);
         free(arrays);
+        free(res);
     } else {
-        MPI_Send(&nums[cuts[taskid]], cuts[taskid + 1] - cuts[taskid], MPI_INT, MASTER, TAG_GATHER, MPI_COMM_WORLD);
-        // printf("taskid %d sent %d\n", taskid, cuts[taskid + 1] - cuts[taskid]);
+        MPI_Send(nums + cuts[taskid], cuts[taskid + 1] - cuts[taskid], MPI_INT, MASTER, TAG_GATHER, MPI_COMM_WORLD);
+        printf("taskid %d sent %d\n", taskid, cuts[taskid + 1] - cuts[taskid]);
     }
 
 }

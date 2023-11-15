@@ -126,18 +126,17 @@ void oddEvenSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* st
     while (!sorted) {
         sorted = true;
         partSorted = true;
-        tPhase(vec, cuts[taskid], cuts[taskid+1] - 1, taskid, numtasks, odd_even_cuts, partSorted);
-        // MPI_Barrier(MPI_COMM_WORLD); // sync
+        if (numtasks > 1) 
+            tPhase(vec, cuts[taskid], cuts[taskid+1] - 1, taskid, numtasks, odd_even_cuts, partSorted);
         ntPhase(vec, cuts[taskid], cuts[taskid+1] - 1, taskid, numtasks, odd_even_cuts, partSorted);
+        
+        // stop condition
         MPI_Gather(&partSorted, 1, MPI_CXX_BOOL, tasksSorted, 1, MPI_CXX_BOOL, MASTER, MPI_COMM_WORLD);
         for (int i = 0; i < numtasks; ++i) {
             if (!tasksSorted[i]) sorted = false;
         }
         MPI_Bcast(&sorted, 1, MPI_CXX_BOOL, MASTER, MPI_COMM_WORLD);
-        // if (taskid == 1) {
-        //     printf("in task1: ");
-        //     // print_vec(vec, cuts[taskid], cuts[taskid+1]-1);
-        // }
+
     }
     // printf("all sorted\n");
     MPI_Barrier(MPI_COMM_WORLD); // sync
@@ -191,8 +190,6 @@ int main(int argc, char** argv) {
 
     // job patition
     std::vector<int> cuts = createCuts(0, vec.size() - 1, numtasks);
-    // printf("total: ");
-    // print_vec(vec, 0, vec.size() - 1);
 
     auto start_time = std::chrono::high_resolution_clock::now();
 

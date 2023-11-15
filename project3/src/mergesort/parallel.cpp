@@ -55,7 +55,7 @@ void* getNKthElements(const std::vector<int>& nums1, const std::vector<int>& num
 
     int resCount = 0;
     while (resCount != numThreads - 1) {
-        // 边界情况
+        // edge conditions
         if (index1 == m) {
             kIndexes1.emplace_back(offset1 + index1 - 1);
             kIndexes2.emplace_back(offset2 + index2 + k - 1);
@@ -81,7 +81,7 @@ void* getNKthElements(const std::vector<int>& nums1, const std::vector<int>& num
             k = total / numThreads;
             // return std::min(nums1[index1], nums2[index2]);
         }
-        // 正常情况
+        // normal
         int newIndex1 = std::min(index1 + k / 2 - 1, m - 1);
         int newIndex2 = std::min(index2 + k / 2 - 1, n - 1);
         int pivot1 = nums1[newIndex1];

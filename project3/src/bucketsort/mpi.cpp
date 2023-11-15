@@ -105,7 +105,8 @@ std::vector<std::vector<int>>& bucketSortKernel(int min_val, int max_val, std::v
     std::vector<std::vector<int>>* buckets = new std::vector<std::vector<int>>(num_buckets);
     // Pre-allocate space to avoid re-allocation
     for (std::vector<int>& bucket : *buckets) {
-        bucket.reserve(large_bucket_num);
+        // bucket.reserve(large_bucket_num);
+        bucket.reserve(large_bucket_size);
     }
 
     // Place each element in the appropriate bucket
@@ -129,8 +130,8 @@ std::vector<std::vector<int>>& bucketSortKernel(int min_val, int max_val, std::v
 
     // Sort each bucket using insertion sort
     for (std::vector<int>& bucket : *buckets) {
-        // insertionSort(bucket);
-        quickSort(bucket, 0, bucket.size()-1);
+        insertionSort(bucket);
+        // quickSort(bucket, 0, bucket.size()-1);
     }
     return *buckets;
     // Combine sorted buckets to get the final sorted array
