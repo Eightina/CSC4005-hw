@@ -30,7 +30,7 @@ echo "Quick Sort Parallel (Optimized with -O2)"
 for num_cores in 1 2 4 8 16 32
 do
   echo "Number of cores: $num_cores"
-  # srun -n 1 --cpus-per-task $num_cores /nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_parallel $num_cores 100000000
-  srun -n 1 --cpus-per-task $num_cores /nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_parallel $num_cores 10000
+  srun -n 1 --cpus-per-task $num_cores /nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_parallel $num_cores 100000000
+  # srun -n 1 --cpus-per-task $num_cores /nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_parallel $num_cores 10000000
 done
 echo ""
