@@ -1,0 +1,971 @@
+Quick Sort MPI (Optimized with -O2)
+Number of cores: 1
+Quick Sort Complete!
+Execution Time: 13451 milliseconds
+std::sort Time: 11959 milliseconds
+Pass the sorting result check!
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    81,987,142,688      cpu-cycles:u                                                
+       138,341,257      cache-misses:u                                              
+             7,258      page-faults:u                                               
+     2,301,635,763      branch-misses:u                                             
+
+      28.669282491 seconds time elapsed
+
+      28.408668000 seconds user
+       0.174580000 seconds sys
+
+
+Number of cores: 2
+taskid 1 sent 50000000
+Quick Sort Complete!
+Execution Time: 13435 milliseconds
+std::sort Time: 15989 milliseconds
+Pass the sorting result check!
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    94,396,578,256      cpu-cycles:u                                                
+        41,488,944      cache-misses:u                                              
+             4,510      page-faults:u                                               
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    97,317,753,272      cpu-cycles:u                                                
+       121,229,654      cache-misses:u                                              
+             7,746      page-faults:u                                               
+     1,769,007,286      branch-misses:u                                             
+
+      34.119262677 seconds time elapsed
+
+       627,784,609      branch-misses:u                                             
+
+      34.119263162 seconds time elapsed
+
+      32.996162000 seconds user
+       1.024644000 seconds sys
+
+
+      33.717845000 seconds user
+       0.312257000 seconds sys
+
+
+Number of cores: 4
+taskid 3 sent 25000000
+taskid 1 sent 25000000
+taskid 2 sent 25000000
+Quick Sort Complete!
+Execution Time: 9134 milliseconds
+std::sort Time: 15967 milliseconds
+Pass the sorting result check!
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    81,991,814,540      cpu-cycles:u                                                
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    84,814,725,039      cpu-cycles:u                                                
+       105,337,944      cache-misses:u                                              
+             8,162      page-faults:u                                               
+     1,519,455,663      branch-misses:u                                             
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    81,976,040,202      cpu-cycles:u                                                
+        26,636,040      cache-misses:u                                              
+             3,892      page-faults:u                                               
+    81,887,285,565      cpu-cycles:u                                                
+        23,509,392      cache-misses:u                                              
+             3,827      page-faults:u                                               
+       336,636,283      branch-misses:u                                             
+
+      30.024977978 seconds time elapsed
+
+      28.653631000 seconds user
+       1.062464000 seconds sys
+
+
+        25,607,778      cache-misses:u                                              
+             3,654      page-faults:u                                               
+       334,470,369      branch-misses:u                                             
+
+      29.804690328 seconds time elapsed
+
+      28.667358000 seconds user
+       1.047528000 seconds sys
+
+
+      30.024877578 seconds time elapsed
+
+      29.387416000 seconds user
+       0.337190000 seconds sys
+
+
+       334,962,981      branch-misses:u                                             
+
+      29.802214823 seconds time elapsed
+
+      28.761121000 seconds user
+       0.950756000 seconds sys
+
+
+Number of cores: 8
+taskid 2 sent 12500000
+taskid 3 sent 12500000
+taskid 6 sent 12500000
+taskid 1 sent 12500000
+taskid 4 sent 12500000
+taskid 7 sent 12500000
+taskid 5 sent 12500000
+Quick Sort Complete!
+Execution Time: 7461 milliseconds
+std::sort Time: 15889 milliseconds
+Pass the sorting result check!
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,677,572,366      cpu-cycles:u                                                
+    76,829,560,871      cpu-cycles:u                                                
+        15,932,342      cache-misses:u                                              
+             3,740      page-faults:u                                               
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    77,035,549,790      cpu-cycles:u                                                
+        16,264,517      cache-misses:u                                              
+             3,381      page-faults:u                                               
+       319,675,815      branch-misses:u                                             
+
+      28.449110984 seconds time elapsed
+
+      27.056025000 seconds user
+       0.903896000 seconds sys
+
+
+        16,144,377      cache-misses:u                                              
+             3,751      page-faults:u                                               
+       201,389,367      branch-misses:u                                             
+
+      28.441709544 seconds time elapsed
+
+      26.924612000 seconds user
+       1.033566000 seconds sys
+
+
+       198,637,290      branch-misses:u                                             
+
+      28.443347629 seconds time elapsed
+
+      26.991138000 seconds user
+       0.966748000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    79,782,987,431      cpu-cycles:u                                                
+        98,852,258      cache-misses:u                                              
+             8,662      page-faults:u                                               
+     1,433,128,123      branch-misses:u                                             
+
+      28.445151343 seconds time elapsed
+
+      27.648953000 seconds user
+       0.320246000 seconds sys
+
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,821,069,892      cpu-cycles:u                                                
+        16,429,231      cache-misses:u                                              
+             3,580      page-faults:u                                               
+       200,269,053      branch-misses:u                                             
+
+      28.042036506 seconds time elapsed
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,854,362,787      cpu-cycles:u                                                
+        17,569,686      cache-misses:u                                              
+             3,836      page-faults:u                                               
+       199,264,397      branch-misses:u                                             
+
+      28.052948138 seconds time elapsed
+
+      26.969541000 seconds user
+       0.989707000 seconds sys
+
+
+    77,029,515,410      cpu-cycles:u                                                
+        15,435,900      cache-misses:u                                              
+             3,867      page-faults:u                                               
+       293,615,742      branch-misses:u                                             
+
+      28.065344494 seconds time elapsed
+
+      26.979381000 seconds user
+       0.980723000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+      26.930131000 seconds user
+       1.029596000 seconds sys
+
+
+    76,859,917,159      cpu-cycles:u                                                
+        15,680,666      cache-misses:u                                              
+             3,760      page-faults:u                                               
+       201,106,797      branch-misses:u                                             
+
+      28.042707774 seconds time elapsed
+
+      26.979618000 seconds user
+       0.978700000 seconds sys
+
+
+Number of cores: 16
+taskid 8 sent 6250000
+taskid 11 sent 6250000
+taskid 10 sent 6250000
+taskid 15 sent 6250000
+taskid 13 sent 6250000
+taskid 9 sent 6250000
+taskid 14 sent 6250000
+taskid 6 sent 6250000
+taskid 4 sent 6250000
+taskid 1 sent 6250000
+taskid 5 sent 6250000
+taskid 12 sent 6250000
+taskid 2 sent 6250000
+taskid 3 sent 6250000
+taskid 7 sent 6250000
+Quick Sort Complete!
+Execution Time: 7287 milliseconds
+std::sort Time: 16026 milliseconds
+Pass the sorting result check!
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,692,452,011      cpu-cycles:u                                                
+        13,020,130      cache-misses:u                                              
+             3,651      page-faults:u                                               
+       228,336,536      branch-misses:u                                             
+
+      28.388082414 seconds time elapsed
+
+      26.967748000 seconds user
+       0.998657000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,702,067,948      cpu-cycles:u                                                
+        13,030,989      cache-misses:u                                              
+             3,671      page-faults:u                                               
+       177,107,046      branch-misses:u                                             
+
+      28.392927526 seconds time elapsed
+
+      26.944913000 seconds user
+       1.021608000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,695,260,285      cpu-cycles:u                                                
+        13,915,854      cache-misses:u                                              
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,704,761,472      cpu-cycles:u                                                
+        13,258,227      cache-misses:u                                              
+             3,734      page-faults:u                                               
+       176,294,810      branch-misses:u                                             
+
+      28.058816690 seconds time elapsed
+
+      26.950605000 seconds user
+       1.016608000 seconds sys
+    76,600,684,092      cpu-cycles:u                                                
+        14,190,407      cache-misses:u                                              
+             3,605      page-faults:u                                               
+       183,572,270      branch-misses:u                                             
+
+      28.054922941 seconds time elapsed
+
+      26.876986000 seconds user
+       1.088528000 seconds sys
+
+
+    76,612,830,107      cpu-cycles:u                                                
+        13,831,533      cache-misses:u                                              
+             3,580      page-faults:u                                               
+       182,372,709      branch-misses:u                                             
+
+      28.056364326 seconds time elapsed
+
+      26.875284000 seconds user
+       1.092450000 seconds sys
+
+
+             3,644      page-faults:u                                               
+       228,711,743      branch-misses:u                                             
+
+      28.050514868 seconds time elapsed
+
+      26.981882000 seconds user
+       0.985694000 seconds sys
+
+
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,613,054,548      cpu-cycles:u                                                
+        14,172,598      cache-misses:u                                              
+             3,555      page-faults:u                                               
+       181,098,015      branch-misses:u                                             
+
+      28.410037082 seconds time elapsed
+
+      26.927032000 seconds user
+       1.040528000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,717,134,717      cpu-cycles:u                                                
+        13,245,990      cache-misses:u                                              
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,706,350,497      cpu-cycles:u                                                
+        14,269,580      cache-misses:u                                              
+             3,503      page-faults:u                                               
+       180,631,745      branch-misses:u                                             
+
+      28.060899055 seconds time elapsed
+
+      26.998579000 seconds user
+       0.969686000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,711,194,971      cpu-cycles:u                                                
+             3,595      page-faults:u                                               
+       180,549,392      branch-misses:u                                             
+
+      28.452493994 seconds time elapsed
+
+      26.960666000 seconds user
+       1.007595000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,483,896,626      cpu-cycles:u                                                
+        13,282,030      cache-misses:u                                              
+             3,405      page-faults:u                                               
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,705,748,113      cpu-cycles:u                                                
+        13,419,672      cache-misses:u                                              
+             3,831      page-faults:u                                               
+       230,688,905      branch-misses:u                                             
+
+      28.364771947 seconds time elapsed
+
+      26.960666000 seconds user
+       1.005563000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,661,158,540      cpu-cycles:u                                                
+        13,288,575      cache-misses:u                                              
+             3,396      page-faults:u                                               
+       179,980,163      branch-misses:u                                             
+
+      28.319785237 seconds time elapsed
+
+      26.960784000 seconds user
+       1.001429000 seconds sys
+
+
+        14,192,086      cache-misses:u                                              
+             3,443      page-faults:u                                               
+       179,671,235      branch-misses:u                                             
+
+      28.050805979 seconds time elapsed
+
+      26.888367000 seconds user
+       1.079445000 seconds sys
+
+
+       185,483,274      branch-misses:u                                             
+
+      28.397785157 seconds time elapsed
+
+      26.877334000 seconds user
+       1.090417000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,706,017,227      cpu-cycles:u                                                
+        13,813,482      cache-misses:u                                              
+             3,830      page-faults:u                                               
+       226,353,968      branch-misses:u                                             
+
+      28.061427514 seconds time elapsed
+
+      26.940362000 seconds user
+       1.028608000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    76,735,270,326      cpu-cycles:u                                                
+        13,485,311      cache-misses:u                                              
+             3,856      page-faults:u                                               
+       229,414,014      branch-misses:u                                             
+
+      28.057073513 seconds time elapsed
+
+      26.897239000 seconds user
+       1.071499000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    79,745,169,560      cpu-cycles:u                                                
+        98,725,331      cache-misses:u                                              
+             7,915      page-faults:u                                               
+     1,428,124,713      branch-misses:u                                             
+
+      28.351267252 seconds time elapsed
+
+      27.657960000 seconds user
+       0.320235000 seconds sys
+
+
+Number of cores: 32
+taskid 21 sent 3125000
+taskid 11 sent 3125000
+taskid 9 sent 3125000
+taskid 23 sent 3125000
+taskid 15 sent 3125000
+taskid 13 sent 3125000
+taskid 1 sent 3125000
+taskid 3 sent 3125000
+taskid 17 sent 3125000
+taskid 19 sent 3125000
+taskid 5 sent 3125000
+taskid 7 sent 3125000
+taskid 4 sent 3125000
+taskid 22 sent 3125000
+taskid 12 sent 3125000
+taskid 8 sent 3125000
+taskid 2 sent 3125000
+taskid 30 sent 3125000
+taskid 29 sent 3125000
+taskid 27 sent 3125000
+taskid 14 sent 3125000
+taskid 28 sent 3125000
+taskid 18 sent 3125000
+taskid 25 sent 3125000
+taskid 20 sent 3125000
+taskid 26 sent 3125000
+taskid 16 sent 3125000
+taskid 31 sent 3125000
+taskid 24 sent 3125000
+taskid 10 sent 3125000
+taskid 6 sent 3125000
+Quick Sort Complete!
+Execution Time: 7756 milliseconds
+std::sort Time: 16045 milliseconds
+Pass the sorting result check!
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,528,996,337      cpu-cycles:u                                                
+        12,373,337      cache-misses:u                                              
+             2,784      page-faults:u                                               
+    78,560,848,700      cpu-cycles:u                                                
+        12,124,173      cache-misses:u                                              
+             3,601      page-faults:u                                               
+       151,940,255      branch-misses:u                                             
+
+      28.855472471 seconds time elapsed
+
+      27.565902000 seconds user
+       1.188151000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,532,525,975      cpu-cycles:u                                                
+        12,292,667      cache-misses:u                                              
+             3,448      page-faults:u                                               
+       151,847,822      branch-misses:u                                             
+
+      28.842222173 seconds time elapsed
+
+      27.558639000 seconds user
+       1.195251000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,539,430,221      cpu-cycles:u                                                
+        12,731,161      cache-misses:u                                              
+             3,745      page-faults:u                                               
+       152,154,276      branch-misses:u                                             
+
+      28.840815115 seconds time elapsed
+
+      27.636393000 seconds user
+       1.117428000 seconds sys
+       150,657,798      branch-misses:u                                             
+
+      28.853772303 seconds time elapsed
+
+      27.645525000 seconds user
+       1.109372000 seconds sys
+
+
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,497,583,986      cpu-cycles:u                                                
+        12,811,560      cache-misses:u                                              
+             3,716      page-faults:u                                               
+       126,442,447      branch-misses:u                                             
+
+      28.843712074 seconds time elapsed
+
+      27.589009000 seconds user
+       1.165255000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,510,107,075      cpu-cycles:u                                                
+        12,623,279      cache-misses:u                                              
+             3,845      page-faults:u                                               
+       152,850,993      branch-misses:u                                             
+
+      28.854043966 seconds time elapsed
+
+      27.600910000 seconds user
+       1.154277000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,542,153,292      cpu-cycles:u                                                
+        12,606,610      cache-misses:u                                              
+             3,572      page-faults:u                                               
+       152,760,972      branch-misses:u                                             
+
+      28.860264437 seconds time elapsed
+
+      27.615275000 seconds user
+       1.140286000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,535,834,383      cpu-cycles:u                                                
+        12,802,607      cache-misses:u                                              
+             3,470      page-faults:u                                               
+       152,218,024      branch-misses:u                                             
+
+      28.840921939 seconds time elapsed
+
+      27.600890000 seconds user
+       1.154235000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,460,924,844      cpu-cycles:u                                                
+        12,348,431      cache-misses:u                                              
+             3,849      page-faults:u                                               
+       126,793,258      branch-misses:u                                             
+
+      28.850126493 seconds time elapsed
+
+      27.635188000 seconds user
+       1.115384000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,542,733,371      cpu-cycles:u                                                
+        12,451,041      cache-misses:u                                              
+             3,507      page-faults:u                                               
+       152,603,112      branch-misses:u                                             
+
+      28.841966847 seconds time elapsed
+
+      27.610617000 seconds user
+       1.140340000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,476,217,525      cpu-cycles:u                                                
+        12,491,786      cache-misses:u                                              
+             3,555      page-faults:u                                               
+       150,988,112      branch-misses:u                                             
+
+      28.880537643 seconds time elapsed
+
+      27.567592000 seconds user
+       1.184276000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,516,232,026      cpu-cycles:u                                                
+        12,477,242      cache-misses:u                                              
+             3,906      page-faults:u                                               
+       151,817,885      branch-misses:u                                             
+
+      28.875255070 seconds time elapsed
+
+      27.643684000 seconds user
+       1.109418000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,061,307,349      cpu-cycles:u                                                
+        13,663,144      cache-misses:u                                              
+             3,311      page-faults:u                                               
+       129,364,233      branch-misses:u                                             
+
+      29.737855650 seconds time elapsed
+
+      27.459758000 seconds user
+       1.299864000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,154,098,368      cpu-cycles:u                                                
+        12,895,773      cache-misses:u                                              
+             3,765      page-faults:u                                               
+       124,190,182      branch-misses:u                                             
+
+      29.640641439 seconds time elapsed
+
+      27.446164000 seconds user
+       1.283231000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    77,964,645,896      cpu-cycles:u                                                
+        12,692,453      cache-misses:u                                              
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    77,980,593,194      cpu-cycles:u                                                
+        13,173,814      cache-misses:u                                              
+             3,884      page-faults:u                                               
+       124,957,949      branch-misses:u                                             
+
+      29.648834252 seconds time elapsed
+
+      27.472257000 seconds user
+       1.215092000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,230,844,131      cpu-cycles:u                                                
+        13,165,641      cache-misses:u                                              
+             3,728      page-faults:u                                               
+       125,325,567      branch-misses:u                                             
+
+      29.253518166 seconds time elapsed
+
+      27.503246000 seconds user
+       1.255951000 seconds sys
+
+
+             3,603      page-faults:u                                               
+       126,363,628      branch-misses:u                                             
+
+      29.291753231 seconds time elapsed
+
+      27.517659000 seconds user
+       1.151308000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,031,785,259      cpu-cycles:u                                                
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,009,629,697      cpu-cycles:u                                                
+        13,004,799      cache-misses:u                                              
+             3,613      page-faults:u                                               
+       152,380,554      branch-misses:u                                             
+
+      31.514757642 seconds time elapsed
+
+      27.426021000 seconds user
+       1.258101000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    77,779,219,408      cpu-cycles:u                                                
+        13,300,145      cache-misses:u                                              
+             3,467      page-faults:u                                               
+       151,618,428      branch-misses:u                                             
+
+      32.230893468 seconds time elapsed
+
+      27.298702000 seconds user
+       1.319301000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,182,209,031      cpu-cycles:u                                                
+        13,094,657      cache-misses:u                                              
+             3,787      page-faults:u                                               
+       152,000,863      branch-misses:u                                             
+
+      29.534100944 seconds time elapsed
+
+      27.458740000 seconds user
+       1.285850000 seconds sys
+
+
+        12,736,954      cache-misses:u                                              
+             3,649      page-faults:u                                               
+       151,764,095      branch-misses:u                                             
+
+      29.295005706 seconds time elapsed
+
+      27.466928000 seconds user
+       1.244869000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,186,986,825      cpu-cycles:u                                                
+    77,864,190,989      cpu-cycles:u                                                
+        12,449,457      cache-misses:u                                              
+             3,476      page-faults:u                                               
+       151,394,620      branch-misses:u                                             
+
+      29.401454169 seconds time elapsed
+
+      27.372082000 seconds user
+       1.249132000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    77,979,084,242      cpu-cycles:u                                                
+        12,970,723      cache-misses:u                                              
+             3,440      page-faults:u                                               
+       150,920,199      branch-misses:u                                             
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,061,618,007      cpu-cycles:u                                                
+        12,850,752      cache-misses:u                                              
+             3,500      page-faults:u                                               
+       150,010,585      branch-misses:u                                             
+
+      30.307489106 seconds time elapsed
+
+      27.353652000 seconds user
+       1.373713000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    77,911,702,742      cpu-cycles:u                                                
+        12,877,235      cache-misses:u                                              
+             3,510      page-faults:u                                               
+       151,645,629      branch-misses:u                                             
+
+      29.653774505 seconds time elapsed
+
+      27.381352000 seconds user
+       1.267821000 seconds sys
+
+
+        12,809,366      cache-misses:u                                              
+             3,714      page-faults:u                                               
+       151,711,153      branch-misses:u                                             
+
+      29.185861339 seconds time elapsed
+
+      27.487066000 seconds user
+       1.268050000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,110,097,707      cpu-cycles:u                                                
+        13,077,503      cache-misses:u                                              
+             3,507      page-faults:u                                               
+       151,645,613      branch-misses:u                                             
+
+      29.222948926 seconds time elapsed
+
+      27.492025000 seconds user
+       1.259930000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,141,272,824      cpu-cycles:u                                                
+        13,015,352      cache-misses:u                                              
+             3,732      page-faults:u                                               
+       125,072,115      branch-misses:u                                             
+
+      29.656418788 seconds time elapsed
+
+      27.528205000 seconds user
+       1.206029000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,072,688,608      cpu-cycles:u                                                
+        12,996,196      cache-misses:u                                              
+             3,776      page-faults:u                                               
+       122,333,073      branch-misses:u                                             
+
+      29.289171800 seconds time elapsed
+
+      27.434685000 seconds user
+       1.275776000 seconds sys
+
+
+      29.698658994 seconds time elapsed
+
+      27.499184000 seconds user
+       1.199474000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    78,187,336,805      cpu-cycles:u                                                
+        12,968,599      cache-misses:u                                              
+             3,501      page-faults:u                                               
+       152,008,373      branch-misses:u                                             
+
+      29.326431399 seconds time elapsed
+
+      27.539719000 seconds user
+       1.220107000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    77,885,135,380      cpu-cycles:u                                                
+        12,667,650      cache-misses:u                                              
+             3,530      page-faults:u                                               
+       120,662,682      branch-misses:u                                             
+
+      31.663958494 seconds time elapsed
+
+      27.414094000 seconds user
+       1.234456000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_mpi 100000000':
+
+    81,405,031,261      cpu-cycles:u                                                
+        95,451,960      cache-misses:u                                              
+             8,674      page-faults:u                                               
+     1,453,687,288      branch-misses:u                                             
+
+      29.250277237 seconds time elapsed
+
+      28.276923000 seconds user
+       0.457839000 seconds sys
+
+
+

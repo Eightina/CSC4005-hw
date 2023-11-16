@@ -125,7 +125,7 @@ void quickSort(std::vector<int>& vec, int numtasks, int taskid, MPI_Status* stat
         free(res);
     } else {
         MPI_Send(nums + cuts[taskid], cuts[taskid + 1] - cuts[taskid], MPI_INT, MASTER, TAG_GATHER, MPI_COMM_WORLD);
-        printf("taskid %d sent %d\n", taskid, cuts[taskid + 1] - cuts[taskid]);
+        // printf("taskid %d sent %d\n", taskid, cuts[taskid + 1] - cuts[taskid]);
     }
 
 }

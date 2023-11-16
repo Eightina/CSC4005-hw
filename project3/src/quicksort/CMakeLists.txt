@@ -27,7 +27,7 @@ target_link_libraries(quicksort_parallel PRIVATE ${OpenMP_CXX_LIBRARIES})
 add_executable(quicksort_mpi
         mpi.cpp
         ../utils.cpp ../utils.hpp)
-# target_compile_options(quicksort_mpi PRIVATE -O2)
-target_compile_options(quicksort_mpi PRIVATE -O0 -g3)
+target_compile_options(quicksort_mpi PRIVATE -O2)
+# target_compile_options(quicksort_mpi PRIVATE -O0 -g3)
 target_include_directories(quicksort_mpi PRIVATE ${MPI_CXX_INCLUDE_DIRS})
 target_link_libraries(quicksort_mpi ${MPI_LIBRARIES})

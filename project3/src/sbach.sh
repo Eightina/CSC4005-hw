@@ -8,10 +8,10 @@
 
 # Quick Sort
 # Sequential
-# echo "Quick Sort Sequential (Optimized with -O2)"
-# srun -n 1 --cpus-per-task 1 /nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_sequential 100000000
-# # srun -n 1 --cpus-per-task 1 /nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_sequential 100000
-# echo ""
+echo "Quick Sort Sequential (Optimized with -O2)"
+srun -n 1 --cpus-per-task 1 /nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_sequential 100000000
+# srun -n 1 --cpus-per-task 1 /nfsmnt/223040076/coursecode/project3/build/src/quicksort/quicksort_sequential 100000
+echo ""
 # MPI
 echo "Quick Sort MPI (Optimized with -O2)"
 for num_cores in 1 2 4 8 16 32

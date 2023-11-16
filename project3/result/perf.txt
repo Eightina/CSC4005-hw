@@ -1,0 +1,914 @@
+Odd-Even Sort MPI (Optimized with -O2)
+Number of cores: 1
+Odd-Even Sort Complete!
+Execution Time: 39576 milliseconds
+std::sort Time: 16 milliseconds
+Pass the sorting result check!
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+   114,241,229,989      cpu-cycles:u                                                
+            51,244      cache-misses:u                                              
+             3,448      page-faults:u                                               
+     2,712,404,783      branch-misses:u                                             
+
+      39.630829031 seconds time elapsed
+
+      39.508842000 seconds user
+       0.010974000 seconds sys
+
+
+Number of cores: 2
+Odd-Even Sort Complete!
+Execution Time: 30119 milliseconds
+std::sort Time: 21 milliseconds
+Pass the sorting result check!
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+
+    86,684,015,825      cpu-cycles:u                                                
+           455,191      cache-misses:u                                              
+            25,726      page-faults:u                                               
+     1,461,190,577      branch-misses:u                                             
+
+      30.185873670 seconds time elapsed
+
+      30.014296000 seconds user
+       0.083802000 seconds sys
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    86,708,132,019      cpu-cycles:u                                                
+           349,879      cache-misses:u                                              
+            26,048      page-faults:u                                               
+     1,457,803,842      branch-misses:u                                             
+
+      30.185896551 seconds time elapsed
+
+      30.020668000 seconds user
+       0.078831000 seconds sys
+
+
+Number of cores: 4
+Odd-Even Sort Complete!
+Execution Time: 18989 milliseconds
+std::sort Time: 21 milliseconds
+Pass the sorting result check!
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    54,582,501,179      cpu-cycles:u                                                
+         2,356,992      cache-misses:u                                              
+            25,864      page-faults:u                                               
+     1,145,643,586      branch-misses:u                                             
+
+      19.053930688 seconds time elapsed
+
+      18.911447000 seconds user
+       0.085815000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    54,496,573,951      cpu-cycles:u                                                
+         2,353,060      cache-misses:u                                              
+            25,387      page-faults:u                                               
+     1,107,356,672      branch-misses:u                                             
+
+      19.305573229 seconds time elapsed
+
+      18.906832000 seconds user
+       0.088797000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    53,461,206,632      cpu-cycles:u                                                
+         3,810,663      cache-misses:u                                              
+            47,259      page-faults:u                                               
+       297,455,781      branch-misses:u                                             
+
+      19.065125616 seconds time elapsed
+
+      18.626909000 seconds user
+       0.373136000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    53,373,471,889      cpu-cycles:u                                                
+         3,434,897      cache-misses:u                                              
+            47,204      page-faults:u                                               
+       291,852,241      branch-misses:u                                             
+
+      19.324767520 seconds time elapsed
+
+      18.613946000 seconds user
+       0.391438000 seconds sys
+
+
+Number of cores: 8
+Odd-Even Sort Complete!
+Execution Time: 11493 milliseconds
+std::sort Time: 21 milliseconds
+Pass the sorting result check!
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    32,776,136,715      cpu-cycles:u                                                
+         2,651,177      cache-misses:u                                              
+            25,465      page-faults:u                                               
+       567,708,855      branch-misses:u                                             
+
+      11.560697905 seconds time elapsed
+
+      11.372849000 seconds user
+       0.151637000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    32,718,417,922      cpu-cycles:u                                                
+         3,292,581      cache-misses:u                                              
+            25,088      page-faults:u                                               
+       559,414,890      branch-misses:u                                             
+
+      12.089096256 seconds time elapsed
+
+      11.367624000 seconds user
+       0.153616000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    32,250,716,484      cpu-cycles:u                                                
+         3,849,722      cache-misses:u                                              
+            47,040      page-faults:u                                               
+       259,304,661      branch-misses:u                                             
+
+      11.571398160 seconds time elapsed
+
+      11.202975000 seconds user
+       0.323185000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    31,980,820,164      cpu-cycles:u                                                
+    32,607,718,357      cpu-cycles:u                                                
+         5,287,836      cache-misses:u                                              
+            47,037      page-faults:u                                               
+       573,910,423      branch-misses:u                                             
+
+         4,108,286      cache-misses:u                                              
+            47,038      page-faults:u                                               
+        47,016,553      branch-misses:u                                             
+
+      11.574430640 seconds time elapsed
+
+      11.181215000 seconds user
+       0.346745000 seconds sys
+
+
+      11.573628789 seconds time elapsed
+
+      11.319653000 seconds user
+       0.207516000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    32,197,234,526      cpu-cycles:u                                                
+         4,613,509      cache-misses:u                                              
+            47,172      page-faults:u                                               
+       255,463,005      branch-misses:u                                             
+
+      12.064588785 seconds time elapsed
+
+      11.202637000 seconds user
+       0.328229000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    31,924,393,095      cpu-cycles:u                                                
+         3,672,826      cache-misses:u                                              
+            47,038      page-faults:u                                               
+        45,149,223      branch-misses:u                                             
+
+      12.085370576 seconds time elapsed
+
+      11.183982000 seconds user
+       0.348802000 seconds sys
+
+
+    32,579,886,236      cpu-cycles:u                                                
+         3,691,527      cache-misses:u                                              
+            47,173      page-faults:u                                               
+       571,984,262      branch-misses:u                                             
+
+      12.052825869 seconds time elapsed
+
+      11.318494000 seconds user
+       0.213805000 seconds sys
+
+
+Number of cores: 16
+Odd-Even Sort Complete!
+Execution Time: 6537 milliseconds
+std::sort Time: 21 milliseconds
+Pass the sorting result check!
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    18,440,916,913      cpu-cycles:u                                                
+         2,824,297      cache-misses:u                                              
+            25,424      page-faults:u                                               
+       197,707,920      branch-misses:u                                             
+
+       6.617633579 seconds time elapsed
+
+       6.434976000 seconds user
+       0.157558000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    18,367,020,924      cpu-cycles:u                                                
+         3,581,495      cache-misses:u                                              
+            24,799      page-faults:u                                               
+       197,290,568      branch-misses:u                                             
+
+       7.086702064 seconds time elapsed
+
+       6.404625000 seconds user
+       0.183587000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    18,410,075,093      cpu-cycles:u                                                
+         5,819,441      cache-misses:u                                              
+            46,769      page-faults:u                                               
+       312,010,034      branch-misses:u                                             
+
+       6.639625163 seconds time elapsed
+
+       6.380782000 seconds user
+       0.217569000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    18,169,982,723      cpu-cycles:u                                                
+         4,697,535      cache-misses:u                                              
+            46,772      page-faults:u                                               
+    18,048,113,349      cpu-cycles:u                                                
+         4,944,349      cache-misses:u                                              
+            46,769      page-faults:u                                               
+        46,527,969      branch-misses:u                                             
+
+       6.650376864 seconds time elapsed
+
+       6.307585000 seconds user
+       0.291288000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    18,059,530,503      cpu-cycles:u                                                
+         5,716,658      cache-misses:u                                              
+            46,768      page-faults:u                                               
+        25,767,473      branch-misses:u                                             
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    18,078,852,093      cpu-cycles:u                                                
+         6,338,754      cache-misses:u                                              
+            46,772      page-faults:u                                               
+        69,503,379      branch-misses:u                                             
+
+       6.633561350 seconds time elapsed
+
+       6.293018000 seconds user
+       0.305273000 seconds sys
+
+
+       141,045,844      branch-misses:u                                             
+
+       6.642074182 seconds time elapsed
+
+       6.340121000 seconds user
+       0.258280000 seconds sys
+
+
+       6.661068667 seconds time elapsed
+
+       6.323895000 seconds user
+       0.275342000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    18,321,709,986      cpu-cycles:u                                                
+         4,372,478      cache-misses:u                                              
+            46,767      page-faults:u                                               
+       248,373,101      branch-misses:u                                             
+
+       6.630772883 seconds time elapsed
+
+       6.370165000 seconds user
+       0.228467000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    18,416,699,809      cpu-cycles:u                                                
+         5,010,791      cache-misses:u                                              
+            46,766      page-faults:u                                               
+       332,977,722      branch-misses:u                                             
+
+       6.630952440 seconds time elapsed
+
+       6.403285000 seconds user
+       0.195520000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    18,364,712,425      cpu-cycles:u                                                
+         3,872,122      cache-misses:u                                              
+            46,764      page-faults:u                                               
+       313,999,967      branch-misses:u                                             
+
+       7.120972114 seconds time elapsed
+
+       6.378359000 seconds user
+       0.230867000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    18,061,221,443      cpu-cycles:u                                                
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    18,008,686,933      cpu-cycles:u                                                
+         5,280,973      cache-misses:u                                              
+         4,360,349      cache-misses:u                                              
+            46,744      page-faults:u                                               
+        76,996,320      branch-misses:u                                             
+
+       7.110316493 seconds time elapsed
+
+       6.316642000 seconds user
+       0.293333000 seconds sys
+
+
+            46,765      page-faults:u                                               
+        25,470,545      branch-misses:u                                             
+
+       7.105419850 seconds time elapsed
+
+       6.302390000 seconds user
+       0.307287000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    18,143,246,666      cpu-cycles:u                                                
+         5,982,063      cache-misses:u                                              
+            46,760      page-faults:u                                               
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    18,379,512,403      cpu-cycles:u                                                
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    18,271,699,505      cpu-cycles:u                                                
+         5,955,861      cache-misses:u                                              
+            46,769      page-faults:u                                               
+       249,866,341      branch-misses:u                                             
+
+       7.127847596 seconds time elapsed
+
+       6.343409000 seconds user
+       0.266345000 seconds sys
+       140,217,911      branch-misses:u                                             
+
+       7.211855970 seconds time elapsed
+
+       6.352458000 seconds user
+       0.256372000 seconds sys
+
+
+         4,220,106      cache-misses:u                                              
+            46,766      page-faults:u                                               
+       335,055,543      branch-misses:u                                             
+
+       7.187129961 seconds time elapsed
+
+       6.407725000 seconds user
+       0.202517000 seconds sys
+
+
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    18,030,202,373      cpu-cycles:u                                                
+         5,836,267      cache-misses:u                                              
+            46,762      page-faults:u                                               
+        46,804,706      branch-misses:u                                             
+
+       7.261171687 seconds time elapsed
+
+       6.308775000 seconds user
+       0.302069000 seconds sys
+
+
+Number of cores: 32
+Odd-Even Sort Complete!
+Execution Time: 3760 milliseconds
+std::sort Time: 21 milliseconds
+Pass the sorting result check!
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,396,268,265      cpu-cycles:u                                                
+           934,372      cache-misses:u                                              
+            24,731      page-faults:u                                               
+        56,778,809      branch-misses:u                                             
+
+       3.874470653 seconds time elapsed
+
+       3.634524000 seconds user
+       0.196677000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,504,278,283      cpu-cycles:u                                                
+         3,221,309      cache-misses:u                                              
+            25,398      page-faults:u                                               
+        57,912,517      branch-misses:u                                             
+
+       3.885389169 seconds time elapsed
+
+       3.666809000 seconds user
+       0.186872000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,334,525,900      cpu-cycles:u                                                
+         4,427,672      cache-misses:u                                              
+            46,706      page-faults:u                                               
+        98,022,110      branch-misses:u                                             
+
+       5.081734577 seconds time elapsed
+
+       3.613055000 seconds user
+       0.261353000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,343,588,839      cpu-cycles:u                                                
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,274,477,487      cpu-cycles:u                                                
+         4,716,147      cache-misses:u                                              
+            46,707      page-faults:u                                               
+         4,929,655      cache-misses:u                                              
+            46,708      page-faults:u                                               
+       110,979,169      branch-misses:u                                             
+
+       4.189805538 seconds time elapsed
+
+       3.630276000 seconds user
+       0.244412000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,371,915,506      cpu-cycles:u                                                
+         4,952,256      cache-misses:u                                              
+            46,706      page-faults:u                                               
+       125,337,051      branch-misses:u                                             
+
+       9.564380099 seconds time elapsed
+
+       3.621508000 seconds user
+       0.254403000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,266,408,639      cpu-cycles:u                                                
+         4,483,778      cache-misses:u                                              
+            46,710      page-faults:u                                               
+        43,622,949      branch-misses:u                                             
+
+       4.437796881 seconds time elapsed
+
+       3.592680000 seconds user
+       0.281426000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,262,171,363      cpu-cycles:u                                                
+         4,573,989      cache-misses:u                                              
+            46,708      page-faults:u                                               
+        40,920,583      branch-misses:u                                             
+
+       9.149085823 seconds time elapsed
+
+       3.605947000 seconds user
+       0.269398000 seconds sys
+
+
+        60,851,317      branch-misses:u                                             
+
+       4.457085915 seconds time elapsed
+
+       3.615668000 seconds user
+       0.258333000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,358,220,711      cpu-cycles:u                                                
+         4,604,667      cache-misses:u                                              
+            46,702      page-faults:u                                               
+       119,299,575      branch-misses:u                                             
+
+       7.033233063 seconds time elapsed
+
+       3.636221000 seconds user
+       0.239478000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,245,098,096      cpu-cycles:u                                                
+         4,515,174      cache-misses:u                                              
+            46,709      page-faults:u                                               
+        28,731,089      branch-misses:u                                             
+
+       5.742024169 seconds time elapsed
+
+       3.597808000 seconds user
+       0.277236000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,228,709,926      cpu-cycles:u                                                
+         4,524,768      cache-misses:u                                              
+            46,700      page-faults:u                                               
+        11,036,849      branch-misses:u                                             
+
+       3.940932365 seconds time elapsed
+
+       3.594989000 seconds user
+       0.280297000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,218,812,318      cpu-cycles:u                                                
+         4,536,344      cache-misses:u                                              
+            46,700      page-faults:u                                               
+         9,750,591      branch-misses:u                                             
+
+       4.128118272 seconds time elapsed
+
+       3.599100000 seconds user
+       0.276063000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,229,322,480      cpu-cycles:u                                                
+         4,409,722      cache-misses:u                                              
+            46,708      page-faults:u                                               
+        10,340,637      branch-misses:u                                             
+
+       3.931095887 seconds time elapsed
+
+       3.589348000 seconds user
+       0.286222000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,237,344,593      cpu-cycles:u                                                
+         4,508,150      cache-misses:u                                              
+            46,711      page-faults:u                                               
+        13,790,856      branch-misses:u                                             
+
+       3.907044264 seconds time elapsed
+
+       3.583490000 seconds user
+       0.291730000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,262,276,534      cpu-cycles:u                                                
+         2,192,837      cache-misses:u                                              
+            46,694      page-faults:u                                               
+        85,879,281      branch-misses:u                                             
+
+       3.916170272 seconds time elapsed
+
+       3.590222000 seconds user
+       0.297190000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,165,781,744      cpu-cycles:u                                                
+         5,093,300      cache-misses:u                                              
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,279,955,518      cpu-cycles:u                                                
+         3,497,165      cache-misses:u                                              
+            46,710      page-faults:u                                               
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+            46,654      page-faults:u                                               
+        42,598,859      branch-misses:u                                             
+
+       3.962122697 seconds time elapsed
+
+       3.575780000 seconds user
+       0.298315000 seconds sys
+
+
+        97,535,094      branch-misses:u                                             
+
+       3.991062771 seconds time elapsed
+
+       3.599400000 seconds user
+       0.285836000 seconds sys
+
+
+    10,273,786,788      cpu-cycles:u                                                
+         5,048,653      cache-misses:u                                              
+            46,707      page-faults:u                                               
+       117,173,885      branch-misses:u                                             
+
+       4.003990844 seconds time elapsed
+
+       3.587934000 seconds user
+       0.296677000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,238,399,363      cpu-cycles:u                                                
+         2,224,634      cache-misses:u                                              
+            46,665      page-faults:u                                               
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,323,529,445      cpu-cycles:u                                                
+         2,228,749      cache-misses:u                                              
+    10,278,287,630      cpu-cycles:u                                                
+         5,257,232      cache-misses:u                                              
+            46,626      page-faults:u                                               
+       132,251,817      branch-misses:u                                             
+
+       3.980452373 seconds time elapsed
+
+       3.598119000 seconds user
+       0.273752000 seconds sys
+
+
+       106,727,300      branch-misses:u                                             
+
+       3.937486864 seconds time elapsed
+
+       3.590474000 seconds user
+       0.289473000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,318,268,496      cpu-cycles:u                                                
+         2,204,206      cache-misses:u                                              
+            46,708      page-faults:u                                               
+       130,881,959      branch-misses:u                                             
+
+       3.920298284 seconds time elapsed
+
+       3.624789000 seconds user
+       0.263174000 seconds sys
+
+
+            46,687      page-faults:u                                               
+       137,728,263      branch-misses:u                                             
+
+       3.926222013 seconds time elapsed
+
+       3.628379000 seconds user
+       0.260452000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,223,129,724      cpu-cycles:u                                                
+         5,108,694      cache-misses:u                                              
+            46,709      page-faults:u                                               
+        61,859,213      branch-misses:u                                             
+
+       4.555674146 seconds time elapsed
+
+       3.583375000 seconds user
+       0.296286000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,292,018,497      cpu-cycles:u                                                
+         2,230,523      cache-misses:u                                              
+            46,677      page-faults:u                                               
+       137,127,963      branch-misses:u                                             
+
+       3.935598370 seconds time elapsed
+
+       3.609189000 seconds user
+       0.275403000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,266,675,212      cpu-cycles:u                                                
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,172,897,237      cpu-cycles:u                                                
+         5,173,643      cache-misses:u                                              
+            46,716      page-faults:u                                               
+        10,312,446      branch-misses:u                                             
+
+       4.023853955 seconds time elapsed
+
+       3.577074000 seconds user
+       0.310399000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,217,898,133      cpu-cycles:u                                                
+         5,053,597      cache-misses:u                                              
+            46,703      page-faults:u                                               
+         9,704,747      branch-misses:u                                             
+
+       3.928110619 seconds time elapsed
+
+       3.582682000 seconds user
+       0.306288000 seconds sys
+
+
+         5,484,329      cache-misses:u                                              
+            46,637      page-faults:u                                               
+       100,514,635      branch-misses:u                                             
+
+       3.928155658 seconds time elapsed
+
+       3.592498000 seconds user
+       0.274198000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,198,253,103      cpu-cycles:u                                                
+         5,199,305      cache-misses:u                                              
+            46,710      page-faults:u                                               
+        43,332,863      branch-misses:u                                             
+
+       3.993014687 seconds time elapsed
+
+       3.582913000 seconds user
+       0.305631000 seconds sys
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,141,418,574      cpu-cycles:u                                                
+         5,140,913      cache-misses:u                                              
+            46,622      page-faults:u                                               
+        14,420,346      branch-misses:u                                             
+
+       3.930048232 seconds time elapsed
+
+       3.577825000 seconds user
+       0.292815000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,192,679,340      cpu-cycles:u                                                
+         5,105,842      cache-misses:u                                              
+            46,704      page-faults:u                                               
+
+
+        28,818,001      branch-misses:u                                             
+
+       4.048276280 seconds time elapsed
+
+       3.593461000 seconds user
+       0.291907000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,262,222,753      cpu-cycles:u                                                
+         2,247,961      cache-misses:u                                              
+            46,634      page-faults:u                                               
+       138,163,762      branch-misses:u                                             
+
+       3.955070160 seconds time elapsed
+
+       3.608565000 seconds user
+       0.262968000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/odd-even-sort/odd-even-sort_mpi 200000':
+
+    10,195,542,662      cpu-cycles:u                                                
+         5,090,868      cache-misses:u                                              
+            46,703      page-faults:u                                               
+        11,326,214      branch-misses:u                                             
+
+       3.917518418 seconds time elapsed
+
+       3.580871000 seconds user
+       0.308300000 seconds sys
+
+
+

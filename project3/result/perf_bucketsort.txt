@@ -1,0 +1,914 @@
+Bucket Sort MPI (Optimized with -O2)
+Number of cores: 1
+Bucket Sort Complete!
+Execution Time: 10193 milliseconds
+std::sort Time: 11830 milliseconds
+Pass the sorting result check!
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    70,312,993,717      cpu-cycles:u                                                
+       307,596,724      cache-misses:u                                              
+           357,076      page-faults:u                                               
+     1,314,179,647      branch-misses:u                                             
+
+      25.496415408 seconds time elapsed
+
+      24.351096000 seconds user
+       1.060434000 seconds sys
+
+
+Number of cores: 2
+Bucket Sort Complete!
+Execution Time: 7290 milliseconds
+std::sort Time: 15209 milliseconds
+Pass the sorting result check!
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    73,094,871,662      cpu-cycles:u                                                
+       137,069,192      cache-misses:u                                              
+           195,023      page-faults:u                                               
+       175,022,501      branch-misses:u                                             
+
+      27.065041175 seconds time elapsed
+
+      25.527629000 seconds user
+       1.456612000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    76,161,149,946      cpu-cycles:u                                                
+       203,678,100      cache-misses:u                                              
+           170,175      page-faults:u                                               
+     1,288,343,188      branch-misses:u                                             
+
+      27.065937348 seconds time elapsed
+
+      26.383548000 seconds user
+       0.602619000 seconds sys
+
+
+Number of cores: 4
+Bucket Sort Complete!
+Execution Time: 3761 milliseconds
+std::sort Time: 15201 milliseconds
+Pass the sorting result check!
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    64,757,124,516      cpu-cycles:u                                                
+        73,889,781      cache-misses:u                                              
+            70,639      page-faults:u                                               
+       159,129,556      branch-misses:u                                             
+
+      23.742175289 seconds time elapsed
+
+      22.652303000 seconds user
+       1.015592000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    64,738,370,599      cpu-cycles:u                                                
+        73,612,190      cache-misses:u                                              
+            70,704      page-faults:u                                               
+       122,459,472      branch-misses:u                                             
+
+      23.740461946 seconds time elapsed
+
+      22.703569000 seconds user
+       0.963731000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    64,622,903,285      cpu-cycles:u                                                
+        71,465,604      cache-misses:u                                              
+            93,107      page-faults:u                                               
+       172,860,216      branch-misses:u                                             
+
+      24.115051944 seconds time elapsed
+
+      22.651022000 seconds user
+       1.017664000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    66,623,785,193      cpu-cycles:u                                                
+       142,886,975      cache-misses:u                                              
+            70,618      page-faults:u                                               
+     1,238,753,487      branch-misses:u                                             
+
+      24.109708035 seconds time elapsed
+
+      23.101548000 seconds user
+       0.566615000 seconds sys
+
+
+Number of cores: 8
+Bucket Sort Complete!
+Execution Time: 2512 milliseconds
+std::sort Time: 15178 milliseconds
+Pass the sorting result check!
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    61,191,024,575      cpu-cycles:u                                                
+        52,070,118      cache-misses:u                                              
+            36,081      page-faults:u                                               
+       139,588,088      branch-misses:u                                             
+
+      22.410579564 seconds time elapsed
+
+      21.481593000 seconds user
+       0.858026000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    61,131,584,251      cpu-cycles:u                                                
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    61,037,585,072      cpu-cycles:u                                                
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    60,749,075,714      cpu-cycles:u                                                
+        50,550,865      cache-misses:u                                              
+        48,443,660      cache-misses:u                                              
+            36,252      page-faults:u                                               
+       113,093,940      branch-misses:u                                             
+
+      22.411917027 seconds time elapsed
+
+      21.438558000 seconds user
+       0.901836000 seconds sys
+
+
+        50,654,524      cache-misses:u                                              
+            36,079      page-faults:u                                               
+       130,407,618      branch-misses:u                                             
+
+      22.965293982 seconds time elapsed
+
+      21.427969000 seconds user
+       0.911828000 seconds sys
+
+
+            35,937      page-faults:u                                               
+       148,630,952      branch-misses:u                                             
+
+      22.963240339 seconds time elapsed
+
+      21.318520000 seconds user
+       1.020583000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    61,204,755,359      cpu-cycles:u                                                
+        52,528,691      cache-misses:u                                              
+            35,987      page-faults:u                                               
+       141,903,355      branch-misses:u                                             
+
+      22.419255212 seconds time elapsed
+
+      21.461965000 seconds user
+       0.877912000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    61,301,023,828      cpu-cycles:u                                                
+        50,650,987      cache-misses:u                                              
+            35,971      page-faults:u                                               
+       164,210,934      branch-misses:u                                             
+
+      22.414059272 seconds time elapsed
+
+      21.468715000 seconds user
+       0.870919000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    61,386,887,152      cpu-cycles:u                                                
+        49,879,747      cache-misses:u                                              
+            49,445      page-faults:u                                               
+       215,605,396      branch-misses:u                                             
+
+      22.974799618 seconds time elapsed
+
+      21.510363000 seconds user
+       0.830046000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    63,449,925,554      cpu-cycles:u                                                
+       119,179,230      cache-misses:u                                              
+            39,318      page-faults:u                                               
+     1,205,606,128      branch-misses:u                                             
+
+      22.977337067 seconds time elapsed
+
+      22.010836000 seconds user
+       0.333180000 seconds sys
+
+
+Number of cores: 16
+Bucket Sort Complete!
+Execution Time: 1653 milliseconds
+std::sort Time: 15287 milliseconds
+Pass the sorting result check!
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    58,985,409,033      cpu-cycles:u                                                
+        40,038,345      cache-misses:u                                              
+            20,206      page-faults:u                                               
+       132,265,602      branch-misses:u                                             
+
+      22.086903227 seconds time elapsed
+
+      20.675598000 seconds user
+       0.939754000 seconds sys
+
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,208,969,951      cpu-cycles:u                                                
+        40,898,376      cache-misses:u                                              
+            20,485      page-faults:u                                               
+    59,239,739,072      cpu-cycles:u                                                
+        40,070,690      cache-misses:u                                              
+            20,010      page-faults:u                                               
+       195,347,761      branch-misses:u                                             
+
+      21.699363258 seconds time elapsed
+
+      20.744755000 seconds user
+       0.871016000 seconds sys
+
+
+       189,255,694      branch-misses:u                                             
+
+      21.711626900 seconds time elapsed
+
+      20.778716000 seconds user
+       0.837095000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,232,694,276      cpu-cycles:u                                                
+        40,785,560      cache-misses:u                                              
+            20,022      page-faults:u                                               
+       152,764,605      branch-misses:u                                             
+
+      21.684149891 seconds time elapsed
+
+      20.752584000 seconds user
+       0.862986000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,255,432,868      cpu-cycles:u                                                
+        41,199,054      cache-misses:u                                              
+            20,297      page-faults:u                                               
+       194,984,009      branch-misses:u                                             
+
+      21.687975872 seconds time elapsed
+
+      20.809910000 seconds user
+       0.807134000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    58,748,957,528      cpu-cycles:u                                                
+        39,648,850      cache-misses:u                                              
+            20,971      page-faults:u                                               
+       159,543,199      branch-misses:u                                             
+
+      22.060286072 seconds time elapsed
+
+      20.617895000 seconds user
+       0.998621000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,188,212,427      cpu-cycles:u                                                
+        40,410,740      cache-misses:u                                              
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,171,165,540      cpu-cycles:u                                                
+        40,808,146      cache-misses:u                                              
+            20,485      page-faults:u                                               
+       136,226,358      branch-misses:u                                             
+
+      21.686790561 seconds time elapsed
+
+      20.731499000 seconds user
+       0.885970000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,218,157,249      cpu-cycles:u                                                
+        41,371,030      cache-misses:u                                              
+            20,304      page-faults:u                                               
+       136,342,936      branch-misses:u                                             
+
+      21.698795754 seconds time elapsed
+
+      20.733690000 seconds user
+       0.883982000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,184,214,704      cpu-cycles:u                                                
+        40,440,487      cache-misses:u                                              
+            20,439      page-faults:u                                               
+       110,913,397      branch-misses:u                                             
+
+      21.692745104 seconds time elapsed
+
+      20.781170000 seconds user
+       0.836035000 seconds sys
+
+
+            20,606      page-faults:u                                               
+       122,270,366      branch-misses:u                                             
+
+      21.691826581 seconds time elapsed
+
+      20.738160000 seconds user
+       0.879970000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,152,691,881      cpu-cycles:u                                                
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,236,399,129      cpu-cycles:u                                                
+        39,782,854      cache-misses:u                                              
+            20,940      page-faults:u                                               
+       190,499,383      branch-misses:u                                             
+
+      22.089455343 seconds time elapsed
+
+      20.828791000 seconds user
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,241,405,365      cpu-cycles:u                                                
+        40,379,462      cache-misses:u                                              
+            26,962      page-faults:u                                               
+       197,419,911      branch-misses:u                                             
+
+      22.078952624 seconds time elapsed
+
+      20.818718000 seconds user
+       0.799184000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,228,183,516      cpu-cycles:u                                                
+        40,486,809      cache-misses:u                                              
+            20,187      page-faults:u                                               
+       143,511,341      branch-misses:u                                             
+
+      22.193687905 seconds time elapsed
+
+      20.778437000 seconds user
+       0.839996000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,186,069,043      cpu-cycles:u                                                
+        39,564,936      cache-misses:u                                              
+            20,223      page-faults:u                                               
+       125,423,591      branch-misses:u                                             
+
+      22.114180795 seconds time elapsed
+
+      20.764449000 seconds user
+       0.853005000 seconds sys
+
+
+        39,813,868      cache-misses:u                                              
+            20,387      page-faults:u                                               
+       149,428,334      branch-misses:u                                             
+
+      22.091683476 seconds time elapsed
+
+      20.759871000 seconds user
+       0.858093000 seconds sys
+
+
+       0.789173000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    61,488,603,115      cpu-cycles:u                                                
+       113,983,063      cache-misses:u                                              
+            23,090      page-faults:u                                               
+     1,192,263,238      branch-misses:u                                             
+
+      22.124520064 seconds time elapsed
+
+      21.328788000 seconds user
+       0.293282000 seconds sys
+
+
+Number of cores: 32
+Bucket Sort Complete!
+Execution Time: 1508 milliseconds
+std::sort Time: 15313 milliseconds
+Pass the sorting result check!
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,504,064,365      cpu-cycles:u                                                
+        34,339,426      cache-misses:u                                              
+            12,405      page-faults:u                                               
+       100,133,925      branch-misses:u                                             
+
+      21.849865601 seconds time elapsed
+
+      20.883911000 seconds user
+       0.894939000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,573,776,806      cpu-cycles:u                                                
+        35,060,686      cache-misses:u                                              
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,556,019,586      cpu-cycles:u                                                
+        34,355,418      cache-misses:u                                              
+            12,479      page-faults:u                                               
+       148,392,183      branch-misses:u                                             
+
+      21.852921034 seconds time elapsed
+
+      20.899757000 seconds user
+       0.881922000 seconds sys
+
+
+            12,211      page-faults:u                                               
+       147,832,959      branch-misses:u                                             
+
+      21.852309438 seconds time elapsed
+
+      20.922193000 seconds user
+       0.860034000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,472,633,674      cpu-cycles:u                                                
+        34,592,698      cache-misses:u                                              
+            12,222      page-faults:u                                               
+        93,841,756      branch-misses:u                                             
+
+      21.856072734 seconds time elapsed
+
+      20.851021000 seconds user
+       0.931811000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,546,037,229      cpu-cycles:u                                                
+        34,713,569      cache-misses:u                                              
+            12,466      page-faults:u                                               
+       141,321,380      branch-misses:u                                             
+
+      21.853274905 seconds time elapsed
+
+      20.869975000 seconds user
+       0.912942000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,555,184,605      cpu-cycles:u                                                
+        34,841,201      cache-misses:u                                              
+            12,426      page-faults:u                                               
+       156,513,694      branch-misses:u                                             
+
+      21.861785230 seconds time elapsed
+
+      20.873535000 seconds user
+       0.908933000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,556,505,559      cpu-cycles:u                                                
+        34,755,761      cache-misses:u                                              
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,438,991,152      cpu-cycles:u                                                
+            12,722      page-faults:u                                               
+       144,618,491      branch-misses:u                                             
+
+      21.857889649 seconds time elapsed
+
+      20.880301000 seconds user
+       0.902851000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,557,418,897      cpu-cycles:u                                                
+        35,400,092      cache-misses:u                                              
+            12,214      page-faults:u                                               
+       155,813,486      branch-misses:u                                             
+
+      21.869677643 seconds time elapsed
+
+      20.875263000 seconds user
+       0.907880000 seconds sys
+
+
+    59,419,342,532      cpu-cycles:u                                                
+        34,914,853      cache-misses:u                                              
+            12,195      page-faults:u                                               
+       128,361,360      branch-misses:u                                             
+
+      21.869666258 seconds time elapsed
+
+      20.826435000 seconds user
+       0.956677000 seconds sys
+
+
+        35,117,985      cache-misses:u                                              
+            12,165      page-faults:u                                               
+       134,365,967      branch-misses:u                                             
+
+      21.864545755 seconds time elapsed
+
+      20.834270000 seconds user
+       0.948690000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,575,444,065      cpu-cycles:u                                                
+        35,562,405      cache-misses:u                                              
+            12,209      page-faults:u                                               
+       156,646,433      branch-misses:u                                             
+
+      21.880215166 seconds time elapsed
+
+      20.883939000 seconds user
+       0.899843000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,557,336,467      cpu-cycles:u                                                
+        34,684,914      cache-misses:u                                              
+            11,933      page-faults:u                                               
+       153,563,508      branch-misses:u                                             
+
+      21.870194810 seconds time elapsed
+
+      20.892079000 seconds user
+       0.890871000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,210,754,230      cpu-cycles:u                                                
+        36,437,035      cache-misses:u                                              
+            12,126      page-faults:u                                               
+       104,969,726      branch-misses:u                                             
+
+      22.507193134 seconds time elapsed
+
+      20.790940000 seconds user
+       0.998727000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,047,172,202      cpu-cycles:u                                                
+        36,095,256      cache-misses:u                                              
+            11,929      page-faults:u                                               
+        97,765,621      branch-misses:u                                             
+
+      22.208536769 seconds time elapsed
+
+      20.775334000 seconds user
+       1.015669000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,157,466,236      cpu-cycles:u                                                
+        36,316,279      cache-misses:u                                              
+            12,076      page-faults:u                                               
+       103,803,279      branch-misses:u                                             
+
+      22.396326379 seconds time elapsed
+
+      20.741618000 seconds user
+       1.044513000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,210,760,122      cpu-cycles:u                                                
+        36,357,554      cache-misses:u                                              
+            12,381      page-faults:u                                               
+       154,268,803      branch-misses:u                                             
+
+      22.402317383 seconds time elapsed
+
+      20.809528000 seconds user
+    59,197,053,254      cpu-cycles:u                                                
+        36,550,849      cache-misses:u                                              
+            12,073      page-faults:u                                               
+       139,790,804      branch-misses:u                                             
+
+      22.242303441 seconds time elapsed
+
+      20.793574000 seconds user
+       0.999623000 seconds sys
+
+
+    59,206,959,628      cpu-cycles:u                                                
+        36,384,652      cache-misses:u                                              
+            12,118      page-faults:u                                               
+       144,461,569      branch-misses:u                                             
+
+      22.206188335 seconds time elapsed
+
+      20.794538000 seconds user
+       0.998672000 seconds sys
+
+
+       0.983708000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,191,610,171      cpu-cycles:u                                                
+        36,545,676      cache-misses:u                                              
+            12,297      page-faults:u                                               
+       156,348,051      branch-misses:u                                             
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,214,817,927      cpu-cycles:u                                                
+        36,695,358      cache-misses:u                                              
+            12,156      page-faults:u                                               
+       154,387,837      branch-misses:u                                             
+
+      23.190548052 seconds time elapsed
+
+      20.809115000 seconds user
+       0.984686000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,195,629,682      cpu-cycles:u                                                
+        36,335,060      cache-misses:u                                              
+            12,411      page-faults:u                                               
+       149,890,580      branch-misses:u                                             
+
+      22.151155276 seconds time elapsed
+
+      20.804072000 seconds user
+       0.988627000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,181,053,910      cpu-cycles:u                                                
+        36,657,298      cache-misses:u                                              
+            12,549      page-faults:u                                               
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,222,928,269      cpu-cycles:u                                                
+        36,515,535      cache-misses:u                                              
+            12,543      page-faults:u                                               
+       152,662,217      branch-misses:u                                             
+      23.032618221 seconds time elapsed
+
+      20.795964000 seconds user
+       0.996649000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    58,733,702,434      cpu-cycles:u                                                
+        36,406,750      cache-misses:u                                              
+            12,060      page-faults:u                                               
+       136,863,078      branch-misses:u                                             
+
+      22.263759721 seconds time elapsed
+
+      20.585038000 seconds user
+       1.208288000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,369,928,172      cpu-cycles:u                                                
+        36,413,404      cache-misses:u                                              
+            12,359      page-faults:u                                               
+       133,370,232      branch-misses:u                                             
+
+      22.198426557 seconds time elapsed
+
+      20.892772000 seconds user
+       0.900107000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,213,417,049      cpu-cycles:u                                                
+        36,305,857      cache-misses:u                                              
+            12,504      page-faults:u                                               
+       110,241,128      branch-misses:u                                             
+
+      22.586318003 seconds time elapsed
+
+      20.835373000 seconds user
+       0.956998000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,186,082,780      cpu-cycles:u                                                
+        36,143,174      cache-misses:u                                              
+            12,176      page-faults:u                                               
+       102,064,936      branch-misses:u                                             
+
+      22.248613815 seconds time elapsed
+
+      20.792678000 seconds user
+       0.992641000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,222,783,733      cpu-cycles:u                                                
+        36,061,480      cache-misses:u                                              
+            12,230      page-faults:u                                               
+        98,340,579      branch-misses:u                                             
+
+      22.332867843 seconds time elapsed
+
+      20.838905000 seconds user
+       0.954132000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,205,494,200      cpu-cycles:u                                                
+        36,421,314      cache-misses:u                                              
+            12,071      page-faults:u                                               
+        93,382,956      branch-misses:u                                             
+
+      22.452519077 seconds time elapsed
+
+      20.851303000 seconds user
+       0.941668000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,193,110,010      cpu-cycles:u                                                
+        36,109,167      cache-misses:u                                              
+            12,400      page-faults:u                                               
+        84,806,315      branch-misses:u                                             
+
+      22.623063269 seconds time elapsed
+
+      20.812944000 seconds user
+       0.980159000 seconds sys
+
+
+       128,517,767      branch-misses:u                                             
+
+      22.298014386 seconds time elapsed
+
+      20.777369000 seconds user
+       1.015950000 seconds sys
+
+
+
+      22.756731006 seconds time elapsed
+
+      20.836685000 seconds user
+       0.956345000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    59,179,815,399      cpu-cycles:u                                                
+        36,495,631      cache-misses:u                                              
+            12,531      page-faults:u                                               
+       143,943,735      branch-misses:u                                             
+
+      22.173421300 seconds time elapsed
+
+      20.770968000 seconds user
+       1.022726000 seconds sys
+
+
+
+ Performance counter stats for '/nfsmnt/223040076/coursecode/project3/build/src/bucketsort/bucketsort_mpi 100000000 1000000':
+
+    61,532,407,971      cpu-cycles:u                                                
+       110,592,348      cache-misses:u                                              
+            17,625      page-faults:u                                               
+     1,183,761,936      branch-misses:u                                             
+
+      22.216005257 seconds time elapsed
+
+      21.362165000 seconds user
+       0.432032000 seconds sys
+
+
+
