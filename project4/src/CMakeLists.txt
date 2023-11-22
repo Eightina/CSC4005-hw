@@ -1,5 +1,3 @@
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
-
 ## OpenACC
 find_package(OpenACC REQUIRED)
 if (OpenACC_CXX_FOUND)
@@ -22,8 +20,8 @@ add_executable(softmax
 target_compile_options(softmax PRIVATE -O2)
 target_link_libraries(softmax PRIVATE simple_ml_ext)
 
-SET(CMAKE_CXX_COMPILER pgc++)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc -Minfo=accel")
+# SET(CMAKE_CXX_COMPILER pgc++)
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc -Minfo=accel")
 
 add_library(simple_ml_openacc STATIC
     simple_ml_openacc.cpp simple_ml_openacc.hpp simple_ml_ext.hpp
