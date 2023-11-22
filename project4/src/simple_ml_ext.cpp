@@ -78,6 +78,39 @@ void print_matrix(float *A, size_t m, size_t n)
     std::cout << std::endl;
 }
 
+/*
+* assign block sizes
+* A helper function for matrix_dot.
+*/
+int inline assign_block_size(int M) {   
+    if (M >= 64) {
+        return 64;
+    } else if (M >= 32) {
+        return 32;
+    } else if (M >= 16) {
+        return 16;
+    } else if (M >= 8) {
+        return 8;
+    } else if (M >= 4) {
+        return 4;
+    } 
+    return 1;
+}
+
+/*
+* load block
+* A helper function for matrix_dot.
+*/
+void inline load_block(float *__restrict dst, const float* src, int src_row, int src_row_len,
+                             int src_col, int block_size_row, int block_size_col) {
+    // #pragma GCC unroll 64
+    for (int i = 0; i < block_size_row; ++i) {
+        memcpy(dst, &src[src_row * src_row_len + src_col], block_size_col);
+        dst += block_size_col;
+        src_row++;
+    }
+}
+
 /**
  * Matrix Dot Multiplication
  * Efficiently compute C = A.dot(B)
@@ -88,9 +121,94 @@ void print_matrix(float *A, size_t m, size_t n)
  **/
 void matrix_dot(const float *A, const float *B, float *C, size_t m, size_t n, size_t k)
 {
-    // BEGIN YOUR CODE
+    int M = m, K = n, N = k; 
+    const int std_block_size_i = assign_block_size(M);
+    const int std_block_size_k = assign_block_size(K);
+    const int std_block_size_j = assign_block_size(N);
+    int block_size_i = std_block_size_i, block_size_j = std_block_size_j, block_size_k = std_block_size_k;
 
-    // END YOUR CODE
+    const int i_res = M % block_size_i;
+    const int k_res = K % block_size_k;
+    const int j_res = N % block_size_j;
+    const int block_range_i = M - i_res;
+    const int block_range_k = K - k_res;
+    const int block_range_j = N - j_res;
+    bool i_switch = false;
+    bool j_switch = false;
+    bool k_switch = false;
+
+    float* zeroload_matrix1 = (float*)aligned_alloc(64, (block_size_i * block_size_k + 8) * sizeof(float));
+    float* zeroload_matrix2 = (float*)aligned_alloc(64, (block_size_k * block_size_j + 8) * sizeof(float));
+    float* kernel_result = (float*)aligned_alloc(64, (block_size_i * block_size_j + 8) * sizeof(float));
+
+    for (int i = 0; i <= block_range_i;) {
+        if (i == M) break;
+        if (i == block_range_i) {
+            block_size_i = i_res;
+            i_switch = true;
+        }
+        for (int j = 0; j <= block_range_j;) {
+            if (j == N) break;
+            if (j == block_range_j) {
+                block_size_j = j_res;
+                j_switch = true;
+            }
+            // int kernel_result[block_size_i * block_size_j] = {};
+            // memset(kernel_result, 0, block_size_i * block_size_j * sizeof(float));
+            for (int temp = 0; temp < block_size_i * block_size_j; ++temp) {
+                kernel_result[temp] = 0.0f;
+            }
+            for (int k = 0; k <= block_range_k;) {
+                if (k == K) break;
+                if (k == block_range_k) {
+                    block_size_k = k_res;
+                    k_switch = true;
+                }
+                //------------------kernel----------------------------
+
+                load_block(zeroload_matrix1, A, i, K, k, block_size_i, block_size_k);
+                load_block(zeroload_matrix2, B, k, N, j, block_size_k, block_size_j);
+
+                for (int k1 = k; k1 < k+block_size_k; ++k1) {
+                    const int temp_kloc = (k1 - k) * block_size_j;  
+                    for (int i1 = i; i1 < i+block_size_i; ++i1) {
+                        const int r1_iter_loc = (i1 - i) * block_size_k + (k1 - k);
+                        register int r1 = *(zeroload_matrix1 + r1_iter_loc);
+
+                        const int result_iter_loc = (i1 - i) * block_size_j;
+                        for (int j1 = j; j1 < j + block_size_j; ++j1) {
+
+                            kernel_result[result_iter_loc + j1 - j] += r1 * zeroload_matrix2[temp_kloc + j1 - j];  
+
+                        }
+
+                    }
+                }
+                //------------------kernel----------------------------
+                k += block_size_k;
+                if (k_switch) {
+                    block_size_k = std_block_size_k;
+                    k_switch = false;
+                } 
+            }
+            for (int row = 0; row < block_size_i; ++row) {
+                memcpy(&C[(i + row) * N + j], &kernel_result[row * block_size_j], block_size_j);
+            }
+            j += block_size_j;
+            if (j_switch) {
+                block_size_j = std_block_size_j;
+                j_switch = false;
+            }
+        }
+        i += block_size_i;
+        if (i_switch) {
+            block_size_i = std_block_size_i;
+            i_switch = false;
+        }
+    }
+    free(zeroload_matrix1);
+    free(zeroload_matrix2);
+    free(kernel_result);
 }
 
 /**
