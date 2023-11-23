@@ -173,7 +173,7 @@ void matrix_dot(const float *A, const float *B, float *C, size_t m, size_t n, si
                     const int temp_kloc = (k1 - k) * block_size_j;  
                     for (int i1 = i; i1 < i+block_size_i; ++i1) {
                         const int r1_iter_loc = (i1 - i) * block_size_k + (k1 - k);
-                        register int r1 = *(zeroload_matrix1 + r1_iter_loc);
+                        register float r1 = *(zeroload_matrix1 + r1_iter_loc);
 
                         const int result_iter_loc = (i1 - i) * block_size_j;
                         for (int j1 = j; j1 < j + block_size_j; ++j1) {
@@ -274,7 +274,7 @@ void matrix_dot_trans(const float *A, const float *B, float *C, size_t n, size_t
                     const int temp_kloc = (k1 - k) * block_size_j;  
                     for (int i1 = i; i1 < i+block_size_i; ++i1) {
                         const int r1_iter_loc = (k1 - k) * block_size_i + (i1 - i);
-                        register int r1 = *(zeroload_matrix1 + r1_iter_loc);
+                        register float r1 = *(zeroload_matrix1 + r1_iter_loc);
 
                         const int result_iter_loc = (i1 - i) * block_size_j;
                         for (int j1 = j; j1 < j + block_size_j; ++j1) {
@@ -372,21 +372,7 @@ void matrix_trans_dot(const float *A, const float *B, float *C, size_t m, size_t
                 load_block(zeroload_matrix1, A, i, K, k, block_size_i, block_size_k);
                 load_block(zeroload_matrix2, B, j, K, k, block_size_j, block_size_k);
 
-                // for (int k1 = k; k1 < k+block_size_k; ++k1) {
-                //     const int temp_kloc = (k1 - k) * block_size_j;  
-                //     for (int i1 = i; i1 < i+block_size_i; ++i1) {
-                //         const int r1_iter_loc = (i1 - i) * block_size_k + (k1 - k);
-                //         register int r1 = *(zeroload_matrix1 + r1_iter_loc);
 
-                //         const int result_iter_loc = (i1 - i) * block_size_j;
-                //         for (int j1 = j; j1 < j + block_size_j; ++j1) {
-
-                //             kernel_result[result_iter_loc + j1 - j] += r1 * zeroload_matrix2[temp_kloc + j1 - j];  
-
-                //         }
-
-                //     }
-                // }
                 for (int j1 = j; j1 < j + block_size_j; ++j1) {
 
                     const int temp_kloc_r2 = (j1 - j) * block_size_k;
@@ -444,7 +430,11 @@ void matrix_trans_dot(const float *A, const float *B, float *C, size_t m, size_t
 void matrix_minus(float *A, const float *B, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            A[i * n + j] -= B[i * n + j]; 
+        }
+    }
     // END YOUR CODE
 }
 
@@ -458,7 +448,11 @@ void matrix_minus(float *A, const float *B, size_t m, size_t n)
 void matrix_mul_scalar(float *C, float scalar, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            C[i * n + j] *= scalar; 
+        }
+    }
     // END YOUR CODE
 }
 
@@ -472,7 +466,11 @@ void matrix_mul_scalar(float *C, float scalar, size_t m, size_t n)
 void matrix_div_scalar(float *C, float scalar, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            C[i * n + j] /= scalar; 
+        }
+    }
     // END YOUR CODE
 }
 
@@ -485,7 +483,22 @@ void matrix_div_scalar(float *C, float scalar, size_t m, size_t n)
 void matrix_softmax_normalize(float *C, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
+    for (int i = 0; i < m; ++i) {
+        float row_sum = 0.0f; 
+        float row_e[n];
+        const int rowloc = n * i;
+        for (int j = 0; j < n; ++j) {
+            int cur_e = pow(M_E, C[rowloc + j]);
+            row_e[j] = cur_e;
+            row_sum += cur_e;
+        }
 
+        for (int j = 0; j < n; ++j) {
+            row_e[j] /= row_sum;
+        }
+
+        memcpy(&C[rowloc], row_e, n * sizeof(float));
+    }
     // END YOUR CODE
 }
 
@@ -495,10 +508,14 @@ void matrix_softmax_normalize(float *C, size_t m, size_t n)
  * Args:
  *     C (float*): Matrix of size m * n
  **/
-void vector_to_one_hot_matrix(const unsigned char *y, float *Y, size_t m, size_t k)
+void vector_to_one_hot_matrix(const unsigned char *y, float *Y, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            Y[i * n + j] = (y[i] == j) ? (1) : (0); 
+        }
+    }  
     // END YOUR CODE
 }
 
@@ -525,7 +542,25 @@ void vector_to_one_hot_matrix(const unsigned char *y, float *Y, size_t m, size_t
  */
 void softmax_regression_epoch_cpp(const float *X, const unsigned char *y, float *theta, size_t m, size_t n, size_t k, float lr, size_t batch)
 {
-    // BEGIN YOUR CODE
+    // BEGIN YOUR CODE 
+    for (int i = 0; i < m; ++batch) {
+        float X_b[batch * n]; 
+        float Z[batch * k];
+        float gd[m * n];
+        const float* X_b_t = X + i * n;
+        memcpy(X_b, X_b_t, batch * n * sizeof(float));
+        matrix_dot(X_b, theta, Z, batch, n, k); 
+        matrix_softmax_normalize(Z, batch, k);
+
+        float Y[batch * k];
+        vector_to_one_hot_matrix(y, Y, batch, k);
+        
+        matrix_minus(Z, Y, batch, k);
+        matrix_dot_trans(X_b, Z, gd, n, batch, k); // n*100 * 100*k
+        float batchxlr = lr / batch;
+        matrix_mul_scalar(gd, batchxlr, n, k);
+        matrix_minus(theta, gd, n, k);
+    }
 
     // END YOUR CODE
 }
@@ -546,6 +581,12 @@ void train_softmax(const DataSet *train_data, const DataSet *test_data, size_t n
     for (size_t epoch = 0; epoch < epochs; epoch++)
     {
         // BEGIN YOUR CODE
+        int m = train_data->images_num;
+        int n = train_data->input_dim;
+        int k = num_classes;
+        softmax_regression_epoch_cpp(train_data->images_matrix, train_data->labels_array, theta, m, n, k, lr, batch);
+        matrix_dot(train_data->images_matrix, theta, train_result, m, n ,k);
+        matrix_softmax_normalize(train_result, m, k);
 
         // END YOUR CODE
         train_loss = mean_softmax_loss(train_result, train_data->labels_array, train_data->images_num, num_classes);
@@ -585,7 +626,17 @@ void train_softmax(const DataSet *train_data, const DataSet *test_data, size_t n
 float mean_softmax_loss(const float *result, const unsigned char *labels_array, size_t images_num, size_t num_classes)
 {
     // BEGIN YOUR CODE
-
+    float res = 0.0f;
+    for (int i = 0; i < images_num; ++i) {
+        int row_loc = i * num_classes;
+        float row_correct = result[row_loc + labels_array[i]];
+        float row_exp_sum = 0.0f;
+        for (int j = 0; j < num_classes; ++j) {
+            row_exp_sum += pow(M_E, result[row_loc + j]);
+        }
+        res += -row_correct + log(row_exp_sum);
+    }
+    return res;
     // END YOUR CODE
 }
 
@@ -603,14 +654,26 @@ float mean_softmax_loss(const float *result, const unsigned char *labels_array, 
 float mean_err(float *result, const unsigned char *labels_array, size_t images_num, size_t num_classes)
 {
     // BEGIN YOUR CODE
-
+    float res = 0.0f;
+    for (int i = 0; i < images_num; ++i) {
+        int row_loc = i * num_classes;
+        int row_max_idx = 0;
+        int row_max = result[row_loc];
+        for (int j = 1; j < num_classes; ++j) {
+            if (result[row_loc + j] > row_max) {
+                row_max_idx = j;
+            }
+        }
+        res += (row_max_idx == labels_array[i]) ? 0 : 1;
+    }
+    return res / images_num;
     // END YOUR CODE
 }
 
 /**
  * Matrix Multiplication
  * Efficiently compute A = A * B
- * For each element A[i], B[i] of A and B, A[i] -= B[i]
+ * For each element A[i], B[i] of A and B, A[i] *= B[i]
  * Args:
  *     A (float*): Matrix of size m * n
  *     B (const float*): Matrix of size m * n
@@ -618,7 +681,9 @@ float mean_err(float *result, const unsigned char *labels_array, size_t images_n
 void matrix_mul(float *A, const float *B, size_t size)
 {
     // BEGIN YOUR CODE
-
+    for (int i = 0; i < size; ++i) {
+        A[i] *= B[i];
+    }  
     // END YOUR CODE
 }
 

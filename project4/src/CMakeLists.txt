@@ -11,13 +11,13 @@ add_library(simple_ml_ext STATIC
 add_executable(nn
     nn_classifier.cpp 
     simple_ml_ext.hpp)
-target_compile_options(nn PRIVATE -O2)
+# target_compile_options(nn PRIVATE -O2)
 target_link_libraries(nn PRIVATE simple_ml_ext)
 
 add_executable(softmax
     softmax_classifier.cpp 
     simple_ml_ext.hpp)
-target_compile_options(softmax PRIVATE -O2)
+# target_compile_options(softmax PRIVATE -O2)
 target_link_libraries(softmax PRIVATE simple_ml_ext)
 
 # SET(CMAKE_CXX_COMPILER pgc++)
@@ -31,13 +31,13 @@ target_link_libraries(simple_ml_openacc PRIVATE simple_ml_ext)
 add_executable(nn_openacc
         nn_classifier_openacc.cpp 
         simple_ml_openacc.hpp)
-target_compile_options(nn_openacc PRIVATE -O2)
+# target_compile_options(nn_openacc PRIVATE -O2)
 target_link_libraries(nn_openacc PRIVATE simple_ml_openacc)
 
 add_executable(softmax_openacc
         softmax_classifier_openacc.cpp
         simple_ml_openacc.hpp)
-target_compile_options(softmax_openacc PRIVATE -O2)
+# target_compile_options(softmax_openacc PRIVATE -O2)
 target_link_libraries(softmax_openacc PRIVATE simple_ml_openacc)
 
 # add_executable(nn
