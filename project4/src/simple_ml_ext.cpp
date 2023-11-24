@@ -450,10 +450,9 @@ void matrix_trans_dot(const float *A, const float *B, float *C, size_t m, size_t
 void matrix_minus(float *A, const float *B, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < n; ++j) {
-            A[i * n + j] -= B[i * n + j]; 
-        }
+    const size_t range = m * n;
+    for (size_t i = 0; i < range; ++i) {
+        A[i] -= B[i]; 
     }
     // END YOUR CODE
 }
@@ -468,10 +467,9 @@ void matrix_minus(float *A, const float *B, size_t m, size_t n)
 void matrix_mul_scalar(float *C, float scalar, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < n; ++j) {
-            C[i * n + j] *= scalar; 
-        }
+    const size_t range = m * n;
+    for (size_t i = 0; i < range; ++i) {
+        C[i] *= scalar; 
     }
     // END YOUR CODE
 }
@@ -486,10 +484,9 @@ void matrix_mul_scalar(float *C, float scalar, size_t m, size_t n)
 void matrix_div_scalar(float *C, float scalar, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < n; ++j) {
-            C[i * n + j] /= scalar; 
-        }
+    const size_t range = m * n;
+    for (size_t i = 0; i < range; ++i) {
+        C[i] /= scalar; 
     }
     // END YOUR CODE
 }
@@ -503,18 +500,23 @@ void matrix_div_scalar(float *C, float scalar, size_t m, size_t n)
 void matrix_softmax_normalize(float *C, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-    for (int i = 0; i < m; ++i) {
+    float curC[n];
+    for (size_t i = 0; i < m; ++i) {
+        const size_t rowloc = n * i;
+        memcpy(curC, C + rowloc, sizeof(float) * n);
+
         float row_sum = 0.0f; 
-        const int rowloc = n * i;
-        for (int j = 0; j < n; ++j) {
-            float cur_e = exp(C[rowloc + j]);
-            C[rowloc + j] = cur_e;
+        for (size_t j = 0; j < n; ++j) {
+            float cur_e = exp(curC[j]);
+            curC[j] = cur_e;
             row_sum += cur_e;
         }
 
-        for (int j = 0; j < n; ++j) {
-            C[rowloc + j] /= row_sum;
+        for (size_t j = 0; j < n; ++j) {
+            curC[j] /= row_sum;
         }
+
+        memcpy(C + rowloc, curC, sizeof(float) * n);
 
     }
     // END YOUR CODE
@@ -530,9 +532,6 @@ void vector_to_one_hot_matrix(const unsigned char *y, float *Y, size_t m, size_t
 {
     // BEGIN YOUR CODE
     for (int i = 0; i < m; ++i) {
-        // for (int j = 0; j < n; ++j) {
-        //     Y[i * n + j] = (y[i] == j) ? (1) : (0); 
-        // }
         Y[i * n + y[i]] = 1;
     }  
     // END YOUR CODE
@@ -559,23 +558,35 @@ void vector_to_one_hot_matrix(const unsigned char *y, float *Y, size_t m, size_t
  * Returns:
  *     (None)
  */
-void softmax_regression_epoch_cpp(const float *X, const unsigned char *y, float *theta, size_t m, size_t n, size_t k, float lr, size_t batch)
+void softmax_regression_epoch_cpp(const float *X, const unsigned char *y, float *theta,
+                                 unsigned char *cur_y, float *X_b, float *Z, float *gd, float *Y,
+                                 size_t m, size_t n, size_t k, float lr, size_t batch)
 {
     // BEGIN YOUR CODE 
+    const float batchxlr = lr / batch;
+    // unsigned char cur_y[batch];
+    // float X_b[batch * n];
+    // float Z[batch * k];
+    // float gd[n * k];
+    // float Y[batch * k];
+
     for (int i = 0; i < m; i+=batch) {
-        const unsigned char* cur_y = y + i;
-        const float* X_b = X + i * n; 
-        float Z[batch * k] = {};
-        float gd[n * k] = {};
+        memset(Z, 0, batch * k * sizeof(float));
+        memset(gd, 0, n * k * sizeof(float));
+        memset(Y, 0, batch * k * sizeof(float));
+
+        // const unsigned char* cur_y = y + i;
+        memcpy(cur_y, y + i, batch * sizeof(unsigned char)); 
+        // const float* X_b = X + i * n; 
+        memcpy(X_b, X + i * n, batch * n * sizeof(float));
+
         matrix_dot(X_b, theta, Z, batch, n, k); 
         matrix_softmax_normalize(Z, batch, k);
 
-        float Y[batch * k] = {};
         vector_to_one_hot_matrix(cur_y, Y, batch, k);
         
         matrix_minus(Z, Y, batch, k);
         matrix_dot_trans(X_b, Z, gd, n, batch, k); // n*100 * 100*k
-        float batchxlr = lr / batch;
         matrix_mul_scalar(gd, batchxlr, n, k);
         matrix_minus(theta, gd, n, k);
     }
@@ -629,15 +640,25 @@ void train_softmax(const DataSet *train_data, const DataSet *test_data, size_t n
     float train_loss, train_err, test_loss, test_err;
     std::cout << "| Epoch | Train Loss | Train Err | Test Loss | Test Err |" << std::endl;
     auto start_time = std::chrono::high_resolution_clock::now();
+
+    const int m = train_data->images_num;
+    const int n = train_data->input_dim;
+    const int k = num_classes;
+    unsigned char cur_y[batch];
+    float X_b[batch * n];
+    float Z[batch * k];
+    float gd[n * k];
+    float Y[batch * k];
+    
     for (size_t epoch = 0; epoch < epochs; epoch++)
     {
         // BEGIN YOUR CODE
         memset(train_result, 0, train_data->images_num * num_classes * sizeof(float));
         memset(test_result, 0, test_data->images_num * num_classes * sizeof(float));
-        int m = train_data->images_num;
-        int n = train_data->input_dim;
-        int k = num_classes;
-        softmax_regression_epoch_cpp(train_data->images_matrix, train_data->labels_array, theta, m, n, k, lr, batch);
+
+        softmax_regression_epoch_cpp(train_data->images_matrix, train_data->labels_array, theta,
+                                        cur_y, X_b, Z, gd, Y,
+                                        m, n, k, lr, batch);
         // print_matrix(theta, n, k);
         matrix_dot(train_data->images_matrix, theta, train_result, m, n ,k);
         matrix_dot(test_data->images_matrix, theta, test_result, test_data->images_num, test_data->input_dim ,k);

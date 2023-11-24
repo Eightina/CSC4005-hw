@@ -7,6 +7,7 @@ endif ()
 add_library(simple_ml_ext STATIC
     simple_ml_ext.cpp simple_ml_ext.hpp
 )
+target_compile_options(simple_ml_ext PRIVATE -O2)
 
 add_executable(nn
     nn_classifier.cpp 
@@ -27,6 +28,8 @@ add_library(simple_ml_openacc STATIC
     simple_ml_openacc.cpp simple_ml_openacc.hpp simple_ml_ext.hpp
 )
 target_link_libraries(simple_ml_openacc PRIVATE simple_ml_ext)
+target_compile_options(simple_ml_openacc PRIVATE -O2)
+
 
 add_executable(nn_openacc
         nn_classifier_openacc.cpp 
