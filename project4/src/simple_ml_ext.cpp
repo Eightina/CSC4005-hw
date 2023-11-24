@@ -122,103 +122,104 @@ void inline load_block(float *__restrict dst, const float* src, int src_row, int
  **/
 void matrix_dot(const float *A, const float *B, float *C, size_t m, size_t n, size_t input_k)
 {
-    // int M = m, K = n, N = input_k; 
-    // const int std_block_size_i = assign_block_size(M);
-    // const int std_block_size_k = assign_block_size(K);
-    // const int std_block_size_j = assign_block_size(N);
-    // int block_size_i = std_block_size_i, block_size_j = std_block_size_j, block_size_k = std_block_size_k;
+    int M = m, K = n, N = input_k; 
+    const int std_block_size_i = assign_block_size(M);
+    const int std_block_size_k = assign_block_size(K);
+    const int std_block_size_j = assign_block_size(N);
+    int block_size_i = std_block_size_i, block_size_j = std_block_size_j, block_size_k = std_block_size_k;
 
-    // const int i_res = M % block_size_i;
-    // const int k_res = K % block_size_k;
-    // const int j_res = N % block_size_j;
-    // const int block_range_i = M - i_res;
-    // const int block_range_k = K - k_res;
-    // const int block_range_j = N - j_res;
-    // bool i_switch = false;
-    // bool j_switch = false;
-    // bool k_switch = false;
+    const int i_res = M % block_size_i;
+    const int k_res = K % block_size_k;
+    const int j_res = N % block_size_j;
+    const int block_range_i = M - i_res;
+    const int block_range_k = K - k_res;
+    const int block_range_j = N - j_res;
+    bool i_switch = false;
+    bool j_switch = false;
+    bool k_switch = false;
 
-    // float* zeroload_matrix1 = (float*)aligned_alloc(64, (block_size_i * block_size_k + 8) * sizeof(float));
-    // float* zeroload_matrix2 = (float*)aligned_alloc(64, (block_size_k * block_size_j + 8) * sizeof(float));
-    // float* kernel_result = (float*)aligned_alloc(64, (block_size_i * block_size_j + 8) * sizeof(float));
+    float* zeroload_matrix1 = (float*)aligned_alloc(64, (block_size_i * block_size_k + 8) * sizeof(float));
+    float* zeroload_matrix2 = (float*)aligned_alloc(64, (block_size_k * block_size_j + 8) * sizeof(float));
+    float* kernel_result = (float*)aligned_alloc(64, (block_size_i * block_size_j + 8) * sizeof(float));
 
-    // for (int i = 0; i <= block_range_i;) {
-    //     if (i == M) break;
-    //     if (i == block_range_i) {
-    //         block_size_i = i_res;
-    //         i_switch = true;
-    //     }
-    //     for (int j = 0; j <= block_range_j;) {
-    //         if (j == N) break;
-    //         if (j == block_range_j) {
-    //             block_size_j = j_res;
-    //             j_switch = true;
-    //         }
-    //         // int kernel_result[block_size_i * block_size_j] = {};
-    //         // memset(kernel_result, 0, block_size_i * block_size_j * sizeof(float));
-    //         for (int temp = 0; temp < block_size_i * block_size_j; ++temp) {
-    //             kernel_result[temp] = 0.0f;
-    //         }
-    //         for (int k = 0; k <= block_range_k;) {
-    //             if (k == K) break;
-    //             if (k == block_range_k) {
-    //                 block_size_k = k_res;
-    //                 k_switch = true;
-    //             }
-    //             //------------------kernel----------------------------
+    for (int i = 0; i <= block_range_i;) {
+        if (i == M) break;
+        if (i == block_range_i) {
+            block_size_i = i_res;
+            i_switch = true;
+        }
+        for (int j = 0; j <= block_range_j;) {
+            if (j == N) break;
+            if (j == block_range_j) {
+                block_size_j = j_res;
+                j_switch = true;
+            }
+            // int kernel_result[block_size_i * block_size_j] = {};
+            // memset(kernel_result, 0, block_size_i * block_size_j * sizeof(float));
+            for (int temp = 0; temp < block_size_i * block_size_j; ++temp) {
+                kernel_result[temp] = 0.0f;
+            }
+            for (int k = 0; k <= block_range_k;) {
+                if (k == K) break;
+                if (k == block_range_k) {
+                    block_size_k = k_res;
+                    k_switch = true;
+                }
+                //------------------kernel----------------------------
 
-    //             load_block(zeroload_matrix1, A, i, K, k, block_size_i, block_size_k);
-    //             load_block(zeroload_matrix2, B, k, N, j, block_size_k, block_size_j);
+                load_block(zeroload_matrix1, A, i, K, k, block_size_i, block_size_k);
+                load_block(zeroload_matrix2, B, k, N, j, block_size_k, block_size_j);
 
-    //             for (int k1 = k; k1 < k+block_size_k; ++k1) {
-    //                 const int temp_kloc = (k1 - k) * block_size_j;  
-    //                 for (int i1 = i; i1 < i+block_size_i; ++i1) {
-    //                     const int r1_iter_loc = (i1 - i) * block_size_k + (k1 - k);
-    //                     register float r1 = *(zeroload_matrix1 + r1_iter_loc);
+                for (int k1 = k; k1 < k+block_size_k; ++k1) {
+                    const int temp_kloc = (k1 - k) * block_size_j;  
+                    for (int i1 = i; i1 < i+block_size_i; ++i1) {
+                        const int r1_iter_loc = (i1 - i) * block_size_k + (k1 - k);
+                        register float r1 = *(zeroload_matrix1 + r1_iter_loc);
 
-    //                     const int result_iter_loc = (i1 - i) * block_size_j;
-    //                     for (int j1 = j; j1 < j + block_size_j; ++j1) {
+                        const int result_iter_loc = (i1 - i) * block_size_j;
+                        for (int j1 = j; j1 < j + block_size_j; ++j1) {
 
-    //                         kernel_result[result_iter_loc + j1 - j] += r1 * zeroload_matrix2[temp_kloc + j1 - j];  
+                            kernel_result[result_iter_loc + j1 - j] += r1 * zeroload_matrix2[temp_kloc + j1 - j];  
 
-    //                     }
+                        }
 
-    //                 }
-    //             }
-    //             //------------------kernel----------------------------
-    //             k += block_size_k;
-    //             if (k_switch) {
-    //                 block_size_k = std_block_size_k;
-    //                 k_switch = false;
-    //             } 
-    //         }
-    //         for (int row = 0; row < block_size_i; ++row) {
-    //             memcpy(&C[(i + row) * N + j], &kernel_result[row * block_size_j], block_size_j * sizeof(float));
-    //         }
-    //         j += block_size_j;
-    //         if (j_switch) {
-    //             block_size_j = std_block_size_j;
-    //             j_switch = false;
-    //         }
-    //     }
-    //     i += block_size_i;
-    //     if (i_switch) {
-    //         block_size_i = std_block_size_i;
-    //         i_switch = false;
-    //     }
-    // }
-    // free(zeroload_matrix1);
-    // free(zeroload_matrix2);
-    // free(kernel_result);
-    size_t M = m, K = n, N = input_k;
-
-    for (size_t i = 0; i < M; ++i) {
-        for (size_t j = 0; j < N; ++j) {
-            for (size_t k = 0; k < K; ++k) {
-                C[i * N + j] += A[i * K + k] * B[k * N + j];
+                    }
+                }
+                //------------------kernel----------------------------
+                k += block_size_k;
+                if (k_switch) {
+                    block_size_k = std_block_size_k;
+                    k_switch = false;
+                } 
+            }
+            for (int row = 0; row < block_size_i; ++row) {
+                memcpy(&C[(i + row) * N + j], &kernel_result[row * block_size_j], block_size_j * sizeof(float));
+            }
+            j += block_size_j;
+            if (j_switch) {
+                block_size_j = std_block_size_j;
+                j_switch = false;
             }
         }
+        i += block_size_i;
+        if (i_switch) {
+            block_size_i = std_block_size_i;
+            i_switch = false;
+        }
     }
+    free(zeroload_matrix1);
+    free(zeroload_matrix2);
+    free(kernel_result);
+
+    // size_t M = m, K = n, N = input_k;
+
+    // for (size_t i = 0; i < M; ++i) {
+    //     for (size_t j = 0; j < N; ++j) {
+    //         for (size_t k = 0; k < K; ++k) {
+    //             C[i * N + j] += A[i * K + k] * B[k * N + j];
+    //         }
+    //     }
+    // }
 }
 
 /**
@@ -232,104 +233,104 @@ void matrix_dot(const float *A, const float *B, float *C, size_t m, size_t n, si
 void matrix_dot_trans(const float *A, const float *B, float *C, size_t m, size_t n, size_t input_k)
 {
     // BEGIN YOUR CODE
-    // int M = m, K = n, N = input_k; 
-    // const int std_block_size_i = assign_block_size(M);
-    // const int std_block_size_k = assign_block_size(K);
-    // const int std_block_size_j = assign_block_size(N);
-    // int block_size_i = std_block_size_i, block_size_j = std_block_size_j, block_size_k = std_block_size_k;
+    int M = m, K = n, N = input_k; 
+    const int std_block_size_i = assign_block_size(M);
+    const int std_block_size_k = assign_block_size(K);
+    const int std_block_size_j = assign_block_size(N);
+    int block_size_i = std_block_size_i, block_size_j = std_block_size_j, block_size_k = std_block_size_k;
 
-    // const int i_res = M % block_size_i;
-    // const int k_res = K % block_size_k;
-    // const int j_res = N % block_size_j;
-    // const int block_range_i = M - i_res;
-    // const int block_range_k = K - k_res;
-    // const int block_range_j = N - j_res;
-    // bool i_switch = false;
-    // bool j_switch = false;
-    // bool k_switch = false;
+    const int i_res = M % block_size_i;
+    const int k_res = K % block_size_k;
+    const int j_res = N % block_size_j;
+    const int block_range_i = M - i_res;
+    const int block_range_k = K - k_res;
+    const int block_range_j = N - j_res;
+    bool i_switch = false;
+    bool j_switch = false;
+    bool k_switch = false;
 
-    // float* zeroload_matrix1 = (float*)aligned_alloc(64, (block_size_i * block_size_k + 8) * sizeof(float));
-    // float* zeroload_matrix2 = (float*)aligned_alloc(64, (block_size_k * block_size_j + 8) * sizeof(float));
-    // float* kernel_result = (float*)aligned_alloc(64, (block_size_i * block_size_j + 8) * sizeof(float));
+    float* zeroload_matrix1 = (float*)aligned_alloc(64, (block_size_i * block_size_k + 8) * sizeof(float));
+    float* zeroload_matrix2 = (float*)aligned_alloc(64, (block_size_k * block_size_j + 8) * sizeof(float));
+    float* kernel_result = (float*)aligned_alloc(64, (block_size_i * block_size_j + 8) * sizeof(float));
 
-    // for (int i = 0; i <= block_range_i;) {
-    //     if (i == M) break;
-    //     if (i == block_range_i) {
-    //         block_size_i = i_res;
-    //         i_switch = true;
-    //     }
-    //     for (int j = 0; j <= block_range_j;) {
-    //         if (j == N) break;
-    //         if (j == block_range_j) {
-    //             block_size_j = j_res;
-    //             j_switch = true;
-    //         }
-    //         // int kernel_result[block_size_i * block_size_j] = {};
-    //         // memset(kernel_result, 0, block_size_i * block_size_j * sizeof(float));
-    //         for (int temp = 0; temp < block_size_i * block_size_j; ++temp) {
-    //             kernel_result[temp] = 0.0f;
-    //         }
-    //         for (int k = 0; k <= block_range_k;) {
-    //             if (k == K) break;
-    //             if (k == block_range_k) {
-    //                 block_size_k = k_res;
-    //                 k_switch = true;
-    //             }
-    //             //------------------kernel----------------------------
+    for (int i = 0; i <= block_range_i;) {
+        if (i == M) break;
+        if (i == block_range_i) {
+            block_size_i = i_res;
+            i_switch = true;
+        }
+        for (int j = 0; j <= block_range_j;) {
+            if (j == N) break;
+            if (j == block_range_j) {
+                block_size_j = j_res;
+                j_switch = true;
+            }
+            // int kernel_result[block_size_i * block_size_j] = {};
+            // memset(kernel_result, 0, block_size_i * block_size_j * sizeof(float));
+            for (int temp = 0; temp < block_size_i * block_size_j; ++temp) {
+                kernel_result[temp] = 0.0f;
+            }
+            for (int k = 0; k <= block_range_k;) {
+                if (k == K) break;
+                if (k == block_range_k) {
+                    block_size_k = k_res;
+                    k_switch = true;
+                }
+                //------------------kernel----------------------------
 
-    //             load_block(zeroload_matrix1, A, k, M, i, block_size_k, block_size_i);
-    //             load_block(zeroload_matrix2, B, k, N, j, block_size_k, block_size_j);
+                load_block(zeroload_matrix1, A, k, M, i, block_size_k, block_size_i);
+                load_block(zeroload_matrix2, B, k, N, j, block_size_k, block_size_j);
 
-    //             for (int k1 = k; k1 < k+block_size_k; ++k1) {
-    //                 const int temp_kloc = (k1 - k) * block_size_j;  
-    //                 for (int i1 = i; i1 < i+block_size_i; ++i1) {
-    //                     const int r1_iter_loc = (k1 - k) * block_size_i + (i1 - i);
-    //                     register float r1 = *(zeroload_matrix1 + r1_iter_loc);
+                for (int k1 = k; k1 < k+block_size_k; ++k1) {
+                    const int temp_kloc = (k1 - k) * block_size_j;  
+                    for (int i1 = i; i1 < i+block_size_i; ++i1) {
+                        const int r1_iter_loc = (k1 - k) * block_size_i + (i1 - i);
+                        register float r1 = *(zeroload_matrix1 + r1_iter_loc);
 
-    //                     const int result_iter_loc = (i1 - i) * block_size_j;
-    //                     for (int j1 = j; j1 < j + block_size_j; ++j1) {
+                        const int result_iter_loc = (i1 - i) * block_size_j;
+                        for (int j1 = j; j1 < j + block_size_j; ++j1) {
 
-    //                         kernel_result[result_iter_loc + j1 - j] += r1 * zeroload_matrix2[temp_kloc + j1 - j];  
+                            kernel_result[result_iter_loc + j1 - j] += r1 * zeroload_matrix2[temp_kloc + j1 - j];  
 
-    //                     }
+                        }
 
-    //                 }
-    //             }
-    //             //------------------kernel----------------------------
-    //             k += block_size_k;
-    //             if (k_switch) {
-    //                 block_size_k = std_block_size_k;
-    //                 k_switch = false;
-    //             } 
-    //         }
-    //         for (int row = 0; row < block_size_i; ++row) {
-    //             memcpy(&C[(i + row) * N + j], &kernel_result[row * block_size_j], block_size_j * sizeof(float));
-    //         }
-    //         j += block_size_j;
-    //         if (j_switch) {
-    //             block_size_j = std_block_size_j;
-    //             j_switch = false;
-    //         }
-    //     }
-    //     i += block_size_i;
-    //     if (i_switch) {
-    //         block_size_i = std_block_size_i;
-    //         i_switch = false;
-    //     }
-    // }
-    // free(zeroload_matrix1);
-    // free(zeroload_matrix2);
-    // free(kernel_result);
-    // END YOUR CODE
-    size_t M = m, K = n, N = input_k;
-
-    for (size_t i = 0; i < M; ++i) {
-        for (size_t j = 0; j < N; ++j) {
-            for (size_t k = 0; k < K; ++k) {
-                C[i * N + j] += A[k * M + i] * B[k * N + j];
+                    }
+                }
+                //------------------kernel----------------------------
+                k += block_size_k;
+                if (k_switch) {
+                    block_size_k = std_block_size_k;
+                    k_switch = false;
+                } 
+            }
+            for (int row = 0; row < block_size_i; ++row) {
+                memcpy(&C[(i + row) * N + j], &kernel_result[row * block_size_j], block_size_j * sizeof(float));
+            }
+            j += block_size_j;
+            if (j_switch) {
+                block_size_j = std_block_size_j;
+                j_switch = false;
             }
         }
+        i += block_size_i;
+        if (i_switch) {
+            block_size_i = std_block_size_i;
+            i_switch = false;
+        }
     }
+    free(zeroload_matrix1);
+    free(zeroload_matrix2);
+    free(kernel_result);
+    // END YOUR CODE
+    // size_t M = m, K = n, N = input_k;
+
+    // for (size_t i = 0; i < M; ++i) {
+    //     for (size_t j = 0; j < N; ++j) {
+    //         for (size_t k = 0; k < K; ++k) {
+    //             C[i * N + j] += A[k * M + i] * B[k * N + j];
+    //         }
+    //     }
+    // }
 }
 
 /**
@@ -343,98 +344,98 @@ void matrix_dot_trans(const float *A, const float *B, float *C, size_t m, size_t
 void matrix_trans_dot(const float *A, const float *B, float *C, size_t m, size_t n, size_t k)
 {
     // BEGIN YOUR CODE
-    // int M = m, K = n, N = k; 
-    // const int std_block_size_i = assign_block_size(M);
-    // const int std_block_size_k = assign_block_size(K);
-    // const int std_block_size_j = assign_block_size(N);
-    // int block_size_i = std_block_size_i, block_size_j = std_block_size_j, block_size_k = std_block_size_k;
+    int M = m, K = n, N = k; 
+    const int std_block_size_i = assign_block_size(M);
+    const int std_block_size_k = assign_block_size(K);
+    const int std_block_size_j = assign_block_size(N);
+    int block_size_i = std_block_size_i, block_size_j = std_block_size_j, block_size_k = std_block_size_k;
 
-    // const int i_res = M % block_size_i;
-    // const int k_res = K % block_size_k;
-    // const int j_res = N % block_size_j;
-    // const int block_range_i = M - i_res;
-    // const int block_range_k = K - k_res;
-    // const int block_range_j = N - j_res;
-    // bool i_switch = false;
-    // bool j_switch = false;
-    // bool k_switch = false;
+    const int i_res = M % block_size_i;
+    const int k_res = K % block_size_k;
+    const int j_res = N % block_size_j;
+    const int block_range_i = M - i_res;
+    const int block_range_k = K - k_res;
+    const int block_range_j = N - j_res;
+    bool i_switch = false;
+    bool j_switch = false;
+    bool k_switch = false;
 
-    // float* zeroload_matrix1 = (float*)aligned_alloc(64, (block_size_i * block_size_k + 8) * sizeof(float));
-    // float* zeroload_matrix2 = (float*)aligned_alloc(64, (block_size_k * block_size_j + 8) * sizeof(float));
-    // float* kernel_result = (float*)aligned_alloc(64, (block_size_i * block_size_j + 8) * sizeof(float));
+    float* zeroload_matrix1 = (float*)aligned_alloc(64, (block_size_i * block_size_k + 8) * sizeof(float));
+    float* zeroload_matrix2 = (float*)aligned_alloc(64, (block_size_k * block_size_j + 8) * sizeof(float));
+    float* kernel_result = (float*)aligned_alloc(64, (block_size_i * block_size_j + 8) * sizeof(float));
 
-    // for (int i = 0; i <= block_range_i;) {
-    //     if (i == M) break;
-    //     if (i == block_range_i) {
-    //         block_size_i = i_res;
-    //         i_switch = true;
-    //     }
-    //     for (int j = 0; j <= block_range_j;) {
-    //         if (j == N) break;
-    //         if (j == block_range_j) {
-    //             block_size_j = j_res;
-    //             j_switch = true;
-    //         }
-    //         // int kernel_result[block_size_i * block_size_j] = {};
-    //         // memset(kernel_result, 0, block_size_i * block_size_j * sizeof(float));
-    //         for (int temp = 0; temp < block_size_i * block_size_j; ++temp) {
-    //             kernel_result[temp] = 0.0f;
-    //         }
-    //         for (int k = 0; k <= block_range_k;) {
-    //             if (k == K) break;
-    //             if (k == block_range_k) {
-    //                 block_size_k = k_res;
-    //                 k_switch = true;
-    //             }
-    //             //------------------kernel----------------------------
+    for (int i = 0; i <= block_range_i;) {
+        if (i == M) break;
+        if (i == block_range_i) {
+            block_size_i = i_res;
+            i_switch = true;
+        }
+        for (int j = 0; j <= block_range_j;) {
+            if (j == N) break;
+            if (j == block_range_j) {
+                block_size_j = j_res;
+                j_switch = true;
+            }
+            // int kernel_result[block_size_i * block_size_j] = {};
+            // memset(kernel_result, 0, block_size_i * block_size_j * sizeof(float));
+            for (int temp = 0; temp < block_size_i * block_size_j; ++temp) {
+                kernel_result[temp] = 0.0f;
+            }
+            for (int k = 0; k <= block_range_k;) {
+                if (k == K) break;
+                if (k == block_range_k) {
+                    block_size_k = k_res;
+                    k_switch = true;
+                }
+                //------------------kernel----------------------------
 
-    //             load_block(zeroload_matrix1, A, i, K, k, block_size_i, block_size_k);
-    //             load_block(zeroload_matrix2, B, j, K, k, block_size_j, block_size_k);
+                load_block(zeroload_matrix1, A, i, K, k, block_size_i, block_size_k);
+                load_block(zeroload_matrix2, B, j, K, k, block_size_j, block_size_k);
 
 
-    //             for (int j1 = j; j1 < j + block_size_j; ++j1) {
+                for (int j1 = j; j1 < j + block_size_j; ++j1) {
 
-    //                 const int temp_kloc_r2 = (j1 - j) * block_size_k;
+                    const int temp_kloc_r2 = (j1 - j) * block_size_k;
 
-    //                 for (int i1 = i; i1 < i+block_size_i; ++i1) {
+                    for (int i1 = i; i1 < i+block_size_i; ++i1) {
 
-    //                     const int result_iter_loc = (i1 - i) * block_size_j;
-    //                     const int temp_kloc_r1 = (i1 - i) * block_size_k;  
+                        const int result_iter_loc = (i1 - i) * block_size_j;
+                        const int temp_kloc_r1 = (i1 - i) * block_size_k;  
 
-    //                     for (int k1 = k; k1 < k+block_size_k; ++k1) {
-    //                         const int r1_iter_loc = temp_kloc_r1 + (k1 - k);
-    //                         const int r2_iter_loc = temp_kloc_r2 + (k1 - k);
-    //                         kernel_result[result_iter_loc + j1 - j] += zeroload_matrix1[r1_iter_loc] * zeroload_matrix2[r2_iter_loc];     
-    //                     }
-    //                 }
+                        for (int k1 = k; k1 < k+block_size_k; ++k1) {
+                            const int r1_iter_loc = temp_kloc_r1 + (k1 - k);
+                            const int r2_iter_loc = temp_kloc_r2 + (k1 - k);
+                            kernel_result[result_iter_loc + j1 - j] += zeroload_matrix1[r1_iter_loc] * zeroload_matrix2[r2_iter_loc];     
+                        }
+                    }
 
-    //             }
+                }
 
-    //             //------------------kernel----------------------------
-    //             k += block_size_k;
-    //             if (k_switch) {
-    //                 block_size_k = std_block_size_k;
-    //                 k_switch = false;
-    //             } 
-    //         }
-    //         for (int row = 0; row < block_size_i; ++row) {
-    //             memcpy(&C[(i + row) * N + j], &kernel_result[row * block_size_j], block_size_j * sizeof(float));
-    //         }
-    //         j += block_size_j;
-    //         if (j_switch) {
-    //             block_size_j = std_block_size_j;
-    //             j_switch = false;
-    //         }
-    //     }
-    //     i += block_size_i;
-    //     if (i_switch) {
-    //         block_size_i = std_block_size_i;
-    //         i_switch = false;
-    //     }
-    // }
-    // free(zeroload_matrix1);
-    // free(zeroload_matrix2);
-    // free(kernel_result);
+                //------------------kernel----------------------------
+                k += block_size_k;
+                if (k_switch) {
+                    block_size_k = std_block_size_k;
+                    k_switch = false;
+                } 
+            }
+            for (int row = 0; row < block_size_i; ++row) {
+                memcpy(&C[(i + row) * N + j], &kernel_result[row * block_size_j], block_size_j * sizeof(float));
+            }
+            j += block_size_j;
+            if (j_switch) {
+                block_size_j = std_block_size_j;
+                j_switch = false;
+            }
+        }
+        i += block_size_i;
+        if (i_switch) {
+            block_size_i = std_block_size_i;
+            i_switch = false;
+        }
+    }
+    free(zeroload_matrix1);
+    free(zeroload_matrix2);
+    free(kernel_result);
     // END YOUR CODE
 }
 
@@ -561,66 +562,57 @@ void vector_to_one_hot_matrix(const unsigned char *y, float *Y, size_t m, size_t
 void softmax_regression_epoch_cpp(const float *X, const unsigned char *y, float *theta, size_t m, size_t n, size_t k, float lr, size_t batch)
 {
     // BEGIN YOUR CODE 
-    // for (int i = 0; i < m; i+=batch) {
-    //     const unsigned char* cur_y = y + i;
-    //     const float* X_b = X + i * n; 
-    //     float Z[batch * k] = {};
-    //     float gd[n * k] = {};
-    //     // print_matrix(X_b, batch, n);
-    //     // print_matrix(theta, n, k);
-    //     matrix_dot(X_b, theta, Z, batch, n, k); 
-    //     // print_matrix(Z, batch, k);
-    //     matrix_softmax_normalize(Z, batch, k);
-    //     // print_matrix(Z, batch, k);
-
-    //     float Y[batch * k] = {};
-    //     // print_matrix(y, 1, batch);
-    //     vector_to_one_hot_matrix(cur_y, Y, batch, k);
-    //     // print_matrix(Y, batch, k);
-        
-    //     matrix_minus(Z, Y, batch, k);
-    //     // print_matrix(X_b, n, batch);
-    //     // print_matrix(Z, batch, k);
-    //     matrix_dot_trans(X_b, Z, gd, n, batch, k); // n*100 * 100*k
-    //     // print_matrix(gd, n, k);
-    //     float batchxlr = lr / batch;
-    //     matrix_mul_scalar(gd, batchxlr, n, k);
-    //     matrix_minus(theta, gd, n, k);
-    // }
-    int itr = m / batch;
-    for (int i0 = 0; i0 < itr; i0++) {
-        int start = i0 * batch;
-        const float *cur_X = X + start * int(n); 
-        const unsigned char *cur_y = y + start; 
-        // float *Z;
-        // Z = new float[batch * (int)k];
-        float Z[batch * (int)k] = {};
-        matrix_dot(cur_X, theta, Z, batch, n, k);
+    for (int i = 0; i < m; i+=batch) {
+        const unsigned char* cur_y = y + i;
+        const float* X_b = X + i * n; 
+        float Z[batch * k] = {};
+        float gd[n * k] = {};
+        matrix_dot(X_b, theta, Z, batch, n, k); 
         matrix_softmax_normalize(Z, batch, k);
-        // matrix::mMul(cur_X, theta, Z, batch, n, k);
-        // matrix::mExp(Z, batch, k);
-        // matrix::mNormRow(Z, batch, k);
-        // float *Iy;
-        // Iy = new float[batch * (int)k]();
-        float Iy[batch * (int)k] = {};
-        for (int i = 0; i < batch; ++i) {
-            Iy[i * (int)k + cur_y[i]] = 1;
-        }
-        // float* xT;
-        // xT = new float[batch * (int)n];
-        // matrix::mT(cur_X, xT, (int)n, batch);
-        // float* gradient;
-        // gradient = new float[(int)n * (int)k];
-        float gradient[(int)n * (int)k] = {};
-        matrix_minus(Z, Iy, batch, k);
-        // matrix::mSub(Z, Iy, Z, batch, k);
-        matrix_dot_trans(cur_X, Z, gradient, n, batch, k);
-        // matrix::mMul(xT, Z, gradient, (int)n, batch, (int)k);
-        matrix_mul_scalar(gradient, lr / batch, n, k);
-        // matrix::mMul(gradient, lr / batch, (int)n, (int)k);
-        matrix_minus(theta, gradient, n, k);
-        // matrix::mSub(theta, gradient, theta, (int)n, (int)k);
+
+        float Y[batch * k] = {};
+        vector_to_one_hot_matrix(cur_y, Y, batch, k);
+        
+        matrix_minus(Z, Y, batch, k);
+        matrix_dot_trans(X_b, Z, gd, n, batch, k); // n*100 * 100*k
+        float batchxlr = lr / batch;
+        matrix_mul_scalar(gd, batchxlr, n, k);
+        matrix_minus(theta, gd, n, k);
     }
+    // int itr = m / batch;
+    // for (int i0 = 0; i0 < itr; i0++) {
+    //     int start = i0 * batch;
+    //     const float *cur_X = X + start * int(n); 
+    //     const unsigned char *cur_y = y + start; 
+    //     // float *Z;
+    //     // Z = new float[batch * (int)k];
+    //     float Z[batch * (int)k] = {};
+    //     matrix_dot(cur_X, theta, Z, batch, n, k);
+    //     matrix_softmax_normalize(Z, batch, k);
+    //     // matrix::mMul(cur_X, theta, Z, batch, n, k);
+    //     // matrix::mExp(Z, batch, k);
+    //     // matrix::mNormRow(Z, batch, k);
+    //     // float *Iy;
+    //     // Iy = new float[batch * (int)k]();
+    //     float Iy[batch * (int)k] = {};
+    //     for (int i = 0; i < batch; ++i) {
+    //         Iy[i * (int)k + cur_y[i]] = 1;
+    //     }
+    //     // float* xT;
+    //     // xT = new float[batch * (int)n];
+    //     // matrix::mT(cur_X, xT, (int)n, batch);
+    //     // float* gradient;
+    //     // gradient = new float[(int)n * (int)k];
+    //     float gradient[(int)n * (int)k] = {};
+    //     matrix_minus(Z, Iy, batch, k);
+    //     // matrix::mSub(Z, Iy, Z, batch, k);
+    //     matrix_dot_trans(cur_X, Z, gradient, n, batch, k);
+    //     // matrix::mMul(xT, Z, gradient, (int)n, batch, (int)k);
+    //     matrix_mul_scalar(gradient, lr / batch, n, k);
+    //     // matrix::mMul(gradient, lr / batch, (int)n, (int)k);
+    //     matrix_minus(theta, gradient, n, k);
+    //     // matrix::mSub(theta, gradient, theta, (int)n, (int)k);
+    // }
     // END YOUR CODE
 }
 
@@ -649,8 +641,6 @@ void train_softmax(const DataSet *train_data, const DataSet *test_data, size_t n
         // print_matrix(theta, n, k);
         matrix_dot(train_data->images_matrix, theta, train_result, m, n ,k);
         matrix_dot(test_data->images_matrix, theta, test_result, test_data->images_num, test_data->input_dim ,k);
-        // matrix_softmax_normalize(train_result, m, k);
-        // matrix_softmax_normalize(test_result, m, k);
 
         // END YOUR CODE
         train_loss = mean_softmax_loss(train_result, train_data->labels_array, train_data->images_num, num_classes);
@@ -720,15 +710,17 @@ float mean_err(float *result, const unsigned char *labels_array, size_t images_n
     // BEGIN YOUR CODE
     float res = 0.0f;
     for (int i = 0; i < images_num; ++i) {
-        int row_loc = i * num_classes;
-        int row_max_idx = 0;
-        int row_max = result[row_loc];
+        int row_idx = i * num_classes;
+        unsigned char row_max_idx = 0;
+        float row_max = result[row_idx];
         for (int j = 1; j < num_classes; ++j) {
-            if (result[row_loc + j] > row_max) {
+            float cur = result[row_idx + j];
+            if (cur > row_max) {
+                row_max = cur;
                 row_max_idx = j;
             }
         }
-        res += (row_max_idx == labels_array[i]) ? 0 : 1;
+        res += (row_max_idx == labels_array[i]) ? (0) : (1);
     }
     return res / images_num;
     // END YOUR CODE
