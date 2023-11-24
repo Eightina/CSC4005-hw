@@ -571,7 +571,7 @@ void softmax_regression_epoch_cpp(const float *X, const unsigned char *y, float 
     //     matrix_dot(X_b, theta, Z, batch, n, k); 
     //     // print_matrix(Z, batch, k);
     //     matrix_softmax_normalize(Z, batch, k);
-    //     print_matrix(Z, batch, k);
+    //     // print_matrix(Z, batch, k);
 
     //     float Y[batch * k] = {};
     //     // print_matrix(y, 1, batch);
@@ -592,7 +592,6 @@ void softmax_regression_epoch_cpp(const float *X, const unsigned char *y, float 
         int start = i0 * batch;
         const float *cur_X = X + start * int(n); 
         const unsigned char *cur_y = y + start; 
-
         // float *Z;
         // Z = new float[batch * (int)k];
         float Z[batch * (int)k] = {};
@@ -601,19 +600,15 @@ void softmax_regression_epoch_cpp(const float *X, const unsigned char *y, float 
         // matrix::mMul(cur_X, theta, Z, batch, n, k);
         // matrix::mExp(Z, batch, k);
         // matrix::mNormRow(Z, batch, k);
-
         // float *Iy;
         // Iy = new float[batch * (int)k]();
         float Iy[batch * (int)k] = {};
         for (int i = 0; i < batch; ++i) {
             Iy[i * (int)k + cur_y[i]] = 1;
         }
-
         // float* xT;
         // xT = new float[batch * (int)n];
         // matrix::mT(cur_X, xT, (int)n, batch);
-
-
         // float* gradient;
         // gradient = new float[(int)n * (int)k];
         float gradient[(int)n * (int)k] = {};
@@ -625,12 +620,6 @@ void softmax_regression_epoch_cpp(const float *X, const unsigned char *y, float 
         // matrix::mMul(gradient, lr / batch, (int)n, (int)k);
         matrix_minus(theta, gradient, n, k);
         // matrix::mSub(theta, gradient, theta, (int)n, (int)k);
-        // debugView(theta, n, k);
-        
-        // delete []Z;
-        // delete []Iy;
-        // delete []xT;
-        // delete []gradient;
     }
     // END YOUR CODE
 }
@@ -651,13 +640,17 @@ void train_softmax(const DataSet *train_data, const DataSet *test_data, size_t n
     for (size_t epoch = 0; epoch < epochs; epoch++)
     {
         // BEGIN YOUR CODE
+        memset(train_result, 0, train_data->images_num * num_classes * sizeof(float));
+        memset(test_result, 0, test_data->images_num * num_classes * sizeof(float));
         int m = train_data->images_num;
         int n = train_data->input_dim;
         int k = num_classes;
         softmax_regression_epoch_cpp(train_data->images_matrix, train_data->labels_array, theta, m, n, k, lr, batch);
-        print_matrix(theta, n, k);
+        // print_matrix(theta, n, k);
         matrix_dot(train_data->images_matrix, theta, train_result, m, n ,k);
-        matrix_softmax_normalize(train_result, m, k);
+        matrix_dot(test_data->images_matrix, theta, test_result, test_data->images_num, test_data->input_dim ,k);
+        // matrix_softmax_normalize(train_result, m, k);
+        // matrix_softmax_normalize(test_result, m, k);
 
         // END YOUR CODE
         train_loss = mean_softmax_loss(train_result, train_data->labels_array, train_data->images_num, num_classes);
@@ -703,11 +696,11 @@ float mean_softmax_loss(const float *result, const unsigned char *labels_array, 
         float row_correct = result[row_loc + labels_array[i]];
         float row_exp_sum = 0.0f;
         for (int j = 0; j < num_classes; ++j) {
-            row_exp_sum += pow(M_E, result[row_loc + j]);
+            row_exp_sum += exp(result[row_loc + j]);
         }
         res += -row_correct + log(row_exp_sum);
     }
-    return res;
+    return res / images_num;
     // END YOUR CODE
 }
 
