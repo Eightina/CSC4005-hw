@@ -46,9 +46,9 @@ DataSet *parse_mnist(const std::string &image_filename, const std::string &label
 
 void print_matrix(const float *A, size_t m, size_t n);
 
-void matrix_dot(const float *A, const float *B, float *C, size_t m, size_t n, size_t k);
+void matrix_dot(const float *A, const float *B, float *C, size_t m, size_t n, size_t k, int* block_sizes, float** assist_spaces);
 
-void matrix_dot_trans(const float *A, const float *B, float *C, size_t n, size_t m, size_t k);
+void matrix_dot_trans(const float *A, const float *B, float *C, size_t n, size_t m, size_t k, int* block_sizes, float** assist_spaces);
 
 void matrix_trans_dot(const float *A, const float *B, float *C, size_t m, size_t n, size_t k);
 
@@ -65,7 +65,6 @@ void vector_to_one_hot_matrix(const unsigned char *y, float *Y, size_t m, size_t
 void softmax_regression_epoch_cpp(const float *X,
                                   const unsigned char *y,
                                   float *theta,
-                                  unsigned char *cur_y, float *X_b, float *Z, float *gd, float *Y,
                                   size_t m,
                                   size_t n,
                                   size_t k,
