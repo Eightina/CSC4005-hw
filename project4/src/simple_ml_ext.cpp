@@ -918,7 +918,7 @@ void train_nn(const DataSet *train_data, const DataSet *test_data, size_t num_cl
     assign_blocks(m_train, n, l, block_sizes, assist_sapces);
     assign_blocks(m_train, l, k, block_sizes + 3, assist_sapces + 3);
     assign_blocks(m_test, n, l, block_sizes + 6, assist_sapces + 6);
-    assign_blocks(m_test, l, k, block_sizes + 12, assist_sapces + 12);
+    assign_blocks(m_test, l, k, block_sizes + 9, assist_sapces + 9);
 
     for (size_t epoch = 0; epoch < epochs; epoch++)
     {
@@ -931,7 +931,7 @@ void train_nn(const DataSet *train_data, const DataSet *test_data, size_t num_cl
         matrix_dot(train_data->images_matrix, W1, train_temp, m_train, n ,l, block_sizes, assist_sapces);
         matrix_dot(train_temp, W2, train_result, m_train, l ,k, block_sizes + 3, assist_sapces + 3);
         matrix_dot(test_data->images_matrix, W1, test_temp, m_test, n ,l, block_sizes + 6, assist_sapces + 6);
-        matrix_dot(test_temp, W2, test_result, m_test, l ,k, block_sizes + 12, assist_sapces + 12);
+        matrix_dot(test_temp, W2, test_result, m_test, l ,k, block_sizes + 9, assist_sapces + 9);
 
         // END YOUR CODE
         train_loss = mean_softmax_loss(train_result, train_data->labels_array, train_data->images_num, num_classes);

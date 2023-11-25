@@ -12,7 +12,8 @@ int main(int argc, char* argv[])
     DataSet* test_data = parse_mnist(path_test_data_x,
                                      path_test_data_y);
     std::cout << "Training two layer neural network w/ 400 hidden units" << std::endl;
-    train_nn(train_data, test_data, 10, 400, 20, 0.2);
+    // train_nn(train_data, test_data, 10, 400, 20, 0.2);
+    train_nn(train_data, test_data, 10, 100, 2, 0.2, 2000);
 
     delete train_data;
     delete test_data;
