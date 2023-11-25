@@ -793,7 +793,7 @@ void matrix_masking(float *A, const float *B, size_t size) {
 void relu(float *A, size_t m, size_t n) {
     size_t range = m * n;
     while (range > 0) {
-        (*A) = (*A > 0) ? (*A) : 0;
+        (*A) = ((*A) > 0) ? (*A) : 0;
         --range;
         ++A;
     }
@@ -868,6 +868,8 @@ void nn_epoch_cpp(const float *X, const unsigned char *y, float *W1, float *W2, 
         matrix_mul_scalar(W2_l, lr / batch, l, k);
         matrix_minus(W1, W1_l, n, l);
         matrix_minus(W2, W2_l, l, k);
+        // print_matrix(W1, n, l);
+        // print_matrix(W2, l, k);
 
     }
     // END YOUR CODE
@@ -922,16 +924,24 @@ void train_nn(const DataSet *train_data, const DataSet *test_data, size_t num_cl
 
     for (size_t epoch = 0; epoch < epochs; epoch++)
     {
-        memset(train_result, 0, train_data->images_num * num_classes * sizeof(float));
-        memset(test_result, 0, test_data->images_num * num_classes * sizeof(float));
+        memset(train_temp, 0, m_train * l * sizeof(float));
+        memset(train_result, 0, m_train * k * sizeof(float));
+        memset(test_temp, 0, m_test * l * sizeof(float));
+        memset(test_result, 0, m_test * k * sizeof(float));
 
         nn_epoch_cpp(train_data->images_matrix, train_data->labels_array, W1, W2,
-                        m_train, n, hidden_dim, k, lr, batch);
+                        m_train, n, l, k, lr, batch);
 
         matrix_dot(train_data->images_matrix, W1, train_temp, m_train, n ,l, block_sizes, assist_sapces);
+        relu(train_temp, m_train, l);
         matrix_dot(train_temp, W2, train_result, m_train, l ,k, block_sizes + 3, assist_sapces + 3);
+        
         matrix_dot(test_data->images_matrix, W1, test_temp, m_test, n ,l, block_sizes + 6, assist_sapces + 6);
+        relu(test_temp, m_test, l);
         matrix_dot(test_temp, W2, test_result, m_test, l ,k, block_sizes + 9, assist_sapces + 9);
+        
+        // print_matrix(W1, n, l);
+        // print_matrix(W2, l, k);
 
         // END YOUR CODE
         train_loss = mean_softmax_loss(train_result, train_data->labels_array, train_data->images_num, num_classes);

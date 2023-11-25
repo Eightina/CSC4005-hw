@@ -2,7 +2,7 @@ Current directory: /nfsmnt/223040076/coursecode/project4
 NN Sequential
 Training two layer neural network w/ 400 hidden units
 | Epoch | Train Loss | Train Err | Test Loss | Test Err |
-|     0 |    1.28713 |   0.34420 |   1.30949 |  0.35000 |
-|     1 |    1.06532 |   0.29050 |   1.08331 |  0.29540 |
-Execution Time: 19513 milliseconds
-
+|     0 |    0.13443 |   0.04015 |   0.14269 |  0.04250 |
+|     1 |    0.09720 |   0.03022 |   0.11593 |  0.03630 |
+|     2 |    0.07344 |   0.02170 |   0.10021 |  0.03090 |
+|     3 |    0.05860 |   0.01712 |   0.09120 |  0.02830 |

@@ -44,6 +44,8 @@ uint32_t swap_endian(uint32_t val);
 
 DataSet *parse_mnist(const std::string &image_filename, const std::string &label_filename);
 
+void inline assign_blocks(int M, int K, int N, int* block_sizes, float** assist_sapces);
+
 void print_matrix(const float *A, size_t m, size_t n);
 
 void matrix_dot(const float *A, const float *B, float *C, size_t m, size_t n, size_t k, int* block_sizes, float** assist_spaces);
