@@ -412,101 +412,37 @@ void matrix_dot_trans(const float *A, const float *B, float *C, size_t m, size_t
  *     B (const float*): Matrix of size k * n
  *     C (float*): Matrix of size m * k
  **/
-void matrix_trans_dot(const float *A, const float *B, float *C, size_t m, size_t n, size_t k)
+void matrix_trans_dot(const float *A, const float *B, float *C, size_t m, size_t n, size_t input_k, int* block_sizes, float** assist_spaces)
 {
-    // BEGIN YOUR CODE
-    int M = m, K = n, N = k; 
-    int block_sizes[3];
-    assign_block_size(M, K, N, block_sizes);
-    const int std_block_size_i = block_sizes[0];
-    const int std_block_size_k = block_sizes[1];
-    const int std_block_size_j = block_sizes[2];
-    int block_size_i = std_block_size_i, block_size_j = std_block_size_j, block_size_k = std_block_size_k;
-
-    // const int i_res = M % block_size_i;
-    // const int k_res = K % block_size_k;
-    // const int j_res = N % block_size_j;
-    // const int block_range_i = M - i_res;
-    // const int block_range_k = K - k_res;
-    // const int block_range_j = N - j_res;
-    // bool i_switch = false;
-    // bool j_switch = false;
-    // bool k_switch = false;
-
-    float* zeroload_matrix1 = (float*)aligned_alloc(64, (block_size_i * block_size_k + 8) * sizeof(float));
-    float* zeroload_matrix2 = (float*)aligned_alloc(64, (block_size_k * block_size_j + 8) * sizeof(float));
-    float* kernel_result = (float*)aligned_alloc(64, (block_size_i * block_size_j + 8) * sizeof(float));
-
-    // for (int i = 0; i <= block_range_i;) {
+    int M = m, K = n, N = input_k; 
+    int block_size_i = block_sizes[0], block_size_k = block_sizes[1], block_size_j = block_sizes[2];
+    float* zeroload_matrix1 = assist_spaces[0];
+    float* zeroload_matrix2 = assist_spaces[1];
+    float* kernel_result = assist_spaces[2];
     for (int i = 0; i < M; i += block_size_i) {
-
-        // for (int j = 0; j <= block_range_j;) {
         for (int j = 0; j < N; j += block_size_j) {
-
             memset(kernel_result, 0, block_size_i * block_size_j * sizeof(float));
-
-            // for (int k = 0; k <= block_range_k;) {
             for (int k = 0; k < K; k += block_size_k) {
-
                 //------------------kernel----------------------------
-
                 load_block(zeroload_matrix1, A, i, K, k, block_size_i, block_size_k);
                 load_block(zeroload_matrix2, B, j, K, k, block_size_j, block_size_k);
-
-
                 for (int j1 = j; j1 < j + block_size_j; ++j1) {
-
                     const int temp_kloc_r2 = (j1 - j) * block_size_k;
-
                     for (int i1 = i; i1 < i+block_size_i; ++i1) {
-
                         const int result_iter_loc = (i1 - i) * block_size_j;
                         const int temp_kloc_r1 = (i1 - i) * block_size_k;  
-
                         for (int k1 = k; k1 < k+block_size_k; ++k1) {
-                            const int r1_iter_loc = temp_kloc_r1 + (k1 - k);
-                            const int r2_iter_loc = temp_kloc_r2 + (k1 - k);
-                            kernel_result[result_iter_loc + j1 - j] += zeroload_matrix1[r1_iter_loc] * zeroload_matrix2[r2_iter_loc];     
+                            kernel_result[result_iter_loc + j1 - j] += zeroload_matrix1[temp_kloc_r1 + (k1 - k)] * zeroload_matrix2[temp_kloc_r2 + (k1 - k)];     
                         }
                     }
-
                 }
-
                 //------------------kernel----------------------------
-                // k += block_size_k;
-                // if (k_switch) {
-                //     block_size_k = std_block_size_k;
-                //     k_switch = false;
-                // } else if (k == block_range_k) {
-                //     block_size_k = k_res;
-                //     k_switch = true;
-                // }
             }
             for (int row = 0; row < block_size_i; ++row) {
                 memcpy(&C[(i + row) * N + j], &kernel_result[row * block_size_j], block_size_j * sizeof(float));
             }
-            // j += block_size_j;
-            // if (j_switch) {
-            //     block_size_j = std_block_size_j;
-            //     j_switch = false;
-            // } else if (j == block_range_j) {
-            //     block_size_j = j_res;
-            //     j_switch = true;
-            // }
         }
-        // i += block_size_i;
-        // if (i_switch) {
-        //     block_size_i = std_block_size_i;
-        //     i_switch = false;
-        // } else if (i == block_range_i) {
-        //     block_size_i = i_res;
-        //     i_switch = true;
-        // }
     }
-    free(zeroload_matrix1);
-    free(zeroload_matrix2);
-    free(kernel_result);
-    // END YOUR CODE
 }
 
 /**
@@ -520,9 +456,12 @@ void matrix_trans_dot(const float *A, const float *B, float *C, size_t m, size_t
 void matrix_minus(float *A, const float *B, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-    const size_t range = m * n;
-    for (size_t i = 0; i < range; ++i) {
-        A[i] -= B[i]; 
+    size_t range = m * n;
+    while (range > 0) {
+        (*A) -= (*B);
+        --range;
+        ++A;
+        ++B;
     }
     // END YOUR CODE
 }
@@ -537,9 +476,11 @@ void matrix_minus(float *A, const float *B, size_t m, size_t n)
 void matrix_mul_scalar(float *C, float scalar, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-    const size_t range = m * n;
-    for (size_t i = 0; i < range; ++i) {
-        C[i] *= scalar; 
+    size_t range = m * n;
+    while (range > 0) {
+        (*C) *= scalar;
+        --range;
+        ++C;
     }
     // END YOUR CODE
 }
@@ -555,9 +496,11 @@ void matrix_div_scalar(float *C, float scalar, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
     scalar = 1 / scalar;
-    const size_t range = m * n;
-    for (size_t i = 0; i < range; ++i) {
-        C[i] *= scalar; 
+    size_t range = m * n;
+    while (range > 0) {
+        (*C) *= scalar;
+        --range;
+        ++C;
     }
     // END YOUR CODE
 }
@@ -604,9 +547,12 @@ void matrix_softmax_normalize(float *C, size_t m, size_t n)
 void vector_to_one_hot_matrix(const unsigned char *y, float *Y, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-    for (int i = 0; i < m; ++i) {
-        Y[i * n + y[i]] = 1;
-    }  
+    while (m > 0) {
+        *(Y + (*y)) = 1;
+        --m;
+        ++y;
+        Y += n;
+    }
     // END YOUR CODE
 }
 
@@ -673,40 +619,6 @@ void softmax_regression_epoch_cpp(const float *X, const unsigned char *y, float 
         free(assist_sapces[i]);
         free(assist_sapces_t[i]);
     }
-    // int itr = m / batch;
-    // for (int i0 = 0; i0 < itr; i0++) {
-    //     int start = i0 * batch;
-    //     const float *cur_X = X + start * int(n); 
-    //     const unsigned char *cur_y = y + start; 
-    //     // float *Z;
-    //     // Z = new float[batch * (int)k];
-    //     float Z[batch * (int)k] = {};
-    //     matrix_dot(cur_X, theta, Z, batch, n, k);
-    //     matrix_softmax_normalize(Z, batch, k);
-    //     // matrix::mMul(cur_X, theta, Z, batch, n, k);
-    //     // matrix::mExp(Z, batch, k);
-    //     // matrix::mNormRow(Z, batch, k);
-    //     // float *Iy;
-    //     // Iy = new float[batch * (int)k]();
-    //     float Iy[batch * (int)k] = {};
-    //     for (int i = 0; i < batch; ++i) {
-    //         Iy[i * (int)k + cur_y[i]] = 1;
-    //     }
-    //     // float* xT;
-    //     // xT = new float[batch * (int)n];
-    //     // matrix::mT(cur_X, xT, (int)n, batch);
-    //     // float* gradient;
-    //     // gradient = new float[(int)n * (int)k];
-    //     float gradient[(int)n * (int)k] = {};
-    //     matrix_minus(Z, Iy, batch, k);
-    //     // matrix::mSub(Z, Iy, Z, batch, k);
-    //     matrix_dot_trans(cur_X, Z, gradient, n, batch, k);
-    //     // matrix::mMul(xT, Z, gradient, (int)n, batch, (int)k);
-    //     matrix_mul_scalar(gradient, lr / batch, n, k);
-    //     // matrix::mMul(gradient, lr / batch, (int)n, (int)k);
-    //     matrix_minus(theta, gradient, n, k);
-    //     // matrix::mSub(theta, gradient, theta, (int)n, (int)k);
-    // }
     // END YOUR CODE
 }
 
@@ -847,15 +759,45 @@ float mean_err(float *result, const unsigned char *labels_array, size_t images_n
  *     A (float*): Matrix of size m * n
  *     B (const float*): Matrix of size m * n
  **/
-void matrix_mul(float *A, const float *B, size_t size)
-{
-    // BEGIN YOUR CODE
-    for (int i = 0; i < size; ++i) {
-        A[i] *= B[i];
-    }  
-    // END YOUR CODE
+void matrix_mul(float *A, const float *B, size_t size) {    
+    while (size > 0) {
+        (*A) *= (*B);
+        ++A;
+        ++B;
+        --size;
+    }
 }
 
+/**
+ * A helper function: Masking Matrix 
+ * Efficiently compute A = A * (B > 0)
+ * Args:
+ *     A (float*): Matrix of size m * n
+ *     B (const float*): Masking Matrix of size m * n
+ **/
+void matrix_masking(float *A, const float *B, size_t size) {    
+    while (size > 0) {
+        (*A) = ((*B) > 0) ? (*A) : 0;
+        ++A;
+        ++B;
+        --size;
+    }
+}
+
+/**
+ * A helper function for ReLu 
+ * Efficiently compute A = ReLu(A)
+ * Args:
+ *     A (const float*): Matrix of size m * n
+ **/
+void relu(float *A, size_t m, size_t n) {
+    size_t range = m * n;
+    while (range > 0) {
+        (*A) = (*A > 0) ? (*A) : 0;
+        --range;
+        ++A;
+    }
+}
 /*
 Run a single epoch of SGD for a two-layer neural network defined by the
 weights W1 and W2 (with no bias terms):
@@ -868,9 +810,9 @@ Args:
         (num_examples x input_dim).
     y: 1D class label array of size (num_examples,)
     W1: 1D array of first layer weights, of shape
-        (input_dim x hidden_dim)
+        (input_dim x hidden_dim, n x l)
     W2: 1D array of second layer weights, of shape
-        (hidden_dim x num_classes)
+        (hidden_dim x num_classes, l x k)
     m: num_examples
     n: input_dim
     l: hidden_dim
@@ -881,8 +823,57 @@ Args:
 void nn_epoch_cpp(const float *X, const unsigned char *y, float *W1, float *W2, size_t m, size_t n, size_t l, size_t k, float lr, size_t batch)
 {
     // BEGIN YOUR CODE
+    float X_b[batch * n];
+    float Z1[batch * l];
+    float G1[batch * l];
+    // float h_Z1_exp[batch * k];
+    float Z2[batch * k];
+    float Y[batch * k];
+    float W1_l[n * l];
+    float W2_l[l * k];
+    unsigned char cur_y[batch];
 
+    int block_sizes[15];
+    // int block_sizes_test[3];
+    float* assist_sapces[15];
+    // float* assist_sapces_test[3];
+    assign_blocks(batch, n, l, block_sizes, assist_sapces);
+    assign_blocks(batch, l, k, block_sizes + 3, assist_sapces + 3);
+    assign_blocks(batch, k, l, block_sizes + 6, assist_sapces + 6);
+    assign_blocks(n, batch, l, block_sizes + 9, assist_sapces + 9);
+    assign_blocks(l, batch, k, block_sizes + 12, assist_sapces + 12);
+
+    for (int i = 0; i < m; i += batch) {
+        memset(Z1, 0, batch * l * sizeof(float));
+        memset(Z2, 0, batch * k * sizeof(float));
+        memset(G1, 0, batch * l * sizeof(float));
+        memset(Y, 0, batch * k * sizeof(float));
+        memset(W1_l, 0, n * l * sizeof(float));
+        memset(W2_l, 0, l * k * sizeof(float));
+        memcpy(cur_y, y + i, batch * sizeof(unsigned char)); 
+        memcpy(X_b, X + i * n, batch * n * sizeof(float));
+
+        matrix_dot(X_b, W1, Z1, batch, n, l, block_sizes, assist_sapces); //
+        relu(Z1, batch, l);
+        matrix_dot(Z1, W2, Z2, batch, l, k, block_sizes + 3, assist_sapces + 3); //
+        matrix_softmax_normalize(Z2, batch, k);
+
+        vector_to_one_hot_matrix(cur_y, Y, batch, k);
+        matrix_minus(Z2, Y, batch, k); // Z2 = Z2 - Y
+        matrix_trans_dot(Z2, W2, G1, batch, k, l, block_sizes + 6, assist_sapces + 6); //
+        matrix_masking(G1, Z1, batch * l);
+        matrix_dot_trans(X_b, G1, W1_l, n, batch, l, block_sizes + 9, assist_sapces + 9); //
+        matrix_dot_trans(Z1, Z2, W2_l, l, batch, k, block_sizes + 12, assist_sapces + 12); //
+        matrix_mul_scalar(W1_l, lr / batch, n, l);
+        matrix_mul_scalar(W2_l, lr / batch, l, k);
+        matrix_minus(W1, W1_l, n, l);
+        matrix_minus(W2, W2_l, l, k);
+
+    }
     // END YOUR CODE
+    for (int i = 0; i < 15; ++i) {
+        free(assist_sapces[i]);
+    }
 }
 
 /**
@@ -912,9 +903,35 @@ void train_nn(const DataSet *train_data, const DataSet *test_data, size_t num_cl
     float train_loss, train_err, test_loss, test_err;
     std::cout << "| Epoch | Train Loss | Train Err | Test Loss | Test Err |" << std::endl;
     auto start_time = std::chrono::high_resolution_clock::now();
+    
+    // BEGIN YOUR CODE
+    const int m_train = train_data->images_num;
+    const int m_test = test_data->images_num;
+    const int n = train_data->input_dim;
+    const int k = num_classes;
+    const int l = hidden_dim;
+    float *train_temp = new float[m_train * l];
+    float *test_temp = new float[m_test * l];
+
+    int block_sizes[12];
+    float* assist_sapces[12];
+    assign_blocks(m_train, n, l, block_sizes, assist_sapces);
+    assign_blocks(m_train, l, k, block_sizes + 3, assist_sapces + 3);
+    assign_blocks(m_test, n, l, block_sizes + 6, assist_sapces + 6);
+    assign_blocks(m_test, l, k, block_sizes + 12, assist_sapces + 12);
+
     for (size_t epoch = 0; epoch < epochs; epoch++)
     {
-        // BEGIN YOUR CODE
+        memset(train_result, 0, train_data->images_num * num_classes * sizeof(float));
+        memset(test_result, 0, test_data->images_num * num_classes * sizeof(float));
+
+        nn_epoch_cpp(train_data->images_matrix, train_data->labels_array, W1, W2,
+                        m_train, n, hidden_dim, k, lr, batch);
+
+        matrix_dot(train_data->images_matrix, W1, train_temp, m_train, n ,l, block_sizes, assist_sapces);
+        matrix_dot(train_temp, W2, train_result, m_train, l ,k, block_sizes + 3, assist_sapces + 3);
+        matrix_dot(test_data->images_matrix, W1, test_temp, m_test, n ,l, block_sizes + 6, assist_sapces + 6);
+        matrix_dot(test_temp, W2, test_result, m_test, l ,k, block_sizes + 12, assist_sapces + 12);
 
         // END YOUR CODE
         train_loss = mean_softmax_loss(train_result, train_data->labels_array, train_data->images_num, num_classes);
@@ -937,4 +954,9 @@ void train_nn(const DataSet *train_data, const DataSet *test_data, size_t num_cl
     delete[] W2;
     delete[] train_result;
     delete[] test_result;
+    delete[] train_temp;
+    delete[] test_temp;
+    for (int i = 0; i < 12; ++i) {
+        free(assist_sapces[i]);
+    }
 }

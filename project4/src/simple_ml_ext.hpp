@@ -50,7 +50,7 @@ void matrix_dot(const float *A, const float *B, float *C, size_t m, size_t n, si
 
 void matrix_dot_trans(const float *A, const float *B, float *C, size_t n, size_t m, size_t k, int* block_sizes, float** assist_spaces);
 
-void matrix_trans_dot(const float *A, const float *B, float *C, size_t m, size_t n, size_t k);
+void matrix_trans_dot(const float *A, const float *B, float *C, size_t m, size_t n, size_t k, int* block_sizes, float** assist_spaces);
 
 void matrix_minus(float *A, const float *B, size_t m, size_t n);
 
