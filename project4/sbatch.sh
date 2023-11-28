@@ -15,19 +15,19 @@ TRAIN_Y=/nfsmnt/223040076/coursecode/project4/dataset/training/train-labels.idx1
 TEST_X=/nfsmnt/223040076/coursecode/project4/dataset/testing/t10k-images.idx3-ubyte
 TEST_Y=/nfsmnt/223040076/coursecode/project4/dataset/testing/t10k-labels.idx1-ubyte
 
-# Softmax
+# # Softmax
 # echo "Softmax Sequential"
 # srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/build/softmax $TRAIN_X $TRAIN_Y $TEST_X $TEST_Y
 # echo ""
 
-# echo "Softmax OpenACC"
-# srun -n 1 --gpus 1 ${CURRENT_DIR}/build/softmax_openacc $TRAIN_X $TRAIN_Y $TEST_X $TEST_Y
-# echo ""
+echo "Softmax OpenACC"
+srun -n 1 --gpus 1 ${CURRENT_DIR}/build/softmax_openacc $TRAIN_X $TRAIN_Y $TEST_X $TEST_Y
+echo ""
 
 # NN
-echo "NN Sequential"
-srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/build/nn $TRAIN_X $TRAIN_Y $TEST_X $TEST_Y
-echo ""
+# echo "NN Sequential"
+# srun -n 1 -t20 -p Debug --cpus-per-task 1 ${CURRENT_DIR}/build/nn $TRAIN_X $TRAIN_Y $TEST_X $TEST_Y
+# echo ""
 
 # echo "NN OpenACC"
 # srun -n 1 --gpus 1 ${CURRENT_DIR}/build/nn_openacc $TRAIN_X $TRAIN_Y $TEST_X $TEST_Y

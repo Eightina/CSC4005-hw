@@ -3,11 +3,11 @@
 
 #include "simple_ml_ext.hpp"
 
-void matrix_dot_openacc(const float *A, const float *B, float *C, size_t m, size_t n, size_t k);
+void matrix_dot_openacc(const float *A, const float *B, float *C, size_t m, size_t n, size_t input_k);
 
-void matrix_dot_trans_openacc(const float *A, const float *B, float *C, size_t n, size_t m, size_t k);
+void matrix_dot_trans_openacc(const float *A, const float *B, float *C, size_t m, size_t n, size_t input_k);
 
-void matrix_trans_dot_openacc(const float *A, const float *B, float *C, size_t m, size_t n, size_t k);
+void matrix_trans_dot_openacc(const float *A, const float *B, float *C, size_t m, size_t n, size_t input_k);
 
 void matrix_minus_openacc(float *A, const float *B, size_t m, size_t n);
 
@@ -17,7 +17,7 @@ void matrix_div_scalar_openacc(float *C, float scalar, size_t m, size_t n);
 
 void matrix_softmax_normalize_openacc(float *C, size_t m, size_t n);
 
-void vector_to_one_hot_matrix_openacc(const unsigned char *y, float *Y, size_t m, size_t k);
+void vector_to_one_hot_matrix_openacc(const unsigned char *y, float *Y, size_t m, size_t n);
 
 void softmax_regression_epoch_openacc(const float *X, const unsigned char *y,
                                       float *theta, size_t m, size_t n, size_t k,

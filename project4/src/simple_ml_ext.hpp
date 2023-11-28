@@ -48,25 +48,25 @@ void inline assign_blocks(int M, int K, int N, int* block_sizes, float** assist_
 
 void print_matrix(const float *A, size_t m, size_t n);
 
-void matrix_dot(const float *A, const float *B, float *C, size_t m, size_t n, size_t k, int* block_sizes, float** assist_spaces);
+void matrix_dot(const float *__restrict A, const float *__restrict B, float *__restrict C, size_t m, size_t n, size_t k, int* block_sizes, float** assist_spaces);
 
-void matrix_dot_trans(const float *A, const float *B, float *C, size_t n, size_t m, size_t k, int* block_sizes, float** assist_spaces);
+void matrix_dot_trans(const float *__restrict A, const float *__restrict B, float *__restrict C, size_t n, size_t m, size_t k, int* block_sizes, float** assist_spaces);
 
-void matrix_trans_dot(const float *A, const float *B, float *C, size_t m, size_t n, size_t k, int* block_sizes, float** assist_spaces);
+void matrix_trans_dot(const float *__restrict A, const float *__restrict B, float *__restrict C, size_t m, size_t n, size_t k, int* block_sizes, float** assist_spaces);
 
-void matrix_minus(float *A, const float *B, size_t m, size_t n);
+void matrix_minus(float *__restrict A, const float *__restrict B, size_t m, size_t n);
 
-void matrix_mul_scalar(float *C, float scalar, size_t m, size_t n);
+void matrix_mul_scalar(float *__restrict C, float scalar, size_t m, size_t n);
 
-void matrix_div_scalar(float *C, float scalar, size_t m, size_t n);
+void matrix_div_scalar(float *__restrict C, float scalar, size_t m, size_t n);
 
-void matrix_softmax_normalize(float *C, size_t m, size_t n);
+void matrix_softmax_normalize(float *__restrict C, size_t m, size_t n);
 
-void vector_to_one_hot_matrix(const unsigned char *y, float *Y, size_t m, size_t k);
+void vector_to_one_hot_matrix(const unsigned char *__restrict y, float *__restrict Y, size_t m, size_t k);
 
-void softmax_regression_epoch_cpp(const float *X,
-                                  const unsigned char *y,
-                                  float *theta,
+void softmax_regression_epoch_cpp(const float *__restrict X,
+                                  const unsigned char *__restrict y,
+                                  float *__restrict theta,
                                   size_t m,
                                   size_t n,
                                   size_t k,
@@ -80,22 +80,22 @@ void train_softmax(const DataSet *train_data,
                    float lr = 0.5,
                    size_t batch = 100);
 
-float mean_softmax_loss(const float *result,
-                        const unsigned char *labels_array,
+float mean_softmax_loss(const float *__restrict result,
+                        const unsigned char *__restrict labels_array,
                         size_t images_num,
                         size_t num_classes);
 
-float mean_err(float *result,
-               const unsigned char *labels_array,
+float mean_err(float *__restrict result,
+               const unsigned char *__restrict labels_array,
                size_t images_num,
                size_t num_classes);
 
-void matrix_mul(float *A, const float *B, size_t size);
+void matrix_mul(float *__restrict A, const float *__restrict B, size_t size);
 
-void nn_epoch_cpp(const float *X,
-                  const unsigned char *y,
-                  float *W1,
-                  float *W2,
+void nn_epoch_cpp(const float *__restrict X,
+                  const unsigned char *__restrict y,
+                  float *__restrict W1,
+                  float *__restrict W2,
                   size_t m,
                   size_t n,
                   size_t l,

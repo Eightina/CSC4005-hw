@@ -1,8 +1,15 @@
 Current directory: /nfsmnt/223040076/coursecode/project4
-NN Sequential
-Training two layer neural network w/ 400 hidden units
+Softmax OpenACC
+Training softmax regression (GPU)
 | Epoch | Train Loss | Train Err | Test Loss | Test Err |
-|     0 |    0.13443 |   0.04015 |   0.14269 |  0.04250 |
-|     1 |    0.09720 |   0.03022 |   0.11593 |  0.03630 |
-|     2 |    0.07344 |   0.02170 |   0.10021 |  0.03090 |
-|     3 |    0.05860 |   0.01712 |   0.09120 |  0.02830 |
+hostptr=0x7ffd902258a0,stride=1,size=1000,extent=-1,eltsize=4,name=C,flags=0x200=present,async=-1,threadid=1
+Present table dump for device[1]: NVIDIA Tesla GPU 0, compute capability 7.5, threadid=1
+...empty...
+deleted block   device:0x7f029db4e600 size:4096 threadid=1 
+deleted block   device:0x7f029db46a00 size:31744 threadid=1 
+deleted block   device:0x7f029dafa000 size:313856 threadid=1 
+FATAL ERROR: data in PRESENT clause was not found on device 1: name=C host:0x7ffd902258a0
+ file:/nfsmnt/223040076/coursecode/project4/src/simple_ml_openacc.cpp _Z32matrix_softmax_normalize_openaccPfmm line:153
+
+srun: error: node32: task 0: Exited with exit code 1
+

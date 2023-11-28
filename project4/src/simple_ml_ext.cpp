@@ -117,7 +117,7 @@ inline void assign_block_size(int M, int K, int N, int* res) {
     // printf("M %d K %d N %d\n", res[0], res[1], res[2]);
     return;
 
-    // stratagy 1
+    // strategy 1
     // int max_loc = 0;
     // int max = M;
     // if (K > max) {
@@ -136,7 +136,7 @@ inline void assign_block_size(int M, int K, int N, int* res) {
     // }
     // res[max_loc] = max;
 
-    // stratagy 2
+    // strategy 2
     // if (M >= 64) {
     //     return 64;
     // } else if (M >= 32) {
@@ -155,19 +155,16 @@ inline void assign_block_size(int M, int K, int N, int* res) {
 * A helper function for matrix_dot.
 */
 void inline assign_blocks(int M, int K, int N, int* block_sizes, float** assist_sapces) {
-    // int M = M, K = n, N = k; 
-    // int block_sizes[3];
     assign_block_size(M, K, N, block_sizes);
     assist_sapces[0] = (float*)aligned_alloc(64, (block_sizes[0] * block_sizes[1] + 8) * sizeof(float));
     assist_sapces[1] = (float*)aligned_alloc(64, (block_sizes[1] * block_sizes[2] + 8) * sizeof(float));
     assist_sapces[2] = (float*)aligned_alloc(64, (block_sizes[0] * block_sizes[2] + 8) * sizeof(float));
-    // float* assist_sapces[3] = {zeroload_matrix1, zeroload_matrix2, kernel_result};
 }
 /*
 * load block
 * A helper function for matrix_dot.
 */
-void inline load_block(float *__restrict dst, const float* src, int src_row, int src_row_len,
+void inline load_block(float *__restrict dst, const float*__restrict src, int src_row, int src_row_len,
                              int src_col, int block_size_row, int block_size_col) {
     // #pragma GCC unroll 64
     for (int i = 0; i < block_size_row; ++i) {
@@ -185,108 +182,42 @@ void inline load_block(float *__restrict dst, const float* src, int src_row, int
  *     B (const float*): Matrix of size n * k
  *     C (float*): Matrix of size m * k
  **/
-void matrix_dot(const float *A, const float *B, float *C, size_t m, size_t n, size_t input_k, int* block_sizes, float** assist_spaces)
+void matrix_dot(const float *__restrict A, const float *__restrict B, float *__restrict C, size_t m, size_t n, size_t input_k, int* block_sizes, float** assist_spaces)
 {
     int M = m, K = n, N = input_k; 
-    // int block_sizes[3];
-    // assign_block_size(M, K, N, block_sizes);
-    // const int std_block_size_i = block_sizes[0];
-    // const int std_block_size_k = block_sizes[1];
-    // const int std_block_size_j = block_sizes[2];
-    // int block_size_i = std_block_size_i, block_size_j = std_block_size_j, block_size_k = std_block_size_k;
     int block_size_i = block_sizes[0], block_size_k = block_sizes[1], block_size_j = block_sizes[2];
 
-    // const int i_res = M % block_size_i;
-    // const int k_res = K % block_size_k;
-    // const int j_res = N % block_size_j;
-    // const int block_range_i = M - i_res;
-    // const int block_range_k = K - k_res;
-    // const int block_range_j = N - j_res;
-    // bool i_switch = false;
-    // bool j_switch = false;
-    // bool k_switch = false;
+    float* __restrict zeroload_matrix1 = assist_spaces[0];
+    float* __restrict zeroload_matrix2 = assist_spaces[1];
+    float* __restrict kernel_result = assist_spaces[2];
 
-    // float* zeroload_matrix1 = (float*)aligned_alloc(64, (block_size_i * block_size_k + 8) * sizeof(float));
-    // float* zeroload_matrix2 = (float*)aligned_alloc(64, (block_size_k * block_size_j + 8) * sizeof(float));
-    // float* kernel_result = (float*)aligned_alloc(64, (block_size_i * block_size_j + 8) * sizeof(float));
-    float* zeroload_matrix1 = assist_spaces[0];
-    float* zeroload_matrix2 = assist_spaces[1];
-    float* kernel_result = assist_spaces[2];
-
-    // for (int i = 0; i <= block_range_i;) {
     for (int i = 0; i < M; i += block_size_i) {
-
-        // for (int j = 0; j <= block_range_j;) {
         for (int j = 0; j < N; j += block_size_j) {
-
             memset(kernel_result, 0, block_size_i * block_size_j * sizeof(float));
-
-            // for (int k = 0; k <= block_range_k;) {
             for (int k = 0; k < K; k += block_size_k) {
-                //------------------kernel----------------------------
 
+                //------------------kernel----------------------------
                 load_block(zeroload_matrix1, A, i, K, k, block_size_i, block_size_k);
                 load_block(zeroload_matrix2, B, k, N, j, block_size_k, block_size_j);
-
                 for (int k1 = k; k1 < k+block_size_k; ++k1) {
                     const int temp_kloc = (k1 - k) * block_size_j;  
                     for (int i1 = i; i1 < i+block_size_i; ++i1) {
                         const int r1_iter_loc = (i1 - i) * block_size_k + (k1 - k);
                         register float r1 = *(zeroload_matrix1 + r1_iter_loc);
-
                         const int result_iter_loc = (i1 - i) * block_size_j;
                         for (int j1 = j; j1 < j + block_size_j; ++j1) {
-
                             kernel_result[result_iter_loc + j1 - j] += r1 * zeroload_matrix2[temp_kloc + j1 - j];  
-
                         }
-
                     }
                 }
                 //------------------kernel----------------------------
-                // k += block_size_k;
-                // if (k_switch) {
-                //     block_size_k = std_block_size_k;
-                //     k_switch = false;
-                // } else if (k == block_range_k) {
-                //     block_size_k = k_res;
-                //     k_switch = true;
-                // }
+
             }
             for (int row = 0; row < block_size_i; ++row) {
                 memcpy(&C[(i + row) * N + j], &kernel_result[row * block_size_j], block_size_j * sizeof(float));
             }
-            // j += block_size_j;
-            // if (j_switch) {
-            //     block_size_j = std_block_size_j;
-            //     j_switch = false;
-            // } else if (j == block_range_j) {
-            //     block_size_j = j_res;
-            //     j_switch = true;
-            // }
         }
-        // i += block_size_i;
-        // if (i_switch) {
-        //     block_size_i = std_block_size_i;
-        //     i_switch = false;
-        // } else if (i == block_range_i) {
-        //     block_size_i = i_res;
-        //     i_switch = true;
-        // }
     }
-    // free(zeroload_matrix1);
-    // free(zeroload_matrix2);
-    // free(kernel_result);
-
-    // size_t M = m, K = n, N = input_k;
-
-    // for (size_t i = 0; i < M; ++i) {
-    //     for (size_t j = 0; j < N; ++j) {
-    //         for (size_t k = 0; k < K; ++k) {
-    //             C[i * N + j] += A[i * K + k] * B[k * N + j];
-    //         }
-    //     }
-    // }
 }
 
 /**
@@ -297,111 +228,43 @@ void matrix_dot(const float *A, const float *B, float *C, size_t m, size_t n, si
  *     B (const float*): Matrix of size n * k
  *     C (float*): Matrix of size m * k
  **/
-void matrix_dot_trans(const float *A, const float *B, float *C, size_t m, size_t n, size_t input_k, int* block_sizes, float** assist_spaces)
+void matrix_dot_trans(const float *__restrict A, const float *__restrict B, float *__restrict C, size_t m, size_t n, size_t input_k, int* block_sizes, float** assist_spaces)
 {
     // BEGIN YOUR CODE
     int M = m, K = n, N = input_k; 
-    // int block_sizes[3];
-    // assign_block_size(M, K, N, block_sizes);
-    // const int std_block_size_i = block_sizes[0];
-    // const int std_block_size_k = block_sizes[1];
-    // const int std_block_size_j = block_sizes[2];
-    // int block_size_i = std_block_size_i, block_size_j = std_block_size_j, block_size_k = std_block_size_k;
     int block_size_i = block_sizes[0], block_size_k = block_sizes[1], block_size_j = block_sizes[2];
 
-    // const int i_res = M % block_size_i;
-    // const int k_res = K % block_size_k;
-    // const int j_res = N % block_size_j;
-    // const int block_range_i = M - i_res;
-    // const int block_range_k = K - k_res;
-    // const int block_range_j = N - j_res;
-    // bool i_switch = false;
-    // bool j_switch = false;
-    // bool k_switch = false;
+    float* __restrict zeroload_matrix1 = assist_spaces[0];
+    float* __restrict zeroload_matrix2 = assist_spaces[1];
+    float* __restrict kernel_result = assist_spaces[2];
 
-    // float* zeroload_matrix1 = (float*)aligned_alloc(64, (block_size_i * block_size_k + 8) * sizeof(float));
-    // float* zeroload_matrix2 = (float*)aligned_alloc(64, (block_size_k * block_size_j + 8) * sizeof(float));
-    // float* kernel_result = (float*)aligned_alloc(64, (block_size_i * block_size_j + 8) * sizeof(float));
-    float* zeroload_matrix1 = assist_spaces[0];
-    float* zeroload_matrix2 = assist_spaces[1];
-    float* kernel_result = assist_spaces[2];
-
-    // for (int i = 0; i <= block_range_i;) {
     for (int i = 0; i < M; i += block_size_i) {
-
-        // for (int j = 0; j <= block_range_j;) {
         for (int j = 0; j < N; j += block_size_j) {
-
             memset(kernel_result, 0, block_size_i * block_size_j * sizeof(float));
-
-            // for (int k = 0; k <= block_range_k;) {
             for (int k = 0; k < K; k += block_size_k) {
 
                 //------------------kernel----------------------------
-
                 load_block(zeroload_matrix1, A, k, M, i, block_size_k, block_size_i);
                 load_block(zeroload_matrix2, B, k, N, j, block_size_k, block_size_j);
-
                 for (int k1 = k; k1 < k+block_size_k; ++k1) {
                     const int temp_kloc = (k1 - k) * block_size_j;
                     float r1_row[block_size_i];
                     memcpy(r1_row, zeroload_matrix1 + (k1 - k) * block_size_i, block_size_i * sizeof(float));
-
                     for (int i1 = i; i1 < i+block_size_i; ++i1) {
-
                         const int result_iter_loc = (i1 - i) * block_size_j;
                         for (int j1 = j; j1 < j + block_size_j; ++j1) {
-
                             kernel_result[result_iter_loc + j1 - j] += r1_row[i1 - i] * zeroload_matrix2[temp_kloc + j1 - j];  
-
                         }
-
                     }
                 }
                 //------------------kernel----------------------------
-                // k += block_size_k;
-                // if (k_switch) {
-                //     block_size_k = std_block_size_k;
-                //     k_switch = false;
-                // } else if (k == block_range_k) {
-                //     block_size_k = k_res;
-                //     k_switch = true;
-                // }
+
             }
             for (int row = 0; row < block_size_i; ++row) {
                 memcpy(&C[(i + row) * N + j], &kernel_result[row * block_size_j], block_size_j * sizeof(float));
             }
-            // j += block_size_j;
-            // if (j_switch) {
-            //     block_size_j = std_block_size_j;
-            //     j_switch = false;
-            // } else if (j == block_range_j) {
-            //     block_size_j = j_res;
-            //     j_switch = true;
-            // }
         }
-        // i += block_size_i;
-        // if (i_switch) {
-        //     block_size_i = std_block_size_i;
-        //     i_switch = false;
-        // } else if (i == block_range_i) {
-        //     block_size_i = i_res;
-        //     i_switch = true;
-        // }
     }
-    // free(zeroload_matrix1);
-    // free(zeroload_matrix2);
-    // free(kernel_result);
-    // END YOUR CODE
-    // size_t M = m, K = n, N = input_k;
-
-    // for (size_t i = 0; i < M; ++i) {
-    //     for (size_t j = 0; j < N; ++j) {
-    //         for (size_t k = 0; k < K; ++k) {
-    //             C[i * N + j] += A[k * M + i] * B[k * N + j];
-    //         }
-    //     }
-    // }
 }
 
 /**
@@ -412,17 +275,20 @@ void matrix_dot_trans(const float *A, const float *B, float *C, size_t m, size_t
  *     B (const float*): Matrix of size k * n
  *     C (float*): Matrix of size m * k
  **/
-void matrix_trans_dot(const float *A, const float *B, float *C, size_t m, size_t n, size_t input_k, int* block_sizes, float** assist_spaces)
+void matrix_trans_dot(const float *__restrict A, const float *__restrict B, float *__restrict C, size_t m, size_t n, size_t input_k, int* block_sizes, float** assist_spaces)
 {
     int M = m, K = n, N = input_k; 
     int block_size_i = block_sizes[0], block_size_k = block_sizes[1], block_size_j = block_sizes[2];
-    float* zeroload_matrix1 = assist_spaces[0];
-    float* zeroload_matrix2 = assist_spaces[1];
-    float* kernel_result = assist_spaces[2];
+    
+    float* __restrict zeroload_matrix1 = assist_spaces[0];
+    float* __restrict zeroload_matrix2 = assist_spaces[1];
+    float* __restrict kernel_result = assist_spaces[2];
+
     for (int i = 0; i < M; i += block_size_i) {
         for (int j = 0; j < N; j += block_size_j) {
             memset(kernel_result, 0, block_size_i * block_size_j * sizeof(float));
             for (int k = 0; k < K; k += block_size_k) {
+
                 //------------------kernel----------------------------
                 load_block(zeroload_matrix1, A, i, K, k, block_size_i, block_size_k);
                 load_block(zeroload_matrix2, B, j, K, k, block_size_j, block_size_k);
@@ -437,6 +303,7 @@ void matrix_trans_dot(const float *A, const float *B, float *C, size_t m, size_t
                     }
                 }
                 //------------------kernel----------------------------
+
             }
             for (int row = 0; row < block_size_i; ++row) {
                 memcpy(&C[(i + row) * N + j], &kernel_result[row * block_size_j], block_size_j * sizeof(float));
@@ -453,7 +320,7 @@ void matrix_trans_dot(const float *A, const float *B, float *C, size_t m, size_t
  *     A (float*): Matrix of size m * n
  *     B (const float*): Matrix of size m * n
  **/
-void matrix_minus(float *A, const float *B, size_t m, size_t n)
+void matrix_minus(float *__restrict A, const float *__restrict B, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
     size_t range = m * n;
@@ -473,7 +340,7 @@ void matrix_minus(float *A, const float *B, size_t m, size_t n)
  *     C (float*): Matrix of size m * n
  *     scalar (float)
  **/
-void matrix_mul_scalar(float *C, float scalar, size_t m, size_t n)
+void matrix_mul_scalar(float *__restrict C, float scalar, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
     size_t range = m * n;
@@ -492,7 +359,7 @@ void matrix_mul_scalar(float *C, float scalar, size_t m, size_t n)
  *     C (float*): Matrix of size m * n
  *     scalar (float)
  **/
-void matrix_div_scalar(float *C, float scalar, size_t m, size_t n)
+void matrix_div_scalar(float *__restrict C, float scalar, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
     scalar = 1 / scalar;
@@ -511,7 +378,7 @@ void matrix_div_scalar(float *C, float scalar, size_t m, size_t n)
  * Args:
  *     C (float*): Matrix of size m * n
  **/
-void matrix_softmax_normalize(float *C, size_t m, size_t n)
+void matrix_softmax_normalize(float *__restrict C, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
     // float curC[n];
@@ -544,7 +411,7 @@ void matrix_softmax_normalize(float *C, size_t m, size_t n)
  * Args:
  *     C (float*): Matrix of size m * n
  **/
-void vector_to_one_hot_matrix(const unsigned char *y, float *Y, size_t m, size_t n)
+void vector_to_one_hot_matrix(const unsigned char *__restrict y, float *__restrict Y, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
     while (m > 0) {
@@ -577,7 +444,7 @@ void vector_to_one_hot_matrix(const unsigned char *y, float *Y, size_t m, size_t
  * Returns:
  *     (None)
  */
-void softmax_regression_epoch_cpp(const float *X, const unsigned char *y, float *theta,
+void softmax_regression_epoch_cpp(const float *__restrict X, const unsigned char *__restrict y, float *__restrict theta,
                                  size_t m, size_t n, size_t k, float lr, size_t batch)
 {
     // BEGIN YOUR CODE 
@@ -702,7 +569,7 @@ void train_softmax(const DataSet *train_data, const DataSet *test_data, size_t n
  *Returns:
  *    Average softmax loss over the sample.
  */
-float mean_softmax_loss(const float *result, const unsigned char *labels_array, size_t images_num, size_t num_classes)
+float mean_softmax_loss(const float *__restrict result, const unsigned char *__restrict labels_array, size_t images_num, size_t num_classes)
 {
     // BEGIN YOUR CODE
     float res = 0.0f;
@@ -730,7 +597,7 @@ float mean_softmax_loss(const float *result, const unsigned char *labels_array, 
  *Returns:
  *    Average error over the sample.
  */
-float mean_err(float *result, const unsigned char *labels_array, size_t images_num, size_t num_classes)
+float mean_err(float *__restrict result, const unsigned char *__restrict labels_array, size_t images_num, size_t num_classes)
 {
     // BEGIN YOUR CODE
     float res = 0.0f;
@@ -759,7 +626,7 @@ float mean_err(float *result, const unsigned char *labels_array, size_t images_n
  *     A (float*): Matrix of size m * n
  *     B (const float*): Matrix of size m * n
  **/
-void matrix_mul(float *A, const float *B, size_t size) {    
+void matrix_mul(float *__restrict A, const float *__restrict B, size_t size) {    
     while (size > 0) {
         (*A) *= (*B);
         ++A;
@@ -775,7 +642,7 @@ void matrix_mul(float *A, const float *B, size_t size) {
  *     A (float*): Matrix of size m * n
  *     B (const float*): Masking Matrix of size m * n
  **/
-void matrix_masking(float *A, const float *B, size_t size) {    
+void matrix_masking(float *__restrict A, const float *__restrict B, size_t size) {    
     while (size > 0) {
         (*A) = ((*B) > 0) ? (*A) : 0;
         ++A;
@@ -790,7 +657,7 @@ void matrix_masking(float *A, const float *B, size_t size) {
  * Args:
  *     A (const float*): Matrix of size m * n
  **/
-void relu(float *A, size_t m, size_t n) {
+void relu(float *__restrict A, size_t m, size_t n) {
     size_t range = m * n;
     while (range > 0) {
         (*A) = ((*A) > 0) ? (*A) : 0;
@@ -820,7 +687,7 @@ Args:
     lr (float): step size (learning rate) for SGD
     batch (int): size of SGD minibatch
 */
-void nn_epoch_cpp(const float *X, const unsigned char *y, float *W1, float *W2, size_t m, size_t n, size_t l, size_t k, float lr, size_t batch)
+void nn_epoch_cpp(const float *__restrict X, const unsigned char *__restrict y, float *__restrict W1, float *__restrict W2, size_t m, size_t n, size_t l, size_t k, float lr, size_t batch)
 {
     // BEGIN YOUR CODE
     float X_b[batch * n];
@@ -862,6 +729,7 @@ void nn_epoch_cpp(const float *X, const unsigned char *y, float *W1, float *W2, 
         matrix_minus(Z2, Y, batch, k); // Z2 = Z2 - Y
         matrix_trans_dot(Z2, W2, G1, batch, k, l, block_sizes + 6, assist_sapces + 6); //
         matrix_masking(G1, Z1, batch * l);
+
         matrix_dot_trans(X_b, G1, W1_l, n, batch, l, block_sizes + 9, assist_sapces + 9); //
         matrix_dot_trans(Z1, Z2, W2_l, l, batch, k, block_sizes + 12, assist_sapces + 12); //
         matrix_mul_scalar(W1_l, lr / batch, n, l);
@@ -929,8 +797,7 @@ void train_nn(const DataSet *train_data, const DataSet *test_data, size_t num_cl
         memset(test_temp, 0, m_test * l * sizeof(float));
         memset(test_result, 0, m_test * k * sizeof(float));
 
-        nn_epoch_cpp(train_data->images_matrix, train_data->labels_array, W1, W2,
-                        m_train, n, l, k, lr, batch);
+        nn_epoch_cpp(train_data->images_matrix, train_data->labels_array, W1, W2, m_train, n, l, k, lr, batch);
 
         matrix_dot(train_data->images_matrix, W1, train_temp, m_train, n ,l, block_sizes, assist_sapces);
         relu(train_temp, m_train, l);
