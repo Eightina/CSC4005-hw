@@ -5,9 +5,9 @@ void matrix_dot_openacc(const float *A, const float *B,
 {
     // BEGIN YOUR CODE
     size_t M = m, K = n, N = input_k;    
-    #pragma acc data copyin(A[0:M * K], B[0:K * N], C[0:M * N]) copyout(C[0:M * N])
+    // #pragma acc data copyin(A[0:M * K], B[0:K * N], C[0:M * N]) copyout(C[0:M * N])
     // #pragma acc data present(A[0:M * K], B[0:K * N], C[0:M * N]) copyout(C[0:M * N])
-    // #pragma acc data present(A[0:M * K], B[0:K * N], C[0:M * N])
+    #pragma acc data present(A[0:M * K], B[0:K * N], C[0:M * N])
     // #pragma acc update device(A[0:M * K], B[0:K * N], C[0:M * N])
     {
     #pragma acc region
@@ -49,8 +49,8 @@ void matrix_dot_trans_openacc(const float *A, const float *B, float *C, size_t m
 {
     // BEGIN YOUR CODE
     size_t M = m, K = n, N = input_k;
-    #pragma acc data copyin(A[0:M * K], B[0:K * N], C[0:M * N]) copyout(C[0:M * N])
-    // #pragma acc data present(A[0:M * K], B[0:K * N], C[0:M * N])
+    // #pragma acc data copyin(A[0:M * K], B[0:K * N], C[0:M * N]) copyout(C[0:M * N])
+    #pragma acc data present(A[0:M * K], B[0:K * N], C[0:M * N])
     {
     #pragma acc region
     {
@@ -125,23 +125,23 @@ void matrix_minus_openacc(float *A, const float *B, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
     // #pragma acc data present(A[0:m * n], B[0:m * n])
-    size_t range = m * n;
-    // #pragma acc parallel loop present(A[0:range], B[0:range])
-    // for (size_t i = 0; i < range; ++i) {
-    //     A[i] = A[i] -  B[i];
-    // }
+    const size_t range = m * n;
+    #pragma acc parallel loop present(A[0:range], B[0:range])
+    for (size_t i = 0; i < range; ++i) {
+        A[i] = A[i] -  B[i];
+    }
     // #pragma acc data copyin(A[0:range], B[0:range]) copyout(A[0:range])
     // #pragma acc parallel loop present(vec[0:len])
     // {
     // #pragma acc region
     // {
-        #pragma acc loop independent
-        while (range > 0) {
-            (*A) -= (*B);
-            --range;
-            ++A;
-            ++B;
-        }
+        // #pragma acc loop independent
+        // while (range > 0) {
+        //     (*A) -= (*B);
+        //     --range;
+        //     ++A;
+        //     ++B;
+        // }
         // #pragma acc update device(A[0:m * n])
     // }
     // }
@@ -151,14 +151,18 @@ void matrix_minus_openacc(float *A, const float *B, size_t m, size_t n)
 void matrix_mul_scalar_openacc(float *C, float scalar, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
+    const size_t range = m * n;
+    // #pragma acc loop independent
     // #pragma acc data present(C[0:m * n])
-    size_t range = m * n;
-    #pragma acc loop independent
-    while (range > 0) {
-        (*C) *= scalar;
-        --range;
-        ++C;
+    #pragma acc parallel loop present(C[0:range])
+    for (size_t i = 0; i < range; ++i) {
+        C[i] = C[i] * scalar;
     }
+    // while (range > 0) {
+    //     (*C) *= scalar;
+    //     --range;
+    //     ++C;
+    // }
     // END YOUR CODE
 }
 
@@ -168,20 +172,24 @@ void matrix_div_scalar_openacc(float *C, float scalar, size_t m, size_t n)
     // #pragma acc data present(C[0:m * n])
     scalar = 1 / scalar;
     size_t range = m * n;
-    #pragma acc loop independent
-    while (range > 0) {
-        (*C) *= scalar;
-        --range;
-        ++C;
+    // #pragma acc loop independent
+    #pragma acc parallel loop present(C[0:range])
+    for (size_t i = 0; i < range; ++i) {
+        C[i] = C[i] * scalar;
     }
+    // while (range > 0) {
+    //     (*C) *= scalar;
+    //     --range;
+    //     ++C;
+    // }
     // END YOUR CODE
 }
 
 void matrix_softmax_normalize_openacc(float *C, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-    #pragma acc loop independent 
-    // #pragma acc parallel loop present(C[0:m * n])
+    // #pragma acc loop independent 
+    #pragma acc parallel loop present(C[0:m * n])
     for (size_t i = 0; i < m; ++i) {
         const size_t rowloc = n * i;
         float* curC = C + rowloc;
@@ -204,19 +212,21 @@ void matrix_softmax_normalize_openacc(float *C, size_t m, size_t n)
 void vector_to_one_hot_matrix_openacc(const unsigned char *y, float *Y, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-    #pragma acc loop independent
     // #pragma acc data present(y[0:m], Y[0:m * n])
-    while (m > 0) {
-        *(Y + (*y)) = 1;
-        --m;
-        ++y;
-        Y += n;
-    }
-    // #pragma acc update device(Y[0:m * n])
-    // #pragma acc parallel loop present(y[0:m], Y[0:m * n])
-    // for (int i = 0; i < m; ++i) {
-    //     Y[i * n + y[i]] = 1;
+
+    // while (m > 0) {
+    // #pragma acc loop independent
+    //     *(Y + (*y)) = 1;
+    //     --m;
+    //     ++y;
+    //     Y += n;
     // }
+
+    // #pragma acc update device(Y[0:m * n])
+    #pragma acc parallel loop present(y[0:m], Y[0:m * n])
+    for (int i = 0; i < m; ++i) {
+        Y[i * n + y[i]] = 1;
+    }
     // END YOUR CODE
 }
 
@@ -226,45 +236,58 @@ void softmax_regression_epoch_openacc(const float *X, const unsigned char *y,
 {
    // BEGIN YOUR CODE 
     const float batchxlr = lr / batch;
-    unsigned char cur_y[batch];
-    float X_b[batch * n];
+    // unsigned char cur_y[batch];
+    // float X_b[batch * n];
+    const float* X_b;
+    const unsigned char* cur_y;
     float Z[batch * k];
     float gd[n * k];
     float Y[batch * k];
     
     for (int i = 0; i < m; i += batch) {
-        memset(Z, 0, batch * k * sizeof(float));
-        memset(gd, 0, n * k * sizeof(float));
+        // memset(Z, 0, batch * k * sizeof(float));
+        // memset(gd, 0, n * k * sizeof(float));
+        cur_y = y + i;
+        X_b = X + i * n;
         memset(Y, 0, batch * k * sizeof(float));
 
-        memcpy(cur_y, y + i, batch * sizeof(unsigned char)); 
-        memcpy(X_b, X + i * n, batch * n * sizeof(float));
+        // memcpy(cur_y, y + i, batch * sizeof(unsigned char)); 
+        
+        // memcpy(X_b, X + i * n, batch * n * sizeof(float));
+                                // copyout(Z[0:batch * k], Y[0:batch * k], theta[0:n * k])
         // #pragma acc data copyin(X_b[0:batch * n], theta[0:n * k], Z[0:batch * k],\
-        //                             cur_y[0:batch], Y[0:batch * k])\
-        //                         copyout(Z[0:batch * k], Y[0:batch * k])
+        //                             cur_y[0:batch], Y[0:batch * k], gd[0:n * k])\
+        //                 copyout(theta[0:n * k])
+        // {
+        #pragma acc data copyin(X_b[0:batch * n], theta[0:n * k], Z[0:batch * k])
         {
         matrix_dot_openacc(X_b, theta, Z, batch, n, k); 
         matrix_softmax_normalize_openacc(Z, batch, k);
         // #pragma acc data copyin(cur_y[0:batch], Y[0:batch * k])
+        #pragma acc data copyin(cur_y[0:batch], Y[0:batch * k])
+        {
         vector_to_one_hot_matrix_openacc(cur_y, Y, batch, k);
         // #pragma acc update device(Y[0:batch * k])
         
         matrix_minus_openacc(Z, Y, batch, k);
         // #pragma acc update device(Z[0:batch * n])
+        // }
         }
         
         // #pragma acc data copyin(gd[0:n * k])
         // #pragma acc data copyin(X_b[0:batch * n], Z[0:batch * k], gd[0:n * k]) copyout(gd[0:n * k])
+        #pragma acc data copyin(gd[0:n * k])
         {
         matrix_dot_trans_openacc(X_b, Z, gd, n, batch, k); // n*100 * 100*k
-        }
         matrix_mul_scalar_openacc(gd, batchxlr, n, k);
 
         // #pragma acc data copyin(theta[0:n * k], gd[0:n * k]) copyout(theta[0:n * k])
-        {
+        // {
         matrix_minus_openacc(theta, gd, n, k);
-        // #pragma acc update device(theta[0:n * k])
+        #pragma acc update host(theta[0:n * k])
         }
+        }
+        // }
     }
     // END YOUR CODE
 }
@@ -304,19 +327,19 @@ void train_softmax_openacc(const DataSet *train_data, const DataSet *test_data, 
     auto start_time = std::chrono::high_resolution_clock::now();
     for (size_t epoch = 0; epoch < epochs; epoch++)
     {
-        memset(train_result, 0, train_data->images_num * num_classes * sizeof(float));
-        memset(test_result, 0, test_data->images_num * num_classes * sizeof(float));
+        // memset(train_result, 0, train_data->images_num * num_classes * sizeof(float));
+        // memset(test_result, 0, test_data->images_num * num_classes * sizeof(float));
         // #pragma acc update(train_result[0:size_tr], test_result[0:size_te])
 
         softmax_regression_epoch_openacc(train_images, train_labels, theta,
                                         m_train, n_train, k, lr, batch);
         // #pragma acc data copyin(train_data->images_matrix[0:m_train * n_train], theta[0:n_train * k], train_result[0:m_train * k])
-        // #pragma acc data copyin(train_images[0:m_train * n_train], theta[0:n_train * k], train_result[0:m_train * k]) copyout(train_result[0:m_train * k])
+        #pragma acc data copyin(train_images[0:m_train * n_train], theta[0:n_train * k], train_result[0:m_train * k]) copyout(train_result[0:m_train * k])
         {
         matrix_dot_openacc(train_images, theta, train_result, m_train, n_train ,k);
         }
         // #pragma acc data copyin(test_data->images_matrix[0:m_test * n_test], theta[0:n_test * k], test_result[0:m_test * k])
-        // #pragma acc data copyin(test_images[0:m_test * n_test], theta[0:n_test * k], test_result[0:m_test * k]) copyout(test_result[0:m_test * k])
+        #pragma acc data copyin(test_images[0:m_test * n_test], theta[0:n_test * k], test_result[0:m_test * k]) copyout(test_result[0:m_test * k])
         {
         matrix_dot_openacc(test_images, theta, test_result, m_test, n_test ,k);
         }
@@ -431,7 +454,10 @@ void relu_openacc(float *__restrict A, size_t m, size_t n) {
 void nn_epoch_openacc(const float *X, const unsigned char *y, float *W1, float *W2, size_t m, size_t n, size_t l, size_t k, float lr, size_t batch)
 {
     // BEGIN YOUR CODE
-    float X_b[batch * n];
+    // float X_b[batch * n];
+    // unsigned char cur_y[batch];
+    const float* X_b;
+    const unsigned char* cur_y;
     float Z1[batch * l];
     float G1[batch * l];
     // float h_Z1_exp[batch * k];
@@ -439,17 +465,19 @@ void nn_epoch_openacc(const float *X, const unsigned char *y, float *W1, float *
     float Y[batch * k];
     float W1_l[n * l];
     float W2_l[l * k];
-    unsigned char cur_y[batch];
 
     for (int i = 0; i < m; i += batch) {
-        memset(Z1, 0, batch * l * sizeof(float));
-        memset(Z2, 0, batch * k * sizeof(float));
-        memset(G1, 0, batch * l * sizeof(float));
+        // memset(Z1, 0, batch * l * sizeof(float));
+        // memset(Z2, 0, batch * k * sizeof(float));
+        // memset(G1, 0, batch * l * sizeof(float));
+        // memset(W1_l, 0, n * l * sizeof(float));
+        // memset(W2_l, 0, l * k * sizeof(float));
+
         memset(Y, 0, batch * k * sizeof(float));
-        memset(W1_l, 0, n * l * sizeof(float));
-        memset(W2_l, 0, l * k * sizeof(float));
-        memcpy(cur_y, y + i, batch * sizeof(unsigned char)); 
-        memcpy(X_b, X + i * n, batch * n * sizeof(float));
+        cur_y = y + i;
+        X_b = X + i * n;
+        // memcpy(cur_y, y + i, batch * sizeof(unsigned char)); 
+        // memcpy(X_b, X + i * n, batch * n * sizeof(float));
 
         matrix_dot_openacc(X_b, W1, Z1, batch, n, l); //
         relu_openacc(Z1, batch, l);
