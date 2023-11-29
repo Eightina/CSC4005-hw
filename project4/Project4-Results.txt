@@ -2,14 +2,15 @@ Current directory: /nfsmnt/223040076/coursecode/project4
 Softmax OpenACC
 Training softmax regression (GPU)
 | Epoch | Train Loss | Train Err | Test Loss | Test Err |
-hostptr=0x7ffd902258a0,stride=1,size=1000,extent=-1,eltsize=4,name=C,flags=0x200=present,async=-1,threadid=1
-Present table dump for device[1]: NVIDIA Tesla GPU 0, compute capability 7.5, threadid=1
-...empty...
-deleted block   device:0x7f029db4e600 size:4096 threadid=1 
-deleted block   device:0x7f029db46a00 size:31744 threadid=1 
-deleted block   device:0x7f029dafa000 size:313856 threadid=1 
-FATAL ERROR: data in PRESENT clause was not found on device 1: name=C host:0x7ffd902258a0
- file:/nfsmnt/223040076/coursecode/project4/src/simple_ml_openacc.cpp _Z32matrix_softmax_normalize_openaccPfmm line:153
-
-srun: error: node32: task 0: Exited with exit code 1
+|     0 |    0.35134 |   0.10182 |   0.33588 |  0.09400 |
+|     1 |    0.32142 |   0.09268 |   0.31086 |  0.08730 |
+|     2 |    0.30802 |   0.08795 |   0.30097 |  0.08550 |
+|     3 |    0.29987 |   0.08532 |   0.29558 |  0.08370 |
+|     4 |    0.29415 |   0.08323 |   0.29215 |  0.08230 |
+|     5 |    0.28980 |   0.08182 |   0.28973 |  0.08090 |
+|     6 |    0.28633 |   0.08085 |   0.28793 |  0.08080 |
+|     7 |    0.28345 |   0.07997 |   0.28651 |  0.08040 |
+|     8 |    0.28099 |   0.07923 |   0.28537 |  0.08010 |
+|     9 |    0.27886 |   0.07847 |   0.28442 |  0.07970 |
+Execution Time: 3877 milliseconds
 

@@ -25,9 +25,9 @@ void softmax_regression_epoch_openacc(const float *X, const unsigned char *y,
 
 void train_softmax_openacc(const DataSet *train_data, const DataSet *test_data, size_t num_classes, size_t epochs = 10, float lr = 0.5, size_t batch = 100);
 
-float mean_softmax_loss_openacc(const float *result, const unsigned char *labels_array, size_t images_num, size_t num_classes);
+void mean_softmax_loss_openacc(const float *result, const unsigned char *labels_array, size_t images_num, size_t num_classes, float* loss);
 
-float mean_err_openacc(const float *result, const unsigned char *labels_array, size_t images_num, size_t num_classes);
+void mean_err_openacc(const float *result, const unsigned char *labels_array, size_t images_num, size_t num_classes, float* err);
 
 void matrix_mul_openacc(float *A, const float *B, size_t size);
 

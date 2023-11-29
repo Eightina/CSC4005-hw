@@ -5,8 +5,8 @@ void matrix_dot_openacc(const float *A, const float *B,
 {
     // BEGIN YOUR CODE
     size_t M = m, K = n, N = input_k;    
-    // #pragma acc data copyin(A[0:M * K], B[0:K * N], C[0:M * N]) copyout(C[0:M * N])
-    #pragma acc data present(A[0:M * K], B[0:K * N], C[0:M * N])
+    #pragma acc data copyin(A[0:M * K], B[0:K * N], C[0:M * N]) copyout(C[0:M * N])
+    // #pragma acc data present(A[0:M * K], B[0:K * N], C[0:M * N])
     // #pragma acc update device(A[0:M * K], B[0:K * N], C[0:M * N])
     {
     #pragma acc region
@@ -48,8 +48,8 @@ void matrix_dot_trans_openacc(const float *A, const float *B, float *C, size_t m
 {
     // BEGIN YOUR CODE
     size_t M = m, K = n, N = input_k;
-    // #pragma acc data copyin(A[0:M * K], B[0:K * N], C[0:M * N]) copyout(C[0:M * N])
-    #pragma acc data present(A[0:M * K], B[0:K * N], C[0:M * N])
+    #pragma acc data copyin(A[0:M * K], B[0:K * N], C[0:M * N]) copyout(C[0:M * N])
+    // #pragma acc data present(A[0:M * K], B[0:K * N], C[0:M * N])
     {
     #pragma acc region
     {
@@ -102,7 +102,7 @@ void matrix_trans_dot_openacc(const float *A, const float *B, float *C, size_t m
 void matrix_minus_openacc(float *A, const float *B, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-    #pragma acc data present(A[0:m * n], B[0:m * n])
+    // #pragma acc data present(A[0:m * n], B[0:m * n])
     // #pragma acc data copyin(A[0:m * n], B[0:m * n]) copyout(A[0:m * n])
     {
     // #pragma acc region
@@ -123,7 +123,7 @@ void matrix_minus_openacc(float *A, const float *B, size_t m, size_t n)
 void matrix_mul_scalar_openacc(float *C, float scalar, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-    #pragma acc data present(C[0:m * n])
+    // #pragma acc data present(C[0:m * n])
     size_t range = m * n;
     #pragma acc loop independent
     while (range > 0) {
@@ -137,7 +137,7 @@ void matrix_mul_scalar_openacc(float *C, float scalar, size_t m, size_t n)
 void matrix_div_scalar_openacc(float *C, float scalar, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-    #pragma acc data present(C[0:m * n])
+    // #pragma acc data present(C[0:m * n])
     scalar = 1 / scalar;
     size_t range = m * n;
     #pragma acc loop independent
@@ -152,7 +152,7 @@ void matrix_div_scalar_openacc(float *C, float scalar, size_t m, size_t n)
 void matrix_softmax_normalize_openacc(float *C, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-    #pragma acc data present(C[0:m * n])
+    // #pragma acc data present(C[0:m * n])
     #pragma acc loop independent 
     for (size_t i = 0; i < m; ++i) {
         const size_t rowloc = n * i;
@@ -176,7 +176,7 @@ void matrix_softmax_normalize_openacc(float *C, size_t m, size_t n)
 void vector_to_one_hot_matrix_openacc(const unsigned char *y, float *Y, size_t m, size_t n)
 {
     // BEGIN YOUR CODE
-    #pragma acc data present(y[0:m], Y[0:m * n])
+    // #pragma acc data present(y[0:m], Y[0:m * n])
     #pragma acc loop independent
     while (m > 0) {
         *(Y + (*y)) = 1;
@@ -206,18 +206,18 @@ void softmax_regression_epoch_openacc(const float *X, const unsigned char *y,
 
         memcpy(cur_y, y + i, batch * sizeof(unsigned char)); 
         memcpy(X_b, X + i * n, batch * n * sizeof(float));
-        #pragma acc data copyin(X_b[0:batch * n], theta[0:n * k], Z[0:batch * k])
+        // #pragma acc data copyin(X_b[0:batch * n], theta[0:n * k], Z[0:batch * k])
         matrix_dot_openacc(X_b, theta, Z, batch, n, k); 
         matrix_softmax_normalize_openacc(Z, batch, k);
-        #pragma acc data copyin(cur_y[0:batch], Y[0:batch * k])
+        // #pragma acc data copyin(cur_y[0:batch], Y[0:batch * k])
         vector_to_one_hot_matrix_openacc(cur_y, Y, batch, k);
         
         matrix_minus_openacc(Z, Y, batch, k);
-        #pragma acc data copyin(gd[0:n * k])
+        // #pragma acc data copyin(gd[0:n * k])
         matrix_dot_trans_openacc(X_b, Z, gd, n, batch, k); // n*100 * 100*k
         matrix_mul_scalar_openacc(gd, batchxlr, n, k);
         matrix_minus_openacc(theta, gd, n, k);
-        #pragma acc data copyout(theta[0:n * k])
+        // #pragma acc data copyout(theta[0:n * k])
     }
     // END YOUR CODE
 }
@@ -227,6 +227,10 @@ void train_softmax_openacc(const DataSet *train_data, const DataSet *test_data, 
     /*
     Example function to fully train a softmax regression classifier
     */
+    // float* train_images = train_data->images_matrix;
+    // float* test_images = test_data->images_matrix;
+    unsigned char* train_labels = train_data->labels_array;
+    unsigned char* test_labels = test_data->labels_array;
     size_t size = train_data->input_dim * num_classes;
     float *theta = new float[size];
     memset(theta, 0, size * sizeof(float));
@@ -234,7 +238,8 @@ void train_softmax_openacc(const DataSet *train_data, const DataSet *test_data, 
     size_t size_te = test_data->images_num * num_classes;
     float *train_result = new float[size_tr];
     float *test_result = new float[size_te];
-    float train_loss, train_err, test_loss, test_err;
+    // float train_loss, train_err, test_loss, test_err;
+    float *loss_errs = new float[4];
     std::cout << "| Epoch | Train Loss | Train Err | Test Loss | Test Err |" << std::endl;
     std::chrono::milliseconds elapsed_time;
     // BEGIN YOUR CODE
@@ -253,22 +258,22 @@ void train_softmax_openacc(const DataSet *train_data, const DataSet *test_data, 
 
         softmax_regression_epoch_openacc(train_data->images_matrix, train_data->labels_array, theta,
                                         m_train, n_train, k, lr, batch);
-        #pragma acc data copyin(train_data->images_matrix[0:m_train * n_train], theta[0:n_train * k], train_result[0:m_train * k])
+        // #pragma acc data copyin(train_data->images_matrix[0:m_train * n_train], theta[0:n_train * k], train_result[0:m_train * k])
         matrix_dot_openacc(train_data->images_matrix, theta, train_result, m_train, n_train ,k);
 
-        #pragma acc data copyin(test_data->images_matrix[0:m_test * n_test], theta[0:n_test * k], test_result[0:m_test * k])
+        // #pragma acc data copyin(test_data->images_matrix[0:m_test * n_test], theta[0:n_test * k], test_result[0:m_test * k])
         matrix_dot_openacc(test_data->images_matrix, theta, test_result, m_test, n_test ,k);
 
-        #pragma acc data copyin(train_data->labels_array[0:m_train], test_data->labels_array[0:m_test])
-        train_loss = mean_softmax_loss_openacc(train_result, train_data->labels_array, train_data->images_num, num_classes);
-        test_loss = mean_softmax_loss_openacc(test_result, test_data->labels_array, test_data->images_num, num_classes);
-        train_err = mean_err_openacc(train_result, train_data->labels_array, train_data->images_num, num_classes);
-        test_err = mean_err_openacc(test_result, test_data->labels_array, test_data->images_num, num_classes);
+        // #pragma acc data copyin(train_data->labels_array[0:m_train], test_data->labels_array[0:m_test])
+        mean_softmax_loss_openacc(train_result, train_labels, train_data->images_num, num_classes, loss_errs);
+        mean_err_openacc(train_result, train_labels, train_data->images_num, num_classes, loss_errs + 1);
+        mean_softmax_loss_openacc(test_result, test_labels, test_data->images_num, num_classes, loss_errs + 2);
+        mean_err_openacc(test_result, test_labels, test_data->images_num, num_classes, loss_errs + 3);
         std::cout << "|  " << std::setw(4) << std::right << epoch << " |    "
-                  << std::fixed << std::setprecision(5) << train_loss << " |   "
-                  << std::fixed << std::setprecision(5) << train_err << " |   "
-                  << std::fixed << std::setprecision(5) << test_loss << " |  "
-                  << std::fixed << std::setprecision(5) << test_err << " |" << std::endl;
+                  << std::fixed << std::setprecision(5) << loss_errs[0] << " |   "
+                  << std::fixed << std::setprecision(5) << loss_errs[1] << " |   "
+                  << std::fixed << std::setprecision(5) << loss_errs[2] << " |  "
+                  << std::fixed << std::setprecision(5) << loss_errs[3] << " |" << std::endl;
     }
     auto end_time = std::chrono::high_resolution_clock::now();
     elapsed_time =
@@ -283,10 +288,10 @@ void train_softmax_openacc(const DataSet *train_data, const DataSet *test_data, 
     delete[] test_result;
 }
 
-float mean_softmax_loss_openacc(const float *result, const unsigned char *labels_array, size_t images_num, size_t num_classes)
+void mean_softmax_loss_openacc(const float *result, const unsigned char *labels_array, size_t images_num, size_t num_classes, float* loss)
 {
     // BEGIN YOUR CODE
-    #pragma acc data present(result[0:images_num * num_classes], labels_array[0:images_num])
+    // #pragma acc data present(result[0:images_num * num_classes], labels_array[0:images_num])
     float res = 0.0f;
     #pragma acc loop independent
     for (int i = 0; i < images_num; ++i) {
@@ -298,14 +303,16 @@ float mean_softmax_loss_openacc(const float *result, const unsigned char *labels
         }
         res += -row_correct + log(row_exp_sum);
     }
-    return res / images_num;
+    res /= images_num;
+    (*loss) = res;
+    // return ;
     // END YOUR CODE
 }
 
-float mean_err_openacc(const float *result, const unsigned char *labels_array, size_t images_num, size_t num_classes)
+void mean_err_openacc(const float *result, const unsigned char *labels_array, size_t images_num, size_t num_classes, float* err)
 {
     // BEGIN YOUR CODE
-    #pragma acc data present(result[0:images_num * num_classes], labels_array[0:images_num])
+    // #pragma acc data present(result[0:images_num * num_classes], labels_array[0:images_num])
     float res = 0.0f;
     #pragma acc loop independent
     for (int i = 0; i < images_num; ++i) {
@@ -321,14 +328,15 @@ float mean_err_openacc(const float *result, const unsigned char *labels_array, s
         }
         res += (row_max_idx == labels_array[i]) ? (0) : (1);
     }
-    return res / images_num;
+    res /= images_num;
+    (*err) = res;
     // END YOUR CODE
 }
 
 void matrix_mul_openacc(float *A, const float *B, size_t size)
 {
     // BEGIN YOUR CODE
-    #pragma acc data present(A[0:size], B[0:size])
+    // #pragma acc data present(A[0:size], B[0:size])
     #pragma acc loop independent
     while (size > 0) {
         (*A) *= (*B);
@@ -348,6 +356,10 @@ void nn_epoch_openacc(const float *X, const unsigned char *y, float *W1, float *
 
 void train_nn_openacc(const DataSet *train_data, const DataSet *test_data, size_t num_classes, size_t hidden_dim, size_t epochs, float lr, size_t batch)
 {
+    // float* train_images = train_data->images_matrix;
+    // float* test_images = test_data->images_matrix;
+    unsigned char* train_labels = train_data->labels_array;
+    unsigned char* test_labels = test_data->labels_array;
     size_t size_w1 = train_data->input_dim * hidden_dim;
     size_t size_w2 = hidden_dim * num_classes;
     float *W1 = new float[size_w1];
@@ -369,7 +381,11 @@ void train_nn_openacc(const DataSet *train_data, const DataSet *test_data, size_
     size_t size_te = test_data->images_num * num_classes;
     float *train_result = new float[size_tr];
     float *test_result = new float[size_te];
-    float train_loss, train_err, test_loss, test_err;
+    // float train_loss, train_err, test_loss, test_err;
+    float *loss_errs = new float[4];
+    for (int i = 0; i < 4; ++i) {
+        loss_errs[i] = 0.0f;
+    }
     std::cout << "| Epoch | Train Loss | Train Err | Test Loss | Test Err |" << std::endl;
     std::chrono::milliseconds elapsed_time;
     // BEGIN YOUR CODE
@@ -377,15 +393,15 @@ void train_nn_openacc(const DataSet *train_data, const DataSet *test_data, size_
     auto start_time = std::chrono::high_resolution_clock::now();
     for (size_t epoch = 0; epoch < epochs; epoch++)
     {
-        train_loss = mean_softmax_loss_openacc(train_result, train_data->labels_array, train_data->images_num, num_classes);
-        test_loss = mean_softmax_loss_openacc(test_result, test_data->labels_array, test_data->images_num, num_classes);
-        train_err = mean_err_openacc(train_result, train_data->labels_array, train_data->images_num, num_classes);
-        test_err = mean_err_openacc(test_result, test_data->labels_array, test_data->images_num, num_classes);
+        mean_softmax_loss_openacc(train_result, train_labels, train_data->images_num, num_classes, loss_errs);
+        mean_err_openacc(train_result, train_labels, train_data->images_num, num_classes, loss_errs + 1);
+        mean_softmax_loss_openacc(test_result, test_labels, test_data->images_num, num_classes, loss_errs + 2);
+        mean_err_openacc(test_result, test_labels, test_data->images_num, num_classes, loss_errs + 3);
         std::cout << "|  " << std::setw(4) << std::right << epoch << " |    "
-                  << std::fixed << std::setprecision(5) << train_loss << " |   "
-                  << std::fixed << std::setprecision(5) << train_err << " |   "
-                  << std::fixed << std::setprecision(5) << test_loss << " |  "
-                  << std::fixed << std::setprecision(5) << test_err << " |" << std::endl;
+                  << std::fixed << std::setprecision(5) << loss_errs[0] << " |   "
+                  << std::fixed << std::setprecision(5) << loss_errs[1] << " |   "
+                  << std::fixed << std::setprecision(5) << loss_errs[2] << " |  "
+                  << std::fixed << std::setprecision(5) << loss_errs[3] << " |" << std::endl;
     }
     auto end_time = std::chrono::high_resolution_clock::now();
     elapsed_time =
