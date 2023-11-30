@@ -251,32 +251,34 @@ void softmax_regression_epoch_openacc(const float *X, const unsigned char *y,
         X_b = X + i * n;
         memset(Y, 0, batch * k * sizeof(float));
 
-        #pragma acc data copyin(X_b[0:batch * n], theta[0:n * k], Z[0:batch * k])
+        #pragma acc data copyin(X_b[0:batch * n], theta[0:n * k], Z[0:batch * k],\
+                                 cur_y[0:batch], Y[0:batch * k], gd[0:n * k]\
+                                 )
         {
             matrix_dot_openacc(X_b, theta, Z, batch, n, k); 
             matrix_softmax_normalize_openacc(Z, batch, k);
             // #pragma acc data copyin(cur_y[0:batch], Y[0:batch * k])
-            #pragma acc data copyin(cur_y[0:batch], Y[0:batch * k])
-            {
-                vector_to_one_hot_matrix_openacc(cur_y, Y, batch, k);
+            // #pragma acc data copyin(cur_y[0:batch], Y[0:batch * k])
+            // {
+            vector_to_one_hot_matrix_openacc(cur_y, Y, batch, k);
                 // #pragma acc update device(Y[0:batch * k])
-                matrix_minus_openacc(Z, Y, batch, k);
+            matrix_minus_openacc(Z, Y, batch, k);
                 // #pragma acc update device(Z[0:batch * n])
                 // }
-            }
+            // }
             
             // #pragma acc data copyin(gd[0:n * k])
             // #pragma acc data copyin(X_b[0:batch * n], Z[0:batch * k], gd[0:n * k]) copyout(gd[0:n * k])
-            #pragma acc data copyin(gd[0:n * k])
-            {
-                matrix_dot_trans_openacc(X_b, Z, gd, n, batch, k); // n*100 * 100*k
-                matrix_mul_scalar_openacc(gd, batchxlr, n, k);
+            // #pragma acc data copyin(gd[0:n * k])
+            // {
+            matrix_dot_trans_openacc(X_b, Z, gd, n, batch, k); // n*100 * 100*k
+            matrix_mul_scalar_openacc(gd, batchxlr, n, k);
 
                 // #pragma acc data copyin(theta[0:n * k], gd[0:n * k]) copyout(theta[0:n * k])
                 // {
-                matrix_minus_openacc(theta, gd, n, k);
-                #pragma acc update host(theta[0:n * k])
-            }
+            matrix_minus_openacc(theta, gd, n, k);
+            #pragma acc update host(theta[0:n * k])
+            // }
         }
         // }
     }
@@ -301,7 +303,6 @@ void train_softmax_openacc(const DataSet *train_data, const DataSet *test_data, 
     float *test_result = new float[size_te];
     // float train_loss, train_err, test_loss, test_err;
     float *loss_errs = new float[4];
-    std::cout << "| Epoch | Train Loss | Train Err | Test Loss | Test Err |" << std::endl;
     // BEGIN YOUR CODE
 
     const int m_train = train_data->images_num;
@@ -314,8 +315,14 @@ void train_softmax_openacc(const DataSet *train_data, const DataSet *test_data, 
     //                                 train_labels[0:m_train], test_labels[0:m_test], loss_errs[0:4])
     // {   
 
+    std::cout << "| Epoch | Train Loss | Train Err | Test Loss | Test Err |" << std::endl;
     std::chrono::milliseconds elapsed_time;
     auto start_time = std::chrono::high_resolution_clock::now();
+
+    #pragma acc data copyin(train_images[0:m_train * n_train], theta[0:n_train * k], train_result[0:m_train * k],\
+                                test_images[0:m_test * n_test], test_result[0:m_test * k])\
+                        // copyout(train_result[0:m_train * k], test_result[0:m_test * k])
+    {
     for (size_t epoch = 0; epoch < epochs; epoch++)
     {
         // memset(train_result, 0, train_data->images_num * num_classes * sizeof(float));
@@ -325,19 +332,17 @@ void train_softmax_openacc(const DataSet *train_data, const DataSet *test_data, 
         softmax_regression_epoch_openacc(train_images, train_labels, theta,
                                         m_train, n_train, k, lr, batch);
         // #pragma acc data copyin(train_data->images_matrix[0:m_train * n_train], theta[0:n_train * k], train_result[0:m_train * k])
-        #pragma acc data copyin(train_images[0:m_train * n_train], theta[0:n_train * k], train_result[0:m_train * k]) copyout(train_result[0:m_train * k])
-        {
-            matrix_dot_openacc(train_images, theta, train_result, m_train, n_train ,k);
+        matrix_dot_openacc(train_images, theta, train_result, m_train, n_train ,k);
         // #pragma acc data copyin(test_data->images_matrix[0:m_test * n_test], theta[0:n_test * k], test_result[0:m_test * k])
-            #pragma acc data copyin(test_images[0:m_test * n_test], test_result[0:m_test * k]) copyout(test_result[0:m_test * k])
-            {
-                matrix_dot_openacc(test_images, theta, test_result, m_test, n_test ,k);
+            // #pragma acc data copyin(test_images[0:m_test * n_test], test_result[0:m_test * k]) copyout(test_result[0:m_test * k])
+            // {
+        matrix_dot_openacc(test_images, theta, test_result, m_test, n_test ,k);
 
                 // #pragma acc data copyin(train_labels[0:m_train], test_labels[0:m_test])
                 // {
                 // }
-            }
-        }
+            // }
+        #pragma acc update host(train_result[0:m_train * k], test_result[0:m_test * k])
         mean_err_openacc(train_result, train_labels, train_data->images_num, num_classes, loss_errs + 1);
         mean_err_openacc(test_result, test_labels, test_data->images_num, num_classes, loss_errs + 3);
         mean_softmax_loss_openacc(train_result, train_labels, train_data->images_num, num_classes, loss_errs);
@@ -350,10 +355,9 @@ void train_softmax_openacc(const DataSet *train_data, const DataSet *test_data, 
             << std::fixed << std::setprecision(5) << loss_errs[3] << " |" << std::endl;
                 // }
     }
+    }
     auto end_time = std::chrono::high_resolution_clock::now();
-    elapsed_time =
-        std::chrono::duration_cast<std::chrono::milliseconds>(end_time -
-                                                              start_time);
+    elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
     // #pragma acc exit data delete(train_images[0:m_train * n_train], theta[0:n_train * k], train_result[0:size_tr],\
     //                                 test_images[0:m_test * n_test], test_result[0:size_te],\
     //                                 train_labels[0:m_train], test_labels[0:m_test], loss_errs[0:4])                                                
