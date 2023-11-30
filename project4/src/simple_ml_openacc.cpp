@@ -325,28 +325,30 @@ void train_softmax_openacc(const DataSet *train_data, const DataSet *test_data, 
         softmax_regression_epoch_openacc(train_images, train_labels, theta,
                                         m_train, n_train, k, lr, batch);
         // #pragma acc data copyin(train_data->images_matrix[0:m_train * n_train], theta[0:n_train * k], train_result[0:m_train * k])
-        #pragma acc data copyin(train_images[0:m_train * n_train], theta[0:n_train * k], train_result[0:m_train * k])
+        #pragma acc data copyin(train_images[0:m_train * n_train], theta[0:n_train * k], train_result[0:m_train * k]) copyout(train_result[0:m_train * k])
         {
             matrix_dot_openacc(train_images, theta, train_result, m_train, n_train ,k);
         // #pragma acc data copyin(test_data->images_matrix[0:m_test * n_test], theta[0:n_test * k], test_result[0:m_test * k])
-            #pragma acc data copyin(test_images[0:m_test * n_test], test_result[0:m_test * k])
+            #pragma acc data copyin(test_images[0:m_test * n_test], test_result[0:m_test * k]) copyout(test_result[0:m_test * k])
             {
                 matrix_dot_openacc(test_images, theta, test_result, m_test, n_test ,k);
 
-                #pragma acc data copyin(train_labels[0:m_train], test_labels[0:m_test]) 
-                {
-                    mean_softmax_loss_openacc(train_result, train_labels, train_data->images_num, num_classes, loss_errs);
-                    mean_err_openacc(train_result, train_labels, train_data->images_num, num_classes, loss_errs + 1);
-                    mean_softmax_loss_openacc(test_result, test_labels, test_data->images_num, num_classes, loss_errs + 2);
-                    mean_err_openacc(test_result, test_labels, test_data->images_num, num_classes, loss_errs + 3);
-                }
+                // #pragma acc data copyin(train_labels[0:m_train], test_labels[0:m_test])
+                // {
+                // }
             }
         }
+        mean_err_openacc(train_result, train_labels, train_data->images_num, num_classes, loss_errs + 1);
+        mean_err_openacc(test_result, test_labels, test_data->images_num, num_classes, loss_errs + 3);
+        mean_softmax_loss_openacc(train_result, train_labels, train_data->images_num, num_classes, loss_errs);
+        mean_softmax_loss_openacc(test_result, test_labels, test_data->images_num, num_classes, loss_errs + 2);
+        
         std::cout << "|  " << std::setw(4) << std::right << epoch << " |    "
-                  << std::fixed << std::setprecision(5) << loss_errs[0] << " |   "
-                  << std::fixed << std::setprecision(5) << loss_errs[1] << " |   "
-                  << std::fixed << std::setprecision(5) << loss_errs[2] << " |  "
-                  << std::fixed << std::setprecision(5) << loss_errs[3] << " |" << std::endl;
+            << std::fixed << std::setprecision(5) << loss_errs[0] << " |   "
+            << std::fixed << std::setprecision(5) << loss_errs[1] << " |   "
+            << std::fixed << std::setprecision(5) << loss_errs[2] << " |  "
+            << std::fixed << std::setprecision(5) << loss_errs[3] << " |" << std::endl;
+                // }
     }
     auto end_time = std::chrono::high_resolution_clock::now();
     elapsed_time =
@@ -370,7 +372,8 @@ void mean_softmax_loss_openacc(const float *result, const unsigned char *labels_
     // BEGIN YOUR CODE
     // #pragma acc data present(result[0:images_num * num_classes], labels_array[0:images_num])
     float res = 0.0f;
-    #pragma acc loop independent
+    // #pragma acc loop independent
+    // #pragma acc parallel loop copyin(result[0:images_num * num_classes], labels_array[0:images_num], loss) copyout(loss)
     for (int i = 0; i < images_num; ++i) {
         int row_loc = i * num_classes;
         float row_correct = result[row_loc + labels_array[i]];
@@ -380,6 +383,7 @@ void mean_softmax_loss_openacc(const float *result, const unsigned char *labels_
         }
         res += -row_correct + log(row_exp_sum);
     }
+    
     res /= images_num;
     (*loss) = res;
     // return ;
@@ -391,7 +395,9 @@ void mean_err_openacc(const float *result, const unsigned char *labels_array, si
     // BEGIN YOUR CODE
     // #pragma acc data present(result[0:images_num * num_classes], labels_array[0:images_num])
     float res = 0.0f;
-    #pragma acc loop independent
+    // #pragma acc loop independent
+    // #pragma acc parallel loop present(result[0:images_num * num_classes], labels_array[0:images_num]) copyin(err) copyout(err)
+    #pragma acc parallel loop copyin(result[0:images_num * num_classes], labels_array[0:images_num]) copyout(err)
     for (int i = 0; i < images_num; ++i) {
         int row_idx = i * num_classes;
         unsigned char row_max_idx = 0;
