@@ -89,20 +89,12 @@ void matrix_trans_dot_openacc(const float *A, const float *B, float *C, size_t m
 {
     // BEGIN YOUR CODE
     size_t M = m, K = n, N = input_k;
-    #pragma acc data copyin(A[0:M * K], B[0:K * N], C[0:M * N]) copyout(C[0:M * N])
+    #pragma acc data copyin(A[0:M * K], B[0:K * N], C[0:M * N])
     // #pragma acc data present(A[0:M * K], B[0:K * N], C[0:M * N])
     {
     #pragma acc region
     {
         # pragma acc loop independent vector(128) 
-        // for (size_t k = 0; k < K; ++k) {
-        //     for (size_t i = 0; i < M; ++i) {
-        //         float r1 = A[i * K + k];
-        //         for (size_t j = 0; j < N; ++j) {
-        //             C[i * N + j] += r1 * B[j * K + k];
-        //         }
-        //     }
-        // }
         for (int j = 0; j < N; j ++) {
 
             # pragma acc loop independent vector(16) 
@@ -244,7 +236,7 @@ void softmax_regression_epoch_openacc(const float *X, const unsigned char *y,
     float gd[n * k];
     float Y[batch * k];
     
-        for (int i = 0; i < m; i += batch) {
+    for (int i = 0; i < m; i += batch) {
         // memset(Z, 0, batch * k * sizeof(float));
         // memset(gd, 0, n * k * sizeof(float));
         cur_y = y + i;
@@ -277,8 +269,8 @@ void softmax_regression_epoch_openacc(const float *X, const unsigned char *y,
                 // #pragma acc data copyin(theta[0:n * k], gd[0:n * k]) copyout(theta[0:n * k])
                 // {
             matrix_minus_openacc(theta, gd, n, k);
-            #pragma acc update host(theta[0:n * k])
                             // }
+            #pragma acc update host(theta[0:n * k])
         }
     // }
     }
@@ -482,45 +474,46 @@ void nn_epoch_openacc(const float *X, const unsigned char *y, float *W1, float *
     float W2_l[l * k];
 
     for (int i = 0; i < m; i += batch) {
-        // memset(Z1, 0, batch * l * sizeof(float));
-        // memset(Z2, 0, batch * k * sizeof(float));
-        // memset(G1, 0, batch * l * sizeof(float));
-        // memset(W1_l, 0, n * l * sizeof(float));
-        // memset(W2_l, 0, l * k * sizeof(float));
 
-        // memcpy(cur_y, y + i, batch * sizeof(unsigned char)); 
-        // memcpy(X_b, X + i * n, batch * n * sizeof(float));
         memset(Y, 0, batch * k * sizeof(float));
         cur_y = y + i;
         X_b = X + i * n;
 
-        matrix_dot_openacc(X_b, W1, Z1, batch, n, l); //
-        relu_openacc(Z1, batch, l);
-        matrix_dot_openacc(Z1, W2, Z2, batch, l, k); //
-        matrix_softmax_normalize_openacc(Z2, batch, k);
+        #pragma acc data copyin(X_b[0:batch * n], W1[0:n * l], W2[0:l * k],\
+                                 Z1[0:batch * l], Z2[0:batch * k],\
+                                 G1[0:batch * l], W1_l[0:n * l], \
+                                 W2_l[0:l * k], cur_y[0:batch],\
+                                  Y[0:batch * k])
+        {
 
-        vector_to_one_hot_matrix_openacc(cur_y, Y, batch, k);
-        matrix_minus_openacc(Z2, Y, batch, k); // Z2 = Z2 - Y
-        matrix_trans_dot_openacc(Z2, W2, G1, batch, k, l); //
-        matrix_masking_openacc(G1, Z1, batch * l);
+            matrix_dot_openacc(X_b, W1, Z1, batch, n, l); //
+            relu_openacc(Z1, batch, l);
+            matrix_dot_openacc(Z1, W2, Z2, batch, l, k); //
+            matrix_softmax_normalize_openacc(Z2, batch, k);
 
-        matrix_dot_trans_openacc(X_b, G1, W1_l, n, batch, l); //
-        matrix_dot_trans_openacc(Z1, Z2, W2_l, l, batch, k); //
-        matrix_mul_scalar_openacc(W1_l, lr / batch, n, l);
-        matrix_mul_scalar_openacc(W2_l, lr / batch, l, k);
-        matrix_minus_openacc(W1, W1_l, n, l);
-        matrix_minus_openacc(W2, W2_l, l, k);
+            vector_to_one_hot_matrix_openacc(cur_y, Y, batch, k);
+            matrix_minus_openacc(Z2, Y, batch, k); // Z2 = Z2 - Y
+            matrix_trans_dot_openacc(Z2, W2, G1, batch, k, l); //
+            matrix_masking_openacc(G1, Z1, batch * l);
+
+            matrix_dot_trans_openacc(X_b, G1, W1_l, n, batch, l); //
+            matrix_dot_trans_openacc(Z1, Z2, W2_l, l, batch, k); //
+            matrix_mul_scalar_openacc(W1_l, lr / batch, n, l);
+            matrix_mul_scalar_openacc(W2_l, lr / batch, l, k);
+            matrix_minus_openacc(W1, W1_l, n, l);
+            matrix_minus_openacc(W2, W2_l, l, k);
         // print_matrix(W1, n, l);
         // print_matrix(W2, l, k);
-
+            #pragma acc update host(W1[0:n * l], W2[0:l * k])
+        }
     }
     // END YOUR CODE
 }
 
 void train_nn_openacc(const DataSet *train_data, const DataSet *test_data, size_t num_classes, size_t hidden_dim, size_t epochs, float lr, size_t batch)
 {
-    // float* train_images = train_data->images_matrix;
-    // float* test_images = test_data->images_matrix;
+    float* train_images = train_data->images_matrix;
+    float* test_images = test_data->images_matrix;
     unsigned char* train_labels = train_data->labels_array;
     unsigned char* test_labels = test_data->labels_array;
     size_t size_w1 = train_data->input_dim * hidden_dim;
@@ -546,39 +539,45 @@ void train_nn_openacc(const DataSet *train_data, const DataSet *test_data, size_
     float *test_result = new float[size_te];
     // float train_loss, train_err, test_loss, test_err;
     float *loss_errs = new float[4];
-    for (int i = 0; i < 4; ++i) {
-        loss_errs[i] = 0.0f;
-    }
-    std::cout << "| Epoch | Train Loss | Train Err | Test Loss | Test Err |" << std::endl;
-    std::chrono::milliseconds elapsed_time;
-    auto start_time = std::chrono::high_resolution_clock::now();
 
-    // BEGIN YOUR CODE
     const int m_train = train_data->images_num;
     const int m_test = test_data->images_num;
-    const int n = train_data->input_dim;
+    const int n_train = train_data->input_dim;
+    const int n_test = test_data->input_dim;
     const int k = num_classes;
     const int l = hidden_dim;
     float *train_temp = new float[m_train * l];
     float *test_temp = new float[m_test * l];
 
+    std::cout << "| Epoch | Train Loss | Train Err | Test Loss | Test Err |" << std::endl;
+    std::chrono::milliseconds elapsed_time;
+    auto start_time = std::chrono::high_resolution_clock::now();
+
+    // BEGIN YOUR CODE
+    #pragma acc data copyin(train_images[0:m_train * n_train], test_images[0:m_test * n_test],\
+                             W1[0:size_w1], W2[0:size_w2],\
+                             test_result[0:m_test * k], train_result[0:m_train * k],\
+                             train_labels[0:m_train], test_labels[0:m_test],\
+                             train_temp[0:m_train * l], test_temp[0:m_test * l] )
+    {
     for (size_t epoch = 0; epoch < epochs; epoch++)
     {
-        memset(train_temp, 0, m_train * l * sizeof(float));
-        memset(train_result, 0, m_train * k * sizeof(float));
-        memset(test_temp, 0, m_test * l * sizeof(float));
-        memset(test_result, 0, m_test * k * sizeof(float));
+        // memset(train_temp, 0, m_train * l * sizeof(float));
+        // memset(train_result, 0, m_train * k * sizeof(float));
+        // memset(test_temp, 0, m_test * l * sizeof(float));
+        // memset(test_result, 0, m_test * k * sizeof(float));
 
-        nn_epoch_cpp(train_data->images_matrix, train_data->labels_array, W1, W2, m_train, n, l, k, lr, batch);
+        nn_epoch_openacc(train_images, train_labels, W1, W2, m_train, n_train, l, k, lr, batch);
 
-        matrix_dot_openacc(train_data->images_matrix, W1, train_temp, m_train,n , l);
+        matrix_dot_openacc(train_images, W1, train_temp, m_train,n_train , l);
         relu_openacc(train_temp, m_train, l);
         matrix_dot_openacc(train_temp, W2, train_result, m_train,l , k);
         
-        matrix_dot_openacc(test_data->images_matrix, W1, test_temp, m_test, n , l);
+        matrix_dot_openacc(test_images, W1, test_temp, m_test, n_train , l);
         relu_openacc(test_temp, m_test, l);
         matrix_dot_openacc(test_temp, W2, test_result, m_test,l , k);
 
+        #pragma acc update host(train_result[0:m_train * k], test_result[0:m_test * k])
         mean_softmax_loss_openacc(train_result, train_labels, train_data->images_num, num_classes, loss_errs);
         mean_err_openacc(train_result, train_labels, train_data->images_num, num_classes, loss_errs + 1);
         mean_softmax_loss_openacc(test_result, test_labels, test_data->images_num, num_classes, loss_errs + 2);
@@ -588,6 +587,7 @@ void train_nn_openacc(const DataSet *train_data, const DataSet *test_data, size_
                   << std::fixed << std::setprecision(5) << loss_errs[1] << " |   "
                   << std::fixed << std::setprecision(5) << loss_errs[2] << " |  "
                   << std::fixed << std::setprecision(5) << loss_errs[3] << " |" << std::endl;
+    }
     }
     auto end_time = std::chrono::high_resolution_clock::now();
     elapsed_time =
