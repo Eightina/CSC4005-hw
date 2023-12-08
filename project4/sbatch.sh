@@ -20,9 +20,9 @@ TEST_Y=/nfsmnt/223040076/coursecode/project4/dataset/testing/t10k-labels.idx1-ub
 # srun -n 1 --cpus-per-task 1 ${CURRENT_DIR}/build/softmax $TRAIN_X $TRAIN_Y $TEST_X $TEST_Y
 # echo ""
 
-# echo "Softmax OpenACC"
-# srun -n 1 --gpus 1 ${CURRENT_DIR}/build/softmax_openacc $TRAIN_X $TRAIN_Y $TEST_X $TEST_Y
-# echo ""
+echo "Softmax OpenACC"
+srun -n 1 --gpus 1 ${CURRENT_DIR}/build/softmax_openacc $TRAIN_X $TRAIN_Y $TEST_X $TEST_Y
+echo ""
 
 # NN
 # echo "NN Sequential"
